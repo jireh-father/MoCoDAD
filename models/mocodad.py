@@ -427,6 +427,7 @@ class MoCoDAD(pl.LightningModule):
         gt = dataset_gt_transf[0]
         
         # computing the AUC
+        print("gt,pds shapes: ", gt.shape, pds.shape)
         auc = roc_auc_score(gt,pds)
         
         return auc
