@@ -418,27 +418,20 @@ class STSAE_Unet(STSE_Unet):
         """
         
         # Encode the time step
-        print("input x", X.shape)
-        print("input t", t.shape)
-        print("input condition_data", condition_data.shape)
         t = t.unsqueeze(-1).type(torch.float)
         t = self.pos_encoding(t, self.embedding_dim)
         
         # Add conditioning signal
         if self.inject_condition:
             t = t + condition_data
-        print("pos encoded t", t.shape)
         fd1, d1, d2 = self._downscale(X, t)
-        print("downscale output shapes", fd1.shape, d1.shape, d2.shape)
-        
+
         if self.use_bottleneck:
             fd1 = torch.flatten(fd1,1)
             fd1 = self.to_time_dim(fd1)
             fd1 = self.rev_to_time_dim(fd1)
             fd1 = fd1.view(-1, self.unet_down_channels[6], self.n_frames, self.joints_to_consider['c'])
-            print("bottoleneck output shape", fd1.shape)
-            
+
         fd1 = self._upscale(X, fd1, d1, d2, t)
-        print("upscale output shape", fd1.shape)
 
         return fd1, []
