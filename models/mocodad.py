@@ -289,7 +289,10 @@ class MoCoDAD(pl.LightningModule):
             batch_idx (int): index of the batch
         """
         output = self.forward(batch)
-        print("output shape: ", output.shape)
+        print("output shape: ", output[0].shape)
+        print("output shape: ", output[1].shape)
+        print("output shape: ", output[2].shape)
+        print("output shape: ", output[3].shape)
         self._validation_output_list.append(output)
         return
     
