@@ -313,6 +313,8 @@ class MoCoDAD(pl.LightningModule):
         """
         
         out, gt_data, trans, meta, frames = processing_data(self._validation_output_list)
+
+        print(f"shapes out: {out.shape}, gt_data: {gt_data.shape}")
         del self._validation_output_list
         if self.save_tensors:
             tensors = {'prediction':out, 'gt_data':gt_data, 
