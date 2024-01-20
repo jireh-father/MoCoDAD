@@ -9,7 +9,7 @@ use_hr: false # for validation and test on UBnormal
 
 ## Computational resources
 accelerator: 'gpu'
-devices: [0,1] # indices of cuda devices to use
+devices: [0] # indices of cuda devices to use
 
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
