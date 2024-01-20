@@ -240,8 +240,9 @@ class MoCoDAD(pl.LightningModule):
                                         - actual_frames
             batch_idx (int): index of the batch
         """
-        
-        self._test_output_list.append(self.forward(batch))
+        output = self.forward(batch)
+        print("output shape: ", output.shape)
+        self._test_output_list.append(output)
         return
     
     
@@ -287,8 +288,9 @@ class MoCoDAD(pl.LightningModule):
                                         - actual_frames
             batch_idx (int): index of the batch
         """
-        
-        self._validation_output_list.append(self.forward(batch))
+        output = self.forward(batch)
+        print("output shape: ", output.shape)
+        self._validation_output_list.append(output)
         return
     
     
