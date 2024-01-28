@@ -112,10 +112,10 @@ def data_of_combined_model(**args):
     print("reconstruct_original_data:", reconstruct_original_data)
     local_trajectories = deepcopy(trajectories) if reconstruct_original_data else trajectories
 
-    print("local_trajectories:", local_trajectories)
+    # print("local_trajectories:", local_trajectories)
     local_trajectories = change_coordinate_system(local_trajectories, video_resolution=video_resolution,
                                                   coordinate_system='bounding_box_centre', invert=False)
-    print("changed local_trajectories:", local_trajectories)
+    # print("changed local_trajectories:", local_trajectories)
 
     print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')
     
