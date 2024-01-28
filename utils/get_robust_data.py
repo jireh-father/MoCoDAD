@@ -128,10 +128,10 @@ def data_of_combined_model(**args):
     print("X_local shape:", X_local.shape)
     if y_local:
         print("y_local shape:", y_local.shape)
-    if X_local_meta:
-        print("X_local_meta shape:", X_local_meta.shape)
-    if y_local_meta:
-        print("y_local_meta shape:", y_local_meta.shape)
+    # if X_local_meta:
+    #     print("X_local_meta shape:", X_local_meta.shape)
+    # if y_local_meta:
+    #     print("y_local_meta shape:", y_local_meta.shape)
     if normalize_pose == True:
         scaler_path = os.path.join(exp_dir, f'local_{local_normalisation_strategy}.pickle')
         
