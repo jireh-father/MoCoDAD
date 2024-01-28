@@ -95,7 +95,8 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
         input_trajectories = np.stack(input_trajectories, axis=0)
 
     print("input_trajectories shape:", input_trajectories.shape)
-    print("future_trajectories shape:", future_trajectories.shape)
+    if future_trajectories:
+        print("future_trajectories shape:", future_trajectories.shape)
     if return_start_idxs: # added
         return input_trajectories, future_trajectories, input_ranges_idxs, future_ranges_idxs # added
 
