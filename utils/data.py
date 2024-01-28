@@ -217,18 +217,27 @@ class Trajectory:
 
 
 def load_trajectories(trajectories_path, debug, split='train'):
+    print("trajectories_path: ", trajectories_path)
     trajectories = OrderedDict() # {}	    trajectories = OrderedDict() # {}
     folder_names = os.listdir(trajectories_path)
+    print("folder_names: ", folder_names)
     if debug: # and (split == 'train'):
         folder_names = folder_names[:5]
+        print("folder_names(debug): ", folder_names)
     for folder_name in folder_names:
         csv_file_names = os.listdir(os.path.join(trajectories_path, folder_name))
+        print("csv_file_names: ", csv_file_names)
         for csv_file_name in csv_file_names:
             trajectory_file_path = os.path.join(trajectories_path, folder_name, csv_file_name)
             trajectory = np.loadtxt(trajectory_file_path, dtype=np.float32, delimiter=',', ndmin=2)
+            print("trajectory shape: ", trajectory.shape)
             trajectory_frames, trajectory_coordinates = trajectory[:, 0].astype(np.int32), trajectory[:, 1:]
+            print("trajectory_frames shape: ", trajectory_frames.shape)
+            print("trajectory_coordinates shape: ", trajectory_coordinates.shape)
             person_id = csv_file_name.split('.')[0]
+            print("person_id: ", person_id)
             trajectory_id = folder_name + '_' + person_id
+            print("trajectory_id: ", trajectory_id)
             trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,
                                                      frames=trajectory_frames,
                                                      coordinates=trajectory_coordinates)

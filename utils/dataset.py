@@ -229,7 +229,9 @@ class PoseDatasetRobust(PoseDataset):
         
         
     def gen_dataset(self, ret_keys=False, **dataset_args):
-        
+
+        print("ret_keys: ", ret_keys)
+        print("dataset_args: ", dataset_args)
         global_, local_ = data_of_combined_model(trajectories_path=self.path_to_json, 
                                                  split=self.dataset_split, seg_len=self.seg_len, 
                                                  seg_stride=self.seg_stride,

@@ -36,12 +36,17 @@ def data_of_combined_model(**args):
     else:
         subfolder = 'validating'
     trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
+    print('trajectories_path:', trajectories_path)
     video_resolution = args.get('vid_res', (1080,720))
     video_resolution = np.array(video_resolution, dtype=np.float32)
+    print("video_resolution:", video_resolution)
     # Architecture
     reconstruct_original_data = args.get('reconstruct_original_data', False) 
     input_length = args.get('seg_len', 12)
-    seg_stride = args.get('seg_stride', 1) - 1 
+    seg_stride = args.get('seg_stride', 1) - 1
+    print("reconstruct_original_data:", reconstruct_original_data)
+    print("input_length:", input_length)
+    print("seg_stride:", seg_stride)
     pred_length = 0 
     # Training
     input_missing_steps = False # args.input_missing_steps
@@ -54,6 +59,9 @@ def data_of_combined_model(**args):
 
     trajectories = load_trajectories(trajectories_path, debug=debug, split=split)
     print('\nLoaded %d trajectories.' % len(trajectories))
+    # trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,
+#                                              frames=trajectory_frames,
+#                                              coordinates=trajectory_coordinates)
 
     trajectories = remove_short_trajectories(trajectories, input_length=input_length,
                                              input_gap=seg_stride, pred_length=pred_length)
@@ -101,10 +109,13 @@ def data_of_combined_model(**args):
         X_global, X_global_meta = None, None
     
     # Local
+    print("reconstruct_original_data:", reconstruct_original_data)
     local_trajectories = deepcopy(trajectories) if reconstruct_original_data else trajectories
 
+    print("local_trajectories:", local_trajectories)
     local_trajectories = change_coordinate_system(local_trajectories, video_resolution=video_resolution,
                                                   coordinate_system='bounding_box_centre', invert=False)
+    print("changed local_trajectories:", local_trajectories)
 
     print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')
     
@@ -112,6 +123,10 @@ def data_of_combined_model(**args):
                                                                                   input_gap=seg_stride, pred_length=pred_length,
                                                                                   return_ids=True)
     
+    print("X_local shape:", X_local.shape)
+    print("y_local shape:", y_local.shape)
+    print("X_local_meta shape:", X_local_meta.shape)
+    print("y_local_meta shape:", y_local_meta.shape)
     if normalize_pose == True:
         scaler_path = os.path.join(exp_dir, f'local_{local_normalisation_strategy}.pickle')
         
@@ -172,6 +187,7 @@ def data_of_combined_model(**args):
                    (y_local, y_local_meta), \
                    (y_out, y_out_meta) 
         else:
+            print("return not reconstruct_original_data and pred_length > 0")
             return (X_global, X_global_meta), \
                    (X_local, X_local_meta), \
                    (y_global, y_global_meta), \
@@ -182,5 +198,6 @@ def data_of_combined_model(**args):
                    (X_local, X_local_meta), \
                    (X_out, X_out_meta)
         else:
+            print("return not reconstruct_original_data and pred_length == 0")
             return (X_global, X_global_meta), \
                    (X_local, X_local_meta)
