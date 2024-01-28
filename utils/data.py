@@ -225,6 +225,7 @@ def load_trajectories(trajectories_path, debug, split='train'):
         folder_names = folder_names[:5]
         print("folder_names(debug): ", folder_names)
     for folder_name in folder_names:
+        print("list path", os.path.join(trajectories_path, folder_name))
         csv_file_names = os.listdir(os.path.join(trajectories_path, folder_name))
         print("csv_file_names: ", csv_file_names)
         for csv_file_name in csv_file_names:
