@@ -268,8 +268,9 @@ def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred
     input_trajectory_ids, future_trajectory_ids = [], [] # added
     input_segs_ids, future_segs_ids = [], [] # added
     for trajectory in trajectories.values():
-        
+        print("in")
         if return_ids: # added
+            print(1)
             # this is the original line of code
             X, X_pred, input_ranges_idxs, future_ranges_idxs = _aggregate_rnn_autoencoder_data(trajectory.coordinates, input_length, 
                                                              input_gap, pred_length, return_start_idxs=return_ids) # added last two return values
@@ -280,6 +281,7 @@ def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred
             input_segs_ids += [frames[range_] for range_ in input_ranges_idxs] # added
             
         else: # added
+            print(2)
             X, X_pred = _aggregate_rnn_autoencoder_data(trajectory.coordinates, input_length, input_gap, pred_length) # original line of code
         
         Xs.append(X)

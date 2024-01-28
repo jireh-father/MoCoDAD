@@ -308,7 +308,14 @@ def get_dataset_and_loader(args, split='train', validation=False):
     loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
     
     dataset_args['seg_stride'] = args.seg_stride if split == 'train' else 1  # No strides for test set
-    if args.normalization_strategy=='robust': 
+    if args.normalization_strategy=='robust':
+        print("make training dataset")
+        print("path to data: ", args.data_dir)
+        print("exp_dir: ", args.ckpt_dir)
+        print("include_global: ", (args.num_coords==6))
+        print("split: ", split)
+        print("dataset_args: ", dataset_args)
+
         dataset = PoseDatasetRobust(path_to_data=args.data_dir, 
                                     exp_dir=args.ckpt_dir,
                                     include_global=(args.num_coords==6), split=split, **dataset_args)
@@ -318,7 +325,13 @@ def get_dataset_and_loader(args, split='train', validation=False):
     loader = DataLoader(dataset, **loader_args, shuffle=(split == 'train'))
     if validation:
         dataset_args['seg_stride'] = 1
-        if args.normalization_strategy=='robust': 
+        if args.normalization_strategy=='robust':
+            print("make validation dataset")
+            print("path to data: ", args.data_dir)
+            print("exp_dir: ", args.ckpt_dir)
+            print("include_global: ", (args.num_coords==6))
+            print("split: ", 'validation')
+            print("dataset_args: ", dataset_args)
             val_dataset = PoseDatasetRobust(path_to_data=args.data_dir, 
                                     exp_dir=args.ckpt_dir,
                                     include_global=(args.num_coords==6), split='validation', **dataset_args)
