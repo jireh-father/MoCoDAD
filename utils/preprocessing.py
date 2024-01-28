@@ -66,15 +66,15 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
         stop = len(coordinates) - pred_length - total_input_seq_len + 1
         print("stop:", stop)
         for start_index in range(0, stop):
-            print("start_index:", start_index)
+            # print("start_index:", start_index)
             stop_index = start_index + total_input_seq_len
-            print("stop_index:", stop_index)
+            # print("stop_index:", stop_index)
             input_range = list(range(start_index, stop_index, step)) # added
-            print("input_range:", input_range)
-            print("sliced coordinates shape:", coordinates[start_index:stop_index:step, :].shape)
+            # print("input_range:", input_range)
+            # print("sliced coordinates shape:", coordinates[start_index:stop_index:step, :].shape)
             input_trajectories.append(coordinates[start_index:stop_index:step, :])
             future_range = list(range(stop_index, stop_index + pred_length)) # added
-            print("future_range:", future_range)
+            # print("future_range:", future_range)
             future_trajectories.append(coordinates[stop_index:(stop_index + pred_length), :])
             input_ranges_idxs.append(input_range) # added
             future_ranges_idxs.append(future_range) # added
@@ -84,13 +84,13 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
         stop = len(coordinates) - total_input_seq_len + 1
         print("stop:", stop)
         for start_index in range(0, stop):
-            print("start_index:", start_index)
+            # print("start_index:", start_index)
             stop_index = start_index + total_input_seq_len
-            print("stop_index:", stop_index)
+            # print("stop_index:", stop_index)
             input_range = list(range(start_index, stop_index, step)) # added
-            print("input_range:", input_range)
+            # print("input_range:", input_range)
             input_trajectories.append(coordinates[start_index:stop_index:step, :])
-            print("sliced coordinates shape:", coordinates[start_index:stop_index:step, :].shape)
+            # print("sliced coordinates shape:", coordinates[start_index:stop_index:step, :].shape)
             input_ranges_idxs.append(input_range) # added
         input_trajectories = np.stack(input_trajectories, axis=0)
 
