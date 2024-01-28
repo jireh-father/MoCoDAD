@@ -244,6 +244,9 @@ class PoseDatasetRobust(PoseDataset):
         
         X_global, _ = global_
         X_local, X_local_meta = local_ # X_local has shape (number of segments, window lenght, 34)
+        print("X_local.shape: ", X_local.shape)
+        print("X_local_meta[0].shape: ", X_local_meta[0].shape)
+        print("X_local_meta[1].shape: ", X_local_meta[1].shape)
 
         segs_meta, segs_ids = X_local_meta
         person_keys = dict()
@@ -251,10 +254,13 @@ class PoseDatasetRobust(PoseDataset):
         for seg_meta_item in segs_meta:
             
             person_id = '_'.join(map(lambda x: str(x), seg_meta_item[:-1]))
-            
+            print("seg_meta_item", seg_meta_item)
+            print("person_id: ", person_id)
+            print("meta_item: ", seg_meta_item[:2])
             person_keys[person_id] = seg_meta_item[:2]
     
         X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
+        print("reshaped x_local.shape: ", X_local.shape)
     
         if not self.include_global:
               
@@ -273,8 +279,11 @@ class PoseDatasetRobust(PoseDataset):
         
         if self.headless:
             segs_data_np = segs_data_np[:,:,:14]
+
+        print("x_local reshape to segs_data_np: ", segs_data_np.shape)
     
         segs_data_np = np.transpose(segs_data_np, (0, 3, 1, 2)).astype(np.float32)
+        print("segs_data_np transpose: ", segs_data_np.shape)
             
 
         if ret_keys:
