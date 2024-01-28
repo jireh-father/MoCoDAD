@@ -82,10 +82,15 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
         future_trajectories = np.stack(future_trajectories, axis=0)
     else:
         stop = len(coordinates) - total_input_seq_len + 1
+        print("stop:", stop)
         for start_index in range(0, stop):
+            print("start_index:", start_index)
             stop_index = start_index + total_input_seq_len
+            print("stop_index:", stop_index)
             input_range = list(range(start_index, stop_index, step)) # added
+            print("input_range:", input_range)
             input_trajectories.append(coordinates[start_index:stop_index:step, :])
+            print("sliced coordinates shape:", coordinates[start_index:stop_index:step, :].shape)
             input_ranges_idxs.append(input_range) # added
         input_trajectories = np.stack(input_trajectories, axis=0)
 
