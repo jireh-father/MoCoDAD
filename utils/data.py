@@ -106,6 +106,7 @@ class Trajectory:
             else:
                 raise ValueError('Unknown coordinate system. Only global is available for inversion.')
         else:
+            # this is the default behaviour
             if coordinate_system == 'global':
                 self.coordinates = self._from_image_to_global(self.coordinates, video_resolution=video_resolution)
             elif coordinate_system == 'bounding_box_top_left':
@@ -113,6 +114,7 @@ class Trajectory:
                                                                     video_resolution=video_resolution,
                                                                     location='top_left')
             elif coordinate_system == 'bounding_box_centre':
+                #this is the default behaviour
                 self.coordinates = self._from_image_to_bounding_box(self.coordinates,
                                                                     video_resolution=video_resolution,
                                                                     location='centre')
@@ -232,10 +234,13 @@ def load_trajectories(trajectories_path, debug, split='train'):
             trajectory_file_path = os.path.join(trajectories_path, folder_name, csv_file_name)
             trajectory = np.loadtxt(trajectory_file_path, dtype=np.float32, delimiter=',', ndmin=2)
             print("trajectory shape: ", trajectory.shape)
+            # trajectory_frames: 프레임 번호들
+            # trajectory_coordinates: 실제 좌표들
             trajectory_frames, trajectory_coordinates = trajectory[:, 0].astype(np.int32), trajectory[:, 1:]
             print("trajectory_frames shape: ", trajectory_frames.shape)
             print("trajectory_coordinates shape: ", trajectory_coordinates.shape)
             person_id = csv_file_name.split('.')[0]
+            # person_id: csv파일명.
             print("person_id: ", person_id)
             trajectory_id = folder_name + '_' + person_id
             print("trajectory_id: ", trajectory_id)
