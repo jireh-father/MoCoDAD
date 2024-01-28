@@ -311,8 +311,10 @@ def split_into_train_and_test(trajectories, train_ratio=0.8, seed=42):
 
 def scale_trajectories(X, scaler=None, strategy='zero_one'):
     original_shape = X.shape
+    print("scale x original shape: ", original_shape)
     input_dim = original_shape[-1]
     X = X.reshape(-1, input_dim)
+    print("scale x shape: ", X.shape)
 
     if strategy == 'zero_one':
         X_scaled, scaler = scale_trajectories_zero_one(X, scaler=scaler)
