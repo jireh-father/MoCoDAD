@@ -307,35 +307,35 @@ def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred
 
 
 # modified by stdrr
-def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred_length=0, return_start_idxs=False): # added return_start_idxs
-    input_trajectories, future_trajectories = [], None
-    input_ranges_idxs, future_ranges_idxs = [], None # added
-    total_input_seq_len = input_length + input_gap * (input_length - 1)
-    step = input_gap + 1
-    if pred_length > 0:
-        future_trajectories = []
-        future_ranges_idxs = [] # added 
-        stop = len(coordinates) - pred_length - total_input_seq_len + 1
-        for start_index in range(0, stop):
-            stop_index = start_index + total_input_seq_len
-            input_range = list(range(start_index, stop_index, step)) # added
-            input_trajectories.append(coordinates[start_index:stop_index:step, :])
-            future_range = list(range(stop_index, stop_index + pred_length)) # added
-            future_trajectories.append(coordinates[stop_index:(stop_index + pred_length), :])
-            input_ranges_idxs.append(input_range) # added
-            future_ranges_idxs.append(future_range) # added
-        input_trajectories = np.stack(input_trajectories, axis=0)
-        future_trajectories = np.stack(future_trajectories, axis=0)
-    else:
-        stop = len(coordinates) - total_input_seq_len + 1
-        for start_index in range(0, stop):
-            stop_index = start_index + total_input_seq_len
-            input_range = list(range(start_index, stop_index, step)) # added
-            input_trajectories.append(coordinates[start_index:stop_index:step, :])
-            input_ranges_idxs.append(input_range) # added
-        input_trajectories = np.stack(input_trajectories, axis=0)
-
-    if return_start_idxs: # added
-        return input_trajectories, future_trajectories, input_ranges_idxs, future_ranges_idxs # added
-    
-    return input_trajectories, future_trajectories
+# def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred_length=0, return_start_idxs=False): # added return_start_idxs
+#     input_trajectories, future_trajectories = [], None
+#     input_ranges_idxs, future_ranges_idxs = [], None # added
+#     total_input_seq_len = input_length + input_gap * (input_length - 1)
+#     step = input_gap + 1
+#     if pred_length > 0:
+#         future_trajectories = []
+#         future_ranges_idxs = [] # added
+#         stop = len(coordinates) - pred_length - total_input_seq_len + 1
+#         for start_index in range(0, stop):
+#             stop_index = start_index + total_input_seq_len
+#             input_range = list(range(start_index, stop_index, step)) # added
+#             input_trajectories.append(coordinates[start_index:stop_index:step, :])
+#             future_range = list(range(stop_index, stop_index + pred_length)) # added
+#             future_trajectories.append(coordinates[stop_index:(stop_index + pred_length), :])
+#             input_ranges_idxs.append(input_range) # added
+#             future_ranges_idxs.append(future_range) # added
+#         input_trajectories = np.stack(input_trajectories, axis=0)
+#         future_trajectories = np.stack(future_trajectories, axis=0)
+#     else:
+#         stop = len(coordinates) - total_input_seq_len + 1
+#         for start_index in range(0, stop):
+#             stop_index = start_index + total_input_seq_len
+#             input_range = list(range(start_index, stop_index, step)) # added
+#             input_trajectories.append(coordinates[start_index:stop_index:step, :])
+#             input_ranges_idxs.append(input_range) # added
+#         input_trajectories = np.stack(input_trajectories, axis=0)
+#
+#     if return_start_idxs: # added
+#         return input_trajectories, future_trajectories, input_ranges_idxs, future_ranges_idxs # added
+#
+#     return input_trajectories, future_trajectories
