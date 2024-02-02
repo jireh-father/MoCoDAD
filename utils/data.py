@@ -167,24 +167,24 @@ class Trajectory:
     def _from_image_to_centre_bounding_box(coordinates, video_resolution):
         for idx, kps in enumerate(coordinates):
             if any(kps):
-                print("kps shape: ", kps.shape)
+                # print("kps shape: ", kps.shape)
                 left, right, top, bottom = compute_bounding_box(kps, video_resolution=video_resolution)
                 centre_x, centre_y = (left + right) / 2, (top + bottom) / 2
                 xs, ys = np.hsplit(kps.reshape(-1, 2), indices_or_sections=2)
-                print("xs shape: ", xs.shape)
-                print("ys shape: ", ys.shape)
+                # print("xs shape: ", xs.shape)
+                # print("ys shape: ", ys.shape)
                 xs, ys = np.where(xs == 0.0, centre_x, xs) - centre_x, np.where(ys == 0.0, centre_y, ys) - centre_y
-                print("xs shape after: ", xs.shape)
-                print("ys shape after: ", ys.shape)
+                # print("xs shape after: ", xs.shape)
+                # print("ys shape after: ", ys.shape)
                 left, right, top, bottom = left - centre_x, right - centre_x, top - centre_y, bottom - centre_y
                 width, height = right - left, bottom - top
                 xs = xs / width if width != 0 else np.zeros_like(xs)
                 ys = ys / height if height != 0 else np.zeros_like(ys)
-                print("xs min max: ", min(xs), max(xs))
-                print("ys min max: ", min(ys), max(ys))
+                # print("xs min max: ", min(xs), max(xs))
+                # print("ys min max: ", min(ys), max(ys))
                 kps = np.hstack((xs, ys)).ravel()
-                print("last kps shape: ", kps.shape)
-                print("min, max", min(kps), max(kps))
+                # print("last kps shape: ", kps.shape)
+                # print("min, max", min(kps), max(kps))
 
             coordinates[idx] = kps
 
