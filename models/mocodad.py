@@ -437,6 +437,7 @@ class MoCoDAD(pl.LightningModule):
                     gt = gt[np.array(hr_avenue_masked_clips[clip_idx])==1]
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
+                print("last clip_score shape: ", clip_score.shape)
                 model_scores.append(clip_score)
                 print("model_scores shape: ", len(model_scores))
                 print("gt shape: ", gt.shape)
@@ -455,7 +456,7 @@ class MoCoDAD(pl.LightningModule):
         print("pds shape: ", pds.shape)
         gt = dataset_gt_transf[0]
         print("dataset_gt_transf len", len(dataset_gt_transf))
-        
+
         # computing the AUC
         print("sample", gt[0], pds[0])
         auc = roc_auc_score(gt,pds)
