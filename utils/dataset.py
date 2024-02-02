@@ -254,9 +254,9 @@ class PoseDatasetRobust(PoseDataset):
         for seg_meta_item in segs_meta:
             
             person_id = '_'.join(map(lambda x: str(x), seg_meta_item[:-1]))
-            print("seg_meta_item", seg_meta_item)
-            print("person_id: ", person_id)
-            print("meta_item: ", seg_meta_item[:2])
+            # print("seg_meta_item", seg_meta_item)
+            # print("person_id: ", person_id)
+            # print("meta_item: ", seg_meta_item[:2])
             person_keys[person_id] = seg_meta_item[:2]
     
         X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
