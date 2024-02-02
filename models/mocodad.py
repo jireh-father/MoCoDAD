@@ -450,6 +450,7 @@ class MoCoDAD(pl.LightningModule):
 
         # aggregating the anomaly scores for all transformations
         print("model_scores_transf",len(model_scores_transf))
+        print("model_scores_transf", model_scores_transf[0].shape)
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
         print("pds shape: ", pds.shape)
         gt = dataset_gt_transf[0]
