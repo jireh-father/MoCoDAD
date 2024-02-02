@@ -180,6 +180,8 @@ class Trajectory:
                 width, height = right - left, bottom - top
                 xs = xs / width if width != 0 else np.zeros_like(xs)
                 ys = ys / height if height != 0 else np.zeros_like(ys)
+                print("xs min max: ", min(xs), max(xs))
+                print("ys min max: ", min(ys), max(ys))
                 kps = np.hstack((xs, ys)).ravel()
                 print("last kps shape: ", kps.shape)
                 print("min, max", min(kps), max(kps))
