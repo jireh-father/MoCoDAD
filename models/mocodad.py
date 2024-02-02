@@ -406,12 +406,13 @@ class MoCoDAD(pl.LightningModule):
                     # iterating over each actor A in each clip C with transformation T
 
                     cond_fig = (meta_scene_clip[:, 2] == fig)
-                    out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip], cond_fig) 
+                    out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip], cond_fig)
+                    print("num person out shape: ", out_fig.shape)
 
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
-                    print("loss_matrix", loss_matrix)
+                    print("loss_matrix", loss_matrix.shape)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
-                    print("fig_reconstruction_loss", fig_reconstruction_loss)
+                    print("fig_reconstruction_loss", fig_reconstruction_loss.shape)
 
                     if self.anomaly_score_pad_size != -1:
                         fig_reconstruction_loss = pad_scores(fig_reconstruction_loss, gt, self.anomaly_score_pad_size)                 
@@ -447,7 +448,9 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt_transf[transformation] = dataset_gt
 
         # aggregating the anomaly scores for all transformations
+        print("model_scores_transf",len(model_scores_transf))
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
+        print("pds shape: ", pds.shape)
         gt = dataset_gt_transf[0]
         
         # computing the AUC
