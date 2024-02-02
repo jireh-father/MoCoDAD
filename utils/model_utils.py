@@ -114,7 +114,8 @@ def processing_data(data):
     trans = []
     meta = []
     frames = []
-
+    print("inner output shape", data[0][0].shape)
+    print("inner tensor_data shape", data[0][1].shape)
     for data_array in data:
         output = data_array[0]
         tensor_data = data_array[1]
@@ -133,6 +134,8 @@ def processing_data(data):
     trans = np.concatenate(trans, axis=0)
     meta = np.concatenate(meta, axis=0)
     frames = np.concatenate(frames, axis=0)
+    print("out shape", out.shape)
+    print("gt_data shape", gt_data.shape)
 
     return out,gt_data,trans,meta,frames
 

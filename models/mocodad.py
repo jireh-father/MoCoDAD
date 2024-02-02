@@ -240,8 +240,9 @@ class MoCoDAD(pl.LightningModule):
                                         - actual_frames
             batch_idx (int): index of the batch
         """
+        print('test step batch: ', batch[0].shape)
         output = self.forward(batch)
-        print("output shape: ", output.shape)
+        # print("test step output shape: ", output.shape)
         self._test_output_list.append(output)
         return
     
@@ -289,10 +290,12 @@ class MoCoDAD(pl.LightningModule):
             batch_idx (int): index of the batch
         """
         output = self.forward(batch)
+        print("val output length: ", len(output))
         print("output shape: ", output[0].shape)
         print("output shape: ", output[1].shape)
         print("output shape: ", output[2].shape)
         print("output shape: ", output[3].shape)
+        print("output shape: ", output[4].shape)
         self._validation_output_list.append(output)
         return
     
@@ -355,10 +358,12 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             float: auc score
         """
-        
+        print("gt path", self.gt_path)
         all_gts = [file_name for file_name in os.listdir(self.gt_path) if file_name.endswith('.npy')]
+        print("all gts: ", all_gts)
         all_gts = sorted(all_gts)
         scene_clips = [(int(fn.split('_')[0]), int(fn.split('_')[1].split('.')[0])) for fn in all_gts]
+        print("scene_clips: ", scene_clips)
         hr_ubnormal_masked_clips = get_hr_ubnormal_mask(self.split) if (self.use_hr and (self.dataset_name == 'UBnormal')) else {}
         hr_avenue_masked_clips = get_avenue_mask() if self.dataset_name == 'HR-Avenue' else {}
 
@@ -372,8 +377,11 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt = []
             model_scores = []
             cond_transform = (trans == transformation)
+            print("num trans", cond_transform)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond([out, gt_data, meta, frames], cond_transform)
+            print("out_transform shape: ", out_transform.shape)
+            print("gt_data_transform shape: ", gt_data_transform.shape)
 
             for idx in range(len(all_gts)):
                 # iterating over each clip C with transformation T
@@ -383,11 +391,14 @@ class MoCoDAD(pl.LightningModule):
                 n_frames = gt.shape[0]
                 
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
+                print("cond_scene_clip: ", cond_scene_clip)
                 out_scene_clip, gt_scene_clip, meta_scene_clip, frames_scene_clip = filter_vectors_by_cond([out_transform, gt_data_transform, 
                                                                                                            meta_transform, frames_transform], 
                                                                                                            cond_scene_clip) 
-                
+                print("out_scene_clip.shape", out_scene_clip.shape)
+                print("gt_scene_clip.shape", gt_scene_clip.shape)
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
+                print("figs_ids", figs_ids)
                 error_per_person = []
                 
                 for fig in figs_ids:
@@ -398,6 +409,7 @@ class MoCoDAD(pl.LightningModule):
 
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
+
                     if self.anomaly_score_pad_size != -1:
                         fig_reconstruction_loss = pad_scores(fig_reconstruction_loss, gt, self.anomaly_score_pad_size)                 
                     
