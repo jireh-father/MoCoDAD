@@ -387,6 +387,7 @@ class MoCoDAD(pl.LightningModule):
                 # iterating over each clip C with transformation T
                 
                 scene_idx, clip_idx = scene_clips[idx]
+                print("scene_clips[idx]", scene_clips[idx])
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
                 n_frames = gt.shape[0]
                 
