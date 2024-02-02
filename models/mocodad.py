@@ -454,6 +454,7 @@ class MoCoDAD(pl.LightningModule):
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
         print("pds shape: ", pds.shape)
         gt = dataset_gt_transf[0]
+        print("dataset_gt_transf len", len(dataset_gt_transf))
         
         # computing the AUC
         print("sample", gt[0], pds[0])
