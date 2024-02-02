@@ -397,6 +397,7 @@ class MoCoDAD(pl.LightningModule):
                                                                                                            cond_scene_clip) 
                 print("out_scene_clip.shape", out_scene_clip.shape)
                 print("gt_scene_clip.shape", gt_scene_clip.shape)
+                # person ids
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
                 print("figs_ids", figs_ids)
                 error_per_person = []
@@ -408,7 +409,9 @@ class MoCoDAD(pl.LightningModule):
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip], cond_fig) 
 
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
+                    print("loss_matrix", loss_matrix)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
+                    print("fig_reconstruction_loss", fig_reconstruction_loss)
 
                     if self.anomaly_score_pad_size != -1:
                         fig_reconstruction_loss = pad_scores(fig_reconstruction_loss, gt, self.anomaly_score_pad_size)                 
@@ -416,8 +419,10 @@ class MoCoDAD(pl.LightningModule):
                     error_per_person.append(fig_reconstruction_loss)
             
                 clip_score = np.stack(error_per_person, axis=0)
+                print("clip_score shape: ", clip_score.shape)
                 clip_score_log = np.log1p(clip_score)
                 clip_score = np.mean(clip_score, axis=0) + (np.amax(clip_score_log, axis=0)-np.amin(clip_score_log, axis=0))
+                print("clip_score shape: ", clip_score.shape)
                 
                 # removing the non-HR frames for UBnormal dataset
                 if (scene_idx, clip_idx) in hr_ubnormal_masked_clips:
@@ -431,6 +436,8 @@ class MoCoDAD(pl.LightningModule):
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
                 model_scores.append(clip_score)
+                print("model_scores shape: ", len(model_scores))
+                print("gt shape: ", gt.shape)
                 dataset_gt.append(gt)
                     
             model_scores = np.concatenate(model_scores, axis=0)
