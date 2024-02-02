@@ -189,6 +189,8 @@ class Trajectory:
 
     def is_short(self, input_length, input_gap, pred_length=0):
         min_trajectory_length = input_length + input_gap * (input_length - 1) + pred_length
+        print("input_length, input_gap, pred_length", input_length, input_gap, pred_length)
+        print("min_trajectory_length)", min_trajectory_length)
 
         return len(self) < min_trajectory_length
 
