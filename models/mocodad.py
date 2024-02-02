@@ -455,7 +455,7 @@ class MoCoDAD(pl.LightningModule):
         gt = dataset_gt_transf[0]
         
         # computing the AUC
-
+        print("sample", gt[0], pds[0])
         auc = roc_auc_score(gt,pds)
         print("gt,pds shapes: ", gt.shape, pds.shape)
         print("auc: ", auc)
