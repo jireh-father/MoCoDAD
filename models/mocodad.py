@@ -459,6 +459,10 @@ class MoCoDAD(pl.LightningModule):
 
         # computing the AUC
         print("sample", gt[0], pds[0])
+        print("gt samples", gt[:10])
+        print("pds samples", pds[:10])
+        print("gt stat", max(gt), min(gt), np.mean(gt), np.std(gt))
+        print("pds stat", max(pds), min(pds), np.mean(pds), np.std(pds))
         auc = roc_auc_score(gt,pds)
         print("gt,pds shapes: ", gt.shape, pds.shape)
         print("auc: ", auc)
