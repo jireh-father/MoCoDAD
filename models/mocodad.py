@@ -240,7 +240,7 @@ class MoCoDAD(pl.LightningModule):
                                         - actual_frames
             batch_idx (int): index of the batch
         """
-        print('test step batch: ', batch[0].shape)
+        # print('test step batch: ', batch[0].shape)
         output = self.forward(batch)
         # print("test step output shape: ", output.shape)
         self._test_output_list.append(output)
@@ -290,12 +290,12 @@ class MoCoDAD(pl.LightningModule):
             batch_idx (int): index of the batch
         """
         output = self.forward(batch)
-        print("val output length: ", len(output))
-        print("output shape: ", output[0].shape)
-        print("output shape: ", output[1].shape)
-        print("output shape: ", output[2].shape)
-        print("output shape: ", output[3].shape)
-        print("output shape: ", output[4].shape)
+        # print("val output length: ", len(output))
+        # print("output shape: ", output[0].shape)
+        # print("output shape: ", output[1].shape)
+        # print("output shape: ", output[2].shape)
+        # print("output shape: ", output[3].shape)
+        # print("output shape: ", output[4].shape)
         self._validation_output_list.append(output)
         return
     
