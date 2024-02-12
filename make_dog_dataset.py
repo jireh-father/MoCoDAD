@@ -122,9 +122,11 @@ def main(args):
                                                  f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                 os.makedirs(os.path.dirname(label_output_path), exist_ok=True)
                 if label:
-                    label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
+                    # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
+                    label_np = np.ones(len_df, dtype=np.int8)
                 else:
-                    label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
+                    # label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
+                    label_np = np.zeros(len_df, dtype=np.int8)
                 np.save(label_output_path, label_np)
 
     print("done")
