@@ -53,18 +53,14 @@ def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred
 
 # modified by stdrr
 def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred_length=0, return_start_idxs=False): # added return_start_idxs
-    print("coordinates shape:", coordinates.shape)
     input_trajectories, future_trajectories = [], None
     input_ranges_idxs, future_ranges_idxs = [], None # added
     total_input_seq_len = input_length + input_gap * (input_length - 1)
-    print("total_input_seq_len:", total_input_seq_len)
     step = input_gap + 1
-    print("step:", step)
     if pred_length > 0:
         future_trajectories = []
         future_ranges_idxs = [] # added 
         stop = len(coordinates) - pred_length - total_input_seq_len + 1
-        print("stop:", stop)
         for start_index in range(0, stop):
             # print("start_index:", start_index)
             stop_index = start_index + total_input_seq_len
@@ -82,7 +78,6 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
         future_trajectories = np.stack(future_trajectories, axis=0)
     else:
         stop = len(coordinates) - total_input_seq_len + 1
-        print("stop:", stop)
         for start_index in range(0, stop):
             # print("start_index:", start_index)
             stop_index = start_index + total_input_seq_len
@@ -94,9 +89,6 @@ def _aggregate_rnn_autoencoder_data(coordinates, input_length, input_gap=0, pred
             input_ranges_idxs.append(input_range) # added
         input_trajectories = np.stack(input_trajectories, axis=0)
 
-    print("input_trajectories shape:", input_trajectories.shape)
-    if future_trajectories:
-        print("future_trajectories shape:", future_trajectories.shape)
     if return_start_idxs: # added
         return input_trajectories, future_trajectories, input_ranges_idxs, future_ranges_idxs # added
 
@@ -259,11 +251,6 @@ def remove_short_trajectories(trajectories, input_length, input_gap, pred_length
 
 # modified by stdrr
 def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred_length=0, return_ids=False): # added return_ids
-    print("trajectories length:", len(trajectories))
-    print("input_length", input_length)
-    print("input_gap", input_gap)
-    print("pred_length", pred_length)
-    print("return_ids", return_ids)
 
     Xs, Xs_pred = [], []
     input_trajectory_ids, future_trajectory_ids = [], [] # added
