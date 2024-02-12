@@ -381,7 +381,6 @@ class MoCoDAD(pl.LightningModule):
                 
                 scene_idx, clip_idx = scene_clips[idx]
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
-                print("gt path", all_gts[idx])
                 n_frames = gt.shape[0]
                 
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
