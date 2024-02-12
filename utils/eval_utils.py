@@ -25,7 +25,9 @@ def compute_fig_matrix(pos, frames_pos, n_frames):
 
 
 def compute_var_matrix(pos, frames_pos, n_frames):
-
+    print("pos.shape", pos.shape)
+    print(frames_pos.shape)
+    print(n_frames)
     pose = np.zeros(shape=(pos.shape[0], n_frames))
 
     for n in range(pose.shape[0]):
