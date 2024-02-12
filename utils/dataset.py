@@ -230,9 +230,7 @@ class PoseDatasetRobust(PoseDataset):
         
     def gen_dataset(self, ret_keys=False, **dataset_args):
 
-        print("ret_keys: ", ret_keys)
-        print("dataset_args: ", dataset_args)
-        global_, local_ = data_of_combined_model(trajectories_path=self.path_to_json, 
+        global_, local_ = data_of_combined_model(trajectories_path=self.path_to_json,
                                                  split=self.dataset_split, seg_len=self.seg_len, 
                                                  seg_stride=self.seg_stride,
                                                  vid_res=self.vid_res,
@@ -244,7 +242,6 @@ class PoseDatasetRobust(PoseDataset):
         
         X_global, _ = global_
         X_local, X_local_meta = local_ # X_local has shape (number of segments, window lenght, 34)
-        print("X_local.shape: ", X_local.shape)
         # print("X_local_meta[0].shape: ", X_local_meta[0].shape)
         # print("X_local_meta[1].shape: ", X_local_meta[1].shape)
 
@@ -260,8 +257,7 @@ class PoseDatasetRobust(PoseDataset):
             person_keys[person_id] = seg_meta_item[:2]
     
         X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
-        print("reshaped x_local.shape: ", X_local.shape)
-    
+
         if not self.include_global:
               
             segs_data_np = np.empty(shape=(*X_local.shape[:-1], 3))
@@ -280,11 +276,9 @@ class PoseDatasetRobust(PoseDataset):
         if self.headless:
             segs_data_np = segs_data_np[:,:,:14]
 
-        print("x_local reshape to segs_data_np: ", segs_data_np.shape)
-    
+
         segs_data_np = np.transpose(segs_data_np, (0, 3, 1, 2)).astype(np.float32)
-        print("segs_data_np transpose: ", segs_data_np.shape)
-            
+
 
         if ret_keys:
             return segs_data_np, segs_meta, person_keys, segs_ids
@@ -318,12 +312,6 @@ def get_dataset_and_loader(args, split='train', validation=False):
     
     dataset_args['seg_stride'] = args.seg_stride if split == 'train' else 1  # No strides for test set
     if args.normalization_strategy=='robust':
-        print("make training dataset")
-        print("path to data: ", args.data_dir)
-        print("exp_dir: ", args.ckpt_dir)
-        print("include_global: ", (args.num_coords==6))
-        print("split: ", split)
-        print("dataset_args: ", dataset_args)
 
         dataset = PoseDatasetRobust(path_to_data=args.data_dir, 
                                     exp_dir=args.ckpt_dir,
@@ -335,13 +323,7 @@ def get_dataset_and_loader(args, split='train', validation=False):
     if validation:
         dataset_args['seg_stride'] = 1
         if args.normalization_strategy=='robust':
-            print("make validation dataset")
-            print("path to data: ", args.data_dir)
-            print("exp_dir: ", args.ckpt_dir)
-            print("include_global: ", (args.num_coords==6))
-            print("split: ", 'validation')
-            print("dataset_args: ", dataset_args)
-            val_dataset = PoseDatasetRobust(path_to_data=args.data_dir, 
+            val_dataset = PoseDatasetRobust(path_to_data=args.data_dir,
                                     exp_dir=args.ckpt_dir,
                                     include_global=(args.num_coords==6), split='validation', **dataset_args)
         else:

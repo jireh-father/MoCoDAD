@@ -64,15 +64,6 @@ if __name__== '__main__':
     # Get dataset and loaders
     _, train_loader, _, val_loader = get_dataset_and_loader(args, split=args.split, validation=args.validation)
 
-    for batch in train_loader:
-        print(batch)
-        print(len(batch))
-        print(batch[0].shape)
-        print(batch[1].shape)
-        print(batch[2].shape)
-        print(batch[3].shape)
-        break
-    
     # Initialize model and trainer
     model = MoCoDADlatent(args) if hasattr(args, 'diffusion_on_latent') else MoCoDAD(args)
     

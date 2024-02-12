@@ -314,10 +314,8 @@ def split_into_train_and_test(trajectories, train_ratio=0.8, seed=42):
 
 def scale_trajectories(X, scaler=None, strategy='zero_one'):
     original_shape = X.shape
-    print("scale x original shape: ", original_shape)
     input_dim = original_shape[-1]
     X = X.reshape(-1, input_dim)
-    print("scale x shape: ", X.shape)
 
     if strategy == 'zero_one':
         X_scaled, scaler = scale_trajectories_zero_one(X, scaler=scaler)
@@ -429,7 +427,6 @@ def assemble_ground_truth_and_reconstructions(anomaly_masks, trajectory_ids,
                                               return_video_ids=False):
     y_true, y_hat = {}, {}
     for full_id in anomaly_masks.keys():
-        print(full_id)
         # _, video_id = full_id.split('_')
         video_id = full_id
         y_true[video_id] = anomaly_masks[full_id].astype(np.int32)
@@ -437,7 +434,6 @@ def assemble_ground_truth_and_reconstructions(anomaly_masks, trajectory_ids,
 
     unique_ids = np.unique(trajectory_ids)
     for trajectory_id in unique_ids:
-        print(trajectory_id)
         video_id, _ = trajectory_id.split('_')
         indices = trajectory_ids == trajectory_id
         frames = reconstruction_frames[indices] - 1 # added by me

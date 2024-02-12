@@ -320,7 +320,6 @@ class MoCoDAD(pl.LightningModule):
         
         out, gt_data, trans, meta, frames = processing_data(self._validation_output_list)
 
-        print(f"shapes out: {out.shape}, gt_data: {gt_data.shape}")
         del self._validation_output_list
         if self.save_tensors:
             tensors = {'prediction':out, 'gt_data':gt_data, 
@@ -358,12 +357,9 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             float: auc score
         """
-        print("gt path", self.gt_path)
         all_gts = [file_name for file_name in os.listdir(self.gt_path) if file_name.endswith('.npy')]
-        print("all gts: ", all_gts)
         all_gts = sorted(all_gts)
         scene_clips = [(int(fn.split('_')[0]), int(fn.split('_')[1].split('.')[0])) for fn in all_gts]
-        print("scene_clips: ", scene_clips)
         hr_ubnormal_masked_clips = get_hr_ubnormal_mask(self.split) if (self.use_hr and (self.dataset_name == 'UBnormal')) else {}
         hr_avenue_masked_clips = get_avenue_mask() if self.dataset_name == 'HR-Avenue' else {}
 
@@ -377,30 +373,22 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt = []
             model_scores = []
             cond_transform = (trans == transformation)
-            print("num trans", cond_transform)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond([out, gt_data, meta, frames], cond_transform)
-            print("out_transform shape: ", out_transform.shape)
-            print("gt_data_transform shape: ", gt_data_transform.shape)
 
             for idx in range(len(all_gts)):
                 # iterating over each clip C with transformation T
                 
                 scene_idx, clip_idx = scene_clips[idx]
-                print("scene_clips[idx]", scene_clips[idx])
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
                 n_frames = gt.shape[0]
                 
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
-                print("cond_scene_clip: ", cond_scene_clip)
-                out_scene_clip, gt_scene_clip, meta_scene_clip, frames_scene_clip = filter_vectors_by_cond([out_transform, gt_data_transform, 
+                out_scene_clip, gt_scene_clip, meta_scene_clip, frames_scene_clip = filter_vectors_by_cond([out_transform, gt_data_transform,
                                                                                                            meta_transform, frames_transform], 
                                                                                                            cond_scene_clip) 
-                print("out_scene_clip.shape", out_scene_clip.shape)
-                print("gt_scene_clip.shape", gt_scene_clip.shape)
                 # person ids
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
-                print("figs_ids", figs_ids)
                 error_per_person = []
                 
                 for fig in figs_ids:
@@ -408,12 +396,9 @@ class MoCoDAD(pl.LightningModule):
 
                     cond_fig = (meta_scene_clip[:, 2] == fig)
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip], cond_fig)
-                    print("num person out shape: ", out_fig.shape)
 
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
-                    print("loss_matrix", loss_matrix.shape)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
-                    print("fig_reconstruction_loss", fig_reconstruction_loss.shape)
 
                     if self.anomaly_score_pad_size != -1:
                         fig_reconstruction_loss = pad_scores(fig_reconstruction_loss, gt, self.anomaly_score_pad_size)                 
@@ -421,11 +406,9 @@ class MoCoDAD(pl.LightningModule):
                     error_per_person.append(fig_reconstruction_loss)
             
                 clip_score = np.stack(error_per_person, axis=0)
-                print("clip_score shape: ", clip_score.shape)
                 clip_score_log = np.log1p(clip_score)
                 clip_score = np.mean(clip_score, axis=0) + (np.amax(clip_score_log, axis=0)-np.amin(clip_score_log, axis=0))
-                print("clip_score shape: ", clip_score.shape)
-                
+
                 # removing the non-HR frames for UBnormal dataset
                 if (scene_idx, clip_idx) in hr_ubnormal_masked_clips:
                     clip_score = clip_score[hr_ubnormal_masked_clips[(scene_idx, clip_idx)]]
@@ -437,10 +420,7 @@ class MoCoDAD(pl.LightningModule):
                     gt = gt[np.array(hr_avenue_masked_clips[clip_idx])==1]
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
-                print("last clip_score shape: ", clip_score.shape)
                 model_scores.append(clip_score)
-                print("model_scores shape: ", len(model_scores))
-                print("gt shape: ", gt.shape)
                 dataset_gt.append(gt)
                     
             model_scores = np.concatenate(model_scores, axis=0)
@@ -450,24 +430,12 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt_transf[transformation] = dataset_gt
 
         # aggregating the anomaly scores for all transformations
-        print("model_scores_transf",len(model_scores_transf))
-        print("model_scores_transf", model_scores_transf[0].shape)
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
-        print("pds shape: ", pds.shape)
         gt = dataset_gt_transf[0]
-        print("dataset_gt_transf len", len(dataset_gt_transf))
 
         # computing the AUC
-        print("sample", gt[0], pds[0])
-        print("gt samples", gt[:10])
-        print("pds samples", pds[:10])
-        print("gt stat", max(gt), min(gt), np.mean(gt), np.std(gt))
-        print("pds stat", max(pds), min(pds), np.mean(pds), np.std(pds))
         auc = roc_auc_score(gt,pds)
-        print("gt,pds shapes: ", gt.shape, pds.shape)
-        print("auc: ", auc)
-        sys.exit()
-        
+
         return auc
     
     
