@@ -144,6 +144,6 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', type=str, default='E:\dataset\\afp\dog_mocodad')
 
     # reset_index
-    parser.add_argument('--reset_index', action='store_true', default=True)
+    parser.add_argument('--reset_index', action='store_true', default=False)
 
     main(parser.parse_args())
