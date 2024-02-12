@@ -119,7 +119,7 @@ def main(args):
 
             if is_val:
                 label_output_path = os.path.join(label_output_dir,
-                                                 f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}.npy")
+                                                 f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                 os.makedirs(os.path.dirname(label_output_path), exist_ok=True)
                 if label:
                     label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
