@@ -268,8 +268,6 @@ class MoCoDAD(pl.LightningModule):
         out, gt_data, trans, meta, frames = processing_data(self._test_output_list)
         print("out.shape", out.shape)
         print("mean out: ", np.mean(out))
-        print(meta)
-        sys.exit()
         del self._test_output_list
         if self.save_tensors:
             tensors = {'prediction':out, 'gt_data':gt_data, 
