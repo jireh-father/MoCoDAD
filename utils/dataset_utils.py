@@ -71,6 +71,7 @@ def normalize_pose_robust(pose_data, scaler = None, **kwargs):
     # vid_res = kwargs.get('vid_res', [856, 480])
     # AVENUE
     vid_res = kwargs.get('vid_res', [640, 360])
+    print("vid res in normalize_pose_robust: ", vid_res)
 
     symm_range = kwargs.get('symm_range', True)
     # symm_range = False
