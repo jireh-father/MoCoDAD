@@ -423,6 +423,7 @@ class MoCoDAD(pl.LightningModule):
                     gt = gt[np.array(hr_avenue_masked_clips[clip_idx])==1]
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
+                print("clip_score", clip_score)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
                     
