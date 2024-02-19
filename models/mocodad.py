@@ -441,6 +441,10 @@ class MoCoDAD(pl.LightningModule):
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
 
+                std_clip_score = (clip_score - np.mean(clip_score)) / np.std(clip_score)
+                # calculating the z-score for clip_score
+                clip_score_outliers =
+
                 # append average clip score for each transformation
                 model_scores_each_clip.append(np.mean(clip_score))
                 dataset_gt_each_clip.append(np.mean(gt))
