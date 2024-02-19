@@ -433,7 +433,6 @@ class MoCoDAD(pl.LightningModule):
         # aggregating the anomaly scores for all transformations
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
         gt = dataset_gt_transf[0]
-
         # computing the AUC
         auc = roc_auc_score(gt,pds)
 

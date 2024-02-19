@@ -72,7 +72,7 @@ def main(args):
         #     if not use_unknown_leg_position and "None" in sample['leg_position']:
         #         print("skip unknown leg position")
         #         continue
-        kp_sample_prefix = "0" if is_val else "1"
+        kp_sample_prefix = "0" if label else "1"
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
