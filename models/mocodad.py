@@ -370,6 +370,9 @@ class MoCoDAD(pl.LightningModule):
         model_scores_transf = {}
         dataset_gt_transf = {}
 
+        model_scores_transf_each_clip = {}
+        dataset_gt_transf_each_clip = {}
+
         for transformation in tqdm(range(num_transform)):
             # iterating over each transformation T
             
@@ -378,6 +381,7 @@ class MoCoDAD(pl.LightningModule):
             cond_transform = (trans == transformation)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond([out, gt_data, meta, frames], cond_transform)
+
 
             for idx in range(len(all_gts)):
                 # iterating over each clip C with transformation T
@@ -423,19 +427,27 @@ class MoCoDAD(pl.LightningModule):
                     gt = gt[np.array(hr_avenue_masked_clips[clip_idx])==1]
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
-                print("clip_score", clip_score)
+                print("gt", gt.shape)
+                print("clip_score", clip_score.shape)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
                     
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
+            print("dataset_gt", dataset_gt.shape)
+            print("model_scores", model_scores.shape)
 
             model_scores_transf[transformation] = model_scores
             dataset_gt_transf[transformation] = dataset_gt
+            print("dataset_gt_transf", dataset_gt_transf[transformation].shape)
+            print("model_scores_transf", model_scores_transf[transformation].shape)
+
 
         # aggregating the anomaly scores for all transformations
         pds = np.mean(np.stack(list(model_scores_transf.values()),0),0)
         gt = dataset_gt_transf[0]
+        print("gt", gt.shape)
+        print("pds", pds.shape)
         # computing the AUC
         auc = roc_auc_score(gt,pds)
 
