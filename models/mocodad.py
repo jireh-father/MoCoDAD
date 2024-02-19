@@ -378,6 +378,8 @@ class MoCoDAD(pl.LightningModule):
             
             dataset_gt = []
             model_scores = []
+            dataset_gt_each_clip = []
+            model_scores_each_clip = []
             cond_transform = (trans == transformation)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond([out, gt_data, meta, frames], cond_transform)
@@ -431,9 +433,15 @@ class MoCoDAD(pl.LightningModule):
                 print("clip_score", clip_score.shape)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
-                    
+
+                # append average clip score for each transformation
+                model_scores_each_clip.append(np.mean(clip_score))
+                dataset_gt_each_clip.append(np.mean(gt))
+
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
+            model_scores_transf_each_clip[transformation] = model_scores_each_clip
+            dataset_gt_transf_each_clip[transformation] = dataset_gt_each_clip
             print("dataset_gt", dataset_gt.shape)
             print("model_scores", model_scores.shape)
 
@@ -448,8 +456,20 @@ class MoCoDAD(pl.LightningModule):
         gt = dataset_gt_transf[0]
         print("gt", gt.shape)
         print("pds", pds.shape)
+        pds_each_clip = np.mean(np.stack(list(model_scores_transf_each_clip.values()),0),0)
+        gt_each_clip = dataset_gt_transf_each_clip[0]
+        auc = roc_auc_score(gt_each_clip, pds_each_clip)
+        # gt (85,)
+        # clip_score (85,)
+        # dataset_gt (8405,)
+        # model_scores (8405,)
+        # dataset_gt_transf (8405,)
+        # model_scores_transf (8405,)
+        # gt(8405, )
+        # pds(8405, )
+
         # computing the AUC
-        auc = roc_auc_score(gt,pds)
+        # auc = roc_auc_score(gt,pds)
 
         return auc
     
