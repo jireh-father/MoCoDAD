@@ -452,8 +452,8 @@ class MoCoDAD(pl.LightningModule):
         print("pds", pds.shape)
         pds_each_clip = np.mean(np.stack(list(model_scores_transf_each_clip.values()),0),0)
         gt_each_clip = dataset_gt_transf_each_clip[0]
-        print("gt_each_clip", gt_each_clip.shape)
-        print("pds_each_clip", pds_each_clip.shape)
+        # print("gt_each_clip", gt_each_clip.shape)
+        # print("pds_each_clip", pds_each_clip.shape)
         auc = roc_auc_score(gt_each_clip, pds_each_clip)
         # gt (85,)
         # clip_score (85,)
