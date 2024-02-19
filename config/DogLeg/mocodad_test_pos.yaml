@@ -13,7 +13,7 @@ devices: [0,] # indices of cuda devices to use
 
 ## Paths
 dir_name: 'test_experiment' # name of the directory of the current experiment
-data_dir: './data/DogLeg/' # path to the data
+data_dir: './data/DogLegTestPos/' # path to the data
 exp_dir: './checkpoints' # path to the directory that will contain the current experiment directory
 test_path: './data/DogLegTestPos/testing/test_frame_mask' # path to the test data
 load_ckpt: 'epoch=90-step=14833.ckpt' # name of the checkpoint to load at inference time
