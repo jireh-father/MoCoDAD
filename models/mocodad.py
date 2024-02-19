@@ -429,8 +429,6 @@ class MoCoDAD(pl.LightningModule):
                     gt = gt[np.array(hr_avenue_masked_clips[clip_idx])==1]
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift, self.anomaly_score_filter_kernel_size)
-                print("gt", gt.shape)
-                print("clip_score", clip_score.shape)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
 
@@ -442,13 +440,9 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt = np.concatenate(dataset_gt, axis=0)
             model_scores_transf_each_clip[transformation] = model_scores_each_clip
             dataset_gt_transf_each_clip[transformation] = dataset_gt_each_clip
-            print("dataset_gt", dataset_gt.shape)
-            print("model_scores", model_scores.shape)
 
             model_scores_transf[transformation] = model_scores
             dataset_gt_transf[transformation] = dataset_gt
-            print("dataset_gt_transf", dataset_gt_transf[transformation].shape)
-            print("model_scores_transf", model_scores_transf[transformation].shape)
 
 
         # aggregating the anomaly scores for all transformations
@@ -458,6 +452,8 @@ class MoCoDAD(pl.LightningModule):
         print("pds", pds.shape)
         pds_each_clip = np.mean(np.stack(list(model_scores_transf_each_clip.values()),0),0)
         gt_each_clip = dataset_gt_transf_each_clip[0]
+        print("gt_each_clip", gt_each_clip.shape)
+        print("pds_each_clip", pds_each_clip.shape)
         auc = roc_auc_score(gt_each_clip, pds_each_clip)
         # gt (85,)
         # clip_score (85,)
