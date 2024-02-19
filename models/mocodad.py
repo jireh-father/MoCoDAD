@@ -240,7 +240,7 @@ class MoCoDAD(pl.LightningModule):
                                         - actual_frames
             batch_idx (int): index of the batch
         """
-        print('test step batch: ', batch[0].shape)
+        # print('test step batch: ', batch[0].shape)
         output = self.forward(batch)
         # print("test step output shape: ", output.shape)
         self._test_output_list.append(output)
@@ -420,6 +420,7 @@ class MoCoDAD(pl.LightningModule):
             
                 clip_score = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.stack(error_per_person, axis=0)
+                print("clip_score_orig", clip_score_orig.shape)
                 model_scores_orig.append(clip_score_orig)
                 model_scores_orig_each_clip.append(np.mean(clip_score_orig))
 
@@ -446,6 +447,7 @@ class MoCoDAD(pl.LightningModule):
 
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
+            print("model_scores_orig", model_scores_orig)
             model_scores_orig = np.concatenate(model_scores_orig, axis=0)
 
             model_scores_transf_each_clip[transformation] = model_scores_each_clip
@@ -471,6 +473,8 @@ class MoCoDAD(pl.LightningModule):
         clip_auc = roc_auc_score(gt_each_clip, pds_each_clip)
         ori_score_auc = roc_auc_score(gt, pds_orig)
         clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
+        auc = roc_auc_score(gt, pds)
+        print(f'AUC: {auc:.6f}')
         print(f'Clip AUC: {clip_auc:.6f}')
         print(f'Original Score AUC: {ori_score_auc:.6f}')
         print(f'Clip Original Score AUC: {clip_ori_score_auc:.6f}')
@@ -484,7 +488,6 @@ class MoCoDAD(pl.LightningModule):
         # pds(8405, )
 
         # computing the AUC
-        auc = roc_auc_score(gt,pds)
 
         return auc
     
