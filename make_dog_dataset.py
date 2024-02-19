@@ -124,6 +124,8 @@ def main(args):
                 if label:
                     # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
                     label_np = np.ones(len_df, dtype=np.int8)
+                    # set last 5 elements to 0
+                    label_np[-5:] = 0
                 else:
                     # label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
                     label_np = np.zeros(len_df, dtype=np.int8)
