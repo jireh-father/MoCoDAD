@@ -76,8 +76,6 @@ def main(args):
         else:
             kp_output_dir = os.path.join(args.output_dir, "training", "trajectories")
 
-
-
         # if sample_label:
         #     if 'leg_position' not in sample:
         #         print("no leg position data in sample")
@@ -129,8 +127,9 @@ def main(args):
             df.to_csv(kp_sample_output_path, index=False, header=False)
 
             if args.save_test and is_val:
-                test_kp_sample_output_path = os.path.join(test_kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
-                                                     "00001.csv")
+                test_kp_sample_output_path = os.path.join(test_kp_output_dir,
+                                                          f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
+                                                          "00001.csv")
                 os.makedirs(os.path.dirname(test_kp_sample_output_path), exist_ok=True)
                 df.to_csv(test_kp_sample_output_path, index=False, header=False)
 
@@ -152,7 +151,7 @@ def main(args):
                 np.save(label_output_path, label_np)
                 if args.save_test:
                     test_label_output_path = os.path.join(test_output_dir,
-                                                     f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
+                                                          f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                     os.makedirs(os.path.dirname(test_label_output_path), exist_ok=True)
                     np.save(test_label_output_path, label_np)
 
