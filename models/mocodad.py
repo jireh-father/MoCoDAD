@@ -473,8 +473,8 @@ class MoCoDAD(pl.LightningModule):
                 #         clip_score_outliers.append(x)
 
                 # detect outliers using iqr for clip_score
-                q1 = np.percentile(clip_score, 25)
-                q3 = np.percentile(clip_score, 75)
+                q1 = np.percentile(clip_score, 35)
+                q3 = np.percentile(clip_score, 65)
                 iqr = q3 - q1
                 lower_bound = q1 - (1.5 * iqr)
                 upper_bound = q3 + (1.5 * iqr)
