@@ -33,7 +33,15 @@ TARGET_KP_COL_DICT = {
         'Body_Middle', 'TailBase',
         'R_B_Elbow', 'R_B_Knee', 'R_B_Paw',
         'L_B_Elbow', 'L_B_Knee', 'L_B_Paw'
-    ]
+    ],
+    "no_nose_dup_withers": [
+        'Withers', 'Withers', 'Throat',
+        'R_F_Elbow', 'R_F_Knee', 'R_F_Paw',
+        'L_F_Elbow', 'L_F_Knee', 'L_F_Paw',
+        'Body_Middle', 'TailBase',
+        'R_B_Elbow', 'R_B_Knee', 'R_B_Paw',
+        'L_B_Elbow', 'L_B_Knee', 'L_B_Paw'
+    ],
 }
 
 
