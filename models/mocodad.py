@@ -473,13 +473,13 @@ class MoCoDAD(pl.LightningModule):
                         clip_score_outliers.append(x)
 
                 if is_pos:
-                    pos_score_stds.append(std_clip_score)
+                    pos_score_stds.append(std)
                     pos_score_outlier_ratios.append(len(clip_score_outliers) / len(clip_score))
                     pos_score_outliers.append(len(clip_score_outliers))
                     pos_mean_scores.append(np.mean(clip_score))
                     pos_mean_orig_scores.append(np.mean(clip_score_orig))
                 else:
-                    neg_score_stds.append(std_clip_score)
+                    neg_score_stds.append(std)
                     neg_score_outlier_ratios.append(len(clip_score_outliers) / len(clip_score))
                     neg_score_outliers.append(len(clip_score_outliers))
                     neg_mean_scores.append(np.mean(clip_score))
@@ -517,6 +517,17 @@ class MoCoDAD(pl.LightningModule):
         ori_score_auc = roc_auc_score(gt, pds_orig)
         clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
         auc = roc_auc_score(gt, pds)
+        print("len_pos_score_stds", len(pos_score_stds))
+        print("len_neg_score_stds", len(neg_score_stds))
+        print("len_pos_score_outlier_ratios", len(pos_score_outlier_ratios))
+        print("len_neg_score_outlier_ratios", len(neg_score_outlier_ratios))
+        print("len_pos_score_outliers", len(pos_score_outliers))
+        print("len_neg_score_outliers", len(neg_score_outliers))
+        print("len_pos_mean_orig_scores", len(pos_mean_orig_scores))
+        print("len_neg_mean_orig_scores", len(neg_mean_orig_scores))
+        print("len_pos_mean_scores", len(pos_mean_scores))
+        print("len_neg_mean_scores", len(neg_mean_scores))
+
 
         print(f"pos_score_stds: {np.mean(pos_score_stds)}")
         print(f"neg_score_stds: {np.mean(neg_score_stds)}")
