@@ -420,6 +420,7 @@ class MoCoDAD(pl.LightningModule):
             
                 clip_score = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.stack(error_per_person, axis=0)
+                clip_score_orig = np.mean(clip_score_orig, axis=0)
                 print("clip_score_orig", clip_score_orig.shape)
                 model_scores_orig.append(clip_score_orig)
                 model_scores_orig_each_clip.append(np.mean(clip_score_orig))
