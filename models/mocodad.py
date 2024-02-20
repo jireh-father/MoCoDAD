@@ -464,12 +464,23 @@ class MoCoDAD(pl.LightningModule):
                 # calculating the z-score for clip_score
                 mean = np.mean(clip_score)
                 std = np.std(clip_score)
+                #
+                # threshold = 3#2~3
+                # clip_score_outliers = []
+                # for x in clip_score:
+                #     z_score = (x - mean) / std
+                #     if abs(z_score) > threshold:
+                #         clip_score_outliers.append(x)
 
-                threshold = 3#2~3
+                # detect outliers using iqr for clip_score
+                q1 = np.percentile(clip_score, 25)
+                q3 = np.percentile(clip_score, 75)
+                iqr = q3 - q1
+                lower_bound = q1 - (1.5 * iqr)
+                upper_bound = q3 + (1.5 * iqr)
                 clip_score_outliers = []
                 for x in clip_score:
-                    z_score = (x - mean) / std
-                    if abs(z_score) > threshold:
+                    if x < lower_bound or x > upper_bound:
                         clip_score_outliers.append(x)
 
                 if is_pos:
