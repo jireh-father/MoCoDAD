@@ -69,8 +69,14 @@ def main(args):
             kp_output_dir = os.path.join(args.output_dir, "validating", "trajectories")
             label_output_dir = os.path.join(args.output_dir, "validating", "test_frame_mask")
             os.makedirs(label_output_dir, exist_ok=True)
+            if args.save_test:
+                test_kp_output_dir = os.path.join(args.output_dir, "testing", "trajectories")
+                test_output_dir = os.path.join(args.output_dir, "testing", "test_frame_mask")
+                os.makedirs(label_output_dir, exist_ok=True)
         else:
             kp_output_dir = os.path.join(args.output_dir, "training", "trajectories")
+
+
 
         # if sample_label:
         #     if 'leg_position' not in sample:
@@ -122,6 +128,12 @@ def main(args):
             # save df to csv without header
             df.to_csv(kp_sample_output_path, index=False, header=False)
 
+            if args.save_test and is_val:
+                test_kp_sample_output_path = os.path.join(test_kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
+                                                     "00001.csv")
+                os.makedirs(os.path.dirname(test_kp_sample_output_path), exist_ok=True)
+                df.to_csv(test_kp_sample_output_path, index=False, header=False)
+
             if args.reset_index:
                 len_df = len(df)
 
@@ -138,6 +150,11 @@ def main(args):
                     # label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
                     label_np = np.zeros(len_df, dtype=np.int8)
                 np.save(label_output_path, label_np)
+                if args.save_test:
+                    test_label_output_path = os.path.join(test_output_dir,
+                                                     f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
+                    os.makedirs(os.path.dirname(test_label_output_path), exist_ok=True)
+                    np.save(test_label_output_path, label_np)
 
     print("done")
 
@@ -157,5 +174,7 @@ if __name__ == '__main__':
 
     # reset_index
     parser.add_argument('--reset_index', action='store_true', default=False)
+    # save test
+    parser.add_argument('--save_test', action='store_true', default=False)
 
     main(parser.parse_args())
