@@ -375,6 +375,20 @@ class MoCoDAD(pl.LightningModule):
         dataset_gt_transf_each_clip = {}
         model_scores_transf_orig_each_clip = {}
 
+        pos_score_stds = []
+        neg_score_stds = []
+
+        pos_score_outlier_ratios = []
+        neg_score_outlier_ratios = []
+        pos_score_outliers = []
+        neg_score_outliers = []
+
+        pos_mean_orig_scores = []
+        neg_mean_orig_scores = []
+
+        pos_mean_scores = []
+        neg_mean_scores = []
+
         for transformation in tqdm(range(num_transform)):
             # iterating over each transformation T
             
@@ -384,6 +398,7 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt_each_clip = []
             model_scores_each_clip = []
             model_scores_orig_each_clip = []
+
             cond_transform = (trans == transformation)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond([out, gt_data, meta, frames], cond_transform)
@@ -393,6 +408,7 @@ class MoCoDAD(pl.LightningModule):
                 # iterating over each clip C with transformation T
                 
                 scene_idx, clip_idx = scene_clips[idx]
+                is_pos = scene_idx < 1000
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
                 n_frames = gt.shape[0]
                 
@@ -421,7 +437,7 @@ class MoCoDAD(pl.LightningModule):
                 clip_score = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.mean(clip_score_orig, axis=0)
-                print("clip_score_orig", clip_score_orig.shape)
+
                 model_scores_orig.append(clip_score_orig)
                 model_scores_orig_each_clip.append(np.mean(clip_score_orig))
 
@@ -442,9 +458,32 @@ class MoCoDAD(pl.LightningModule):
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
 
+
                 std_clip_score = (clip_score - np.mean(clip_score)) / np.std(clip_score)
+
                 # calculating the z-score for clip_score
-                # clip_score_outliers =
+                mean = np.mean(clip_score)
+                std = np.std(clip_score)
+
+                threshold = 3#2~3
+                clip_score_outliers = []
+                for x in clip_score:
+                    z_score = (x - mean) / std
+                    if abs(z_score) > threshold:
+                        clip_score_outliers.append(x)
+
+                if is_pos:
+                    pos_score_stds.append(std_clip_score)
+                    pos_score_outlier_ratios.append(len(clip_score_outliers) / len(clip_score))
+                    pos_score_outliers.append(len(clip_score_outliers))
+                    pos_mean_scores.append(np.mean(clip_score))
+                    pos_mean_orig_scores.append(np.mean(clip_score_orig))
+                else:
+                    neg_score_stds.append(std_clip_score)
+                    neg_score_outlier_ratios.append(len(clip_score_outliers) / len(clip_score))
+                    neg_score_outliers.append(len(clip_score_outliers))
+                    neg_mean_scores.append(np.mean(clip_score))
+                    neg_mean_orig_scores.append(np.mean(clip_score_orig))
 
                 # append average clip score for each transformation
                 model_scores_each_clip.append(np.mean(clip_score))
@@ -452,7 +491,6 @@ class MoCoDAD(pl.LightningModule):
 
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
-            print("model_scores_orig", model_scores_orig)
             model_scores_orig = np.concatenate(model_scores_orig, axis=0)
 
             model_scores_transf_each_clip[transformation] = model_scores_each_clip
@@ -479,6 +517,18 @@ class MoCoDAD(pl.LightningModule):
         ori_score_auc = roc_auc_score(gt, pds_orig)
         clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
         auc = roc_auc_score(gt, pds)
+
+        print(f"pos_score_stds: {np.mean(pos_score_stds)}")
+        print(f"neg_score_stds: {np.mean(neg_score_stds)}")
+        print(f"pos_score_outlier_ratios: {np.mean(pos_score_outlier_ratios)}")
+        print(f"neg_score_outlier_ratios: {np.mean(neg_score_outlier_ratios)}")
+        print(f"num pos_score_outliers: {np.mean(pos_score_outliers)}")
+        print(f"num neg_score_outliers: {np.mean(neg_score_outliers)}")
+        print(f"pos_mean_orig_scores: {np.mean(pos_mean_orig_scores)}")
+        print(f"neg_mean_orig_scores: {np.mean(neg_mean_orig_scores)}")
+        print(f"pos_mean_scores: {np.mean(pos_mean_scores)}")
+        print(f"neg_mean_scores: {np.mean(neg_mean_scores)}")
+
         print(f'AUC: {auc:.6f}')
         print(f'Clip AUC: {clip_auc:.6f}')
         print(f'Original Score AUC: {ori_score_auc:.6f}')
