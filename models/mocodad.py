@@ -2,7 +2,7 @@ import argparse
 import os
 from math import prod
 from typing import Dict, List, Tuple
-
+import traceback
 import numpy as np
 import pytorch_lightning as pl
 import torch
@@ -553,18 +553,21 @@ class MoCoDAD(pl.LightningModule):
 
 
         except:
+            traceback.print_exc()
             print("Error in computing clip AUC")
 
         try:
             ori_score_auc = roc_auc_score(gt, pds_orig)
             print(f'Original Score AUC: {ori_score_auc:.6f}')
         except:
+            traceback.print_exc()
             print("Error in computing ori AUC")
 
         try:
             clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
             print(f'Clip Original Score AUC: {clip_ori_score_auc:.6f}')
         except:
+            traceback.print_exc()
             print("Error in computing clip ori AUC")
 
         auc = roc_auc_score(gt, pds)
