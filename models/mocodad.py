@@ -525,38 +525,47 @@ class MoCoDAD(pl.LightningModule):
         # print("gt_each_clip", gt_each_clip.shape)
         # print("pds_each_clip", pds_each_clip.shape)
 
+        print("len_pos_score_stds", len(pos_score_stds))
+        print("len_neg_score_stds", len(neg_score_stds))
+        print("len_pos_score_outlier_ratios", len(pos_score_outlier_ratios))
+        print("len_neg_score_outlier_ratios", len(neg_score_outlier_ratios))
+        print("len_pos_score_outliers", len(pos_score_outliers))
+        print("len_neg_score_outliers", len(neg_score_outliers))
+        print("len_pos_mean_orig_scores", len(pos_mean_orig_scores))
+        print("len_neg_mean_orig_scores", len(neg_mean_orig_scores))
+        print("len_pos_mean_scores", len(pos_mean_scores))
+        print("len_neg_mean_scores", len(neg_mean_scores))
+
+        print(f"pos_score_stds: {np.mean(pos_score_stds)}")
+        print(f"neg_score_stds: {np.mean(neg_score_stds)}")
+        print(f"pos_score_outlier_ratios: {np.mean(pos_score_outlier_ratios)}")
+        print(f"neg_score_outlier_ratios: {np.mean(neg_score_outlier_ratios)}")
+        print(f"num pos_score_outliers: {np.mean(pos_score_outliers)}")
+        print(f"num neg_score_outliers: {np.mean(neg_score_outliers)}")
+        print(f"pos_mean_orig_scores: {np.mean(pos_mean_orig_scores)}")
+        print(f"neg_mean_orig_scores: {np.mean(neg_mean_orig_scores)}")
+        print(f"pos_mean_scores: {np.mean(pos_mean_scores)}")
+        print(f"neg_mean_scores: {np.mean(neg_mean_scores)}")
+
         try:
             clip_auc = roc_auc_score(gt_each_clip, pds_each_clip)
-            ori_score_auc = roc_auc_score(gt, pds_orig)
-            clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
-
-            print("len_pos_score_stds", len(pos_score_stds))
-            print("len_neg_score_stds", len(neg_score_stds))
-            print("len_pos_score_outlier_ratios", len(pos_score_outlier_ratios))
-            print("len_neg_score_outlier_ratios", len(neg_score_outlier_ratios))
-            print("len_pos_score_outliers", len(pos_score_outliers))
-            print("len_neg_score_outliers", len(neg_score_outliers))
-            print("len_pos_mean_orig_scores", len(pos_mean_orig_scores))
-            print("len_neg_mean_orig_scores", len(neg_mean_orig_scores))
-            print("len_pos_mean_scores", len(pos_mean_scores))
-            print("len_neg_mean_scores", len(neg_mean_scores))
-
-
-            print(f"pos_score_stds: {np.mean(pos_score_stds)}")
-            print(f"neg_score_stds: {np.mean(neg_score_stds)}")
-            print(f"pos_score_outlier_ratios: {np.mean(pos_score_outlier_ratios)}")
-            print(f"neg_score_outlier_ratios: {np.mean(neg_score_outlier_ratios)}")
-            print(f"num pos_score_outliers: {np.mean(pos_score_outliers)}")
-            print(f"num neg_score_outliers: {np.mean(neg_score_outliers)}")
-            print(f"pos_mean_orig_scores: {np.mean(pos_mean_orig_scores)}")
-            print(f"neg_mean_orig_scores: {np.mean(neg_mean_orig_scores)}")
-            print(f"pos_mean_scores: {np.mean(pos_mean_scores)}")
-            print(f"neg_mean_scores: {np.mean(neg_mean_scores)}")
             print(f'Clip AUC: {clip_auc:.6f}')
+
+
+        except:
+            print("Error in computing clip AUC")
+
+        try:
+            ori_score_auc = roc_auc_score(gt, pds_orig)
             print(f'Original Score AUC: {ori_score_auc:.6f}')
+        except:
+            print("Error in computing ori AUC")
+
+        try:
+            clip_ori_score_auc = roc_auc_score(gt_each_clip, pds_orig_each_clip)
             print(f'Clip Original Score AUC: {clip_ori_score_auc:.6f}')
         except:
-            print("Error in computing AUC")
+            print("Error in computing clip ori AUC")
 
         auc = roc_auc_score(gt, pds)
         print(f'AUC: {auc:.6f}')
