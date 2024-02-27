@@ -587,7 +587,7 @@ class MoCoDAD(pl.LightningModule):
 
         # computing the AUC
 
-        return auc
+        return clip_auc
     
     
     def test_on_saved_tensors(self, split_name:str) -> float:
