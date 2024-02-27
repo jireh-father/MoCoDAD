@@ -16,7 +16,7 @@ dir_name: 'train_experiment' # name of the directory of the current experiment
 data_dir: './data/dog_leg_kpthr_05/' # path to the data
 exp_dir: './checkpoints_kpthr_05' # path to the directory that will contain the current experiment directory
 test_path: './data/dog_leg_kpthr_05/testing/test_frame_mask' # path to the test data
-load_ckpt: 'epoch=79-step=11840.ckpt' # name of the checkpoint to load at inference time
+load_ckpt: 'epoch=94-step=16435.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: false # if true, create a new directory for the current experiment
 
 ## WANDB configuration
