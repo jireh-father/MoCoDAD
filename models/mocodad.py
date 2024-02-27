@@ -547,6 +547,9 @@ class MoCoDAD(pl.LightningModule):
         print(f"pos_mean_scores: {np.mean(pos_mean_scores)}")
         print(f"neg_mean_scores: {np.mean(neg_mean_scores)}")
 
+        # convert gt_each_clip's type to int using round
+        gt_each_clip = np.round(gt_each_clip).astype(int)
+
         try:
             clip_auc = roc_auc_score(gt_each_clip, pds_each_clip)
             print(f'Clip AUC: {clip_auc:.6f}')
