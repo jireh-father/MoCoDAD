@@ -730,13 +730,15 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             int: number of joints
         """
-        
-        if args.headless:
-            joints_to_consider = 14
-        elif args.kp18_format:
-            joints_to_consider = 18
+        if args.custom_num_joints is not None:
+            return args.custom_num_joints
         else:
-            joints_to_consider = 17
+            if args.headless:
+                joints_to_consider = 14
+            elif args.kp18_format:
+                joints_to_consider = 18
+            else:
+                joints_to_consider = 17
         return joints_to_consider
     
     

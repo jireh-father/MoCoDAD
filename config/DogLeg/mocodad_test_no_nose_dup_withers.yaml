@@ -14,7 +14,7 @@ devices: [0,] # indices of cuda devices to use
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
 data_dir: './data/dog_leg_no_nose/' # path to the data
-exp_dir: './checkpoints_no_nose' # path to the directory that will contain the current experiment directory
+exp_dir: './checkpoints_no_nose_dup_withers' # path to the directory that will contain the current experiment directory
 test_path: './data/dog_leg_no_nose/testing/test_frame_mask' # path to the test data
 load_ckpt: 'epoch=98-step=16929.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: false # if true, create a new directory for the current experiment
