@@ -256,7 +256,10 @@ class PoseDatasetRobust(PoseDataset):
             # print("meta_item: ", seg_meta_item[:2])
             person_keys[person_id] = seg_meta_item[:2]
     
-        X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
+        if dataset_args['custom_num_joints']:
+            X_local = X_local.reshape((*X_local.shape[:2], dataset_args['custom_num_joints'], 2))
+        else:
+            X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
 
         if not self.include_global:
               
@@ -306,7 +309,8 @@ def get_dataset_and_loader(args, split='train', validation=False):
                     'return_indices': False, 'return_metadata': True, 'return_mean': False,
                     'symm_range': args.symm_range, 'hip_center': args.hip_center, 
                     'normalization_strategy': args.normalization_strategy, 'ckpt': args.ckpt_dir, 'scaler': scaler, 
-                    'kp_threshold': 0, 'double_item': False}
+                    'kp_threshold': 0, 'double_item': False,
+                    'custom_num_joints': args.custom_num_joints}
 
     loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
     
