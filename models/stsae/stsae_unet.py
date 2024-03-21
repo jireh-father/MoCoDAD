@@ -31,6 +31,9 @@ class STSE_Unet(nn.Module):
         """
         
         super(STSE_Unet, self).__init__()
+
+        if n_joints != 17:
+            self.joints_to_consider['a'] = n_joints
         
         # Set the model's main parameters
         self.input_dim = c_in
