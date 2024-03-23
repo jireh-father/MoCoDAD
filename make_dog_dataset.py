@@ -61,6 +61,10 @@ TARGET_KP_COL_DICT = {
         ['R_F_Elbow', 'L_F_Elbow', 'R_B_Elbow', 'L_B_Elbow'],
     "only_knees":
         ['R_F_Knee', 'L_F_Knee', 'R_B_Knee', 'L_B_Knee'],
+    "only_paws_knees":
+        ['R_F_Paw', 'L_F_Paw', 'R_B_Paw', 'L_B_Paw', 'R_F_Knee', 'L_F_Knee', 'R_B_Knee', 'L_B_Knee'],
+    "only_paws_elbows":
+        ['R_F_Paw', 'L_F_Paw', 'R_B_Paw', 'L_B_Paw', 'R_F_Elbow', 'L_F_Elbow', 'R_B_Elbow', 'L_B_Elbow'],
 
     "no_nose_dup_withers": [
         'Withers', 'Withers', 'Throat',
