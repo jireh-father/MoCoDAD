@@ -23,6 +23,7 @@ if __name__== '__main__':
     parser = argparse.ArgumentParser(description='Pose_AD_Experiment')
     parser.add_argument('-c', '--config', type=str, required=True,
                         default='/your_default_config_file_path')
+    parser.add_argument('--slack_webhook_url', type=str, default=None)
     
     args = parser.parse_args()
     config_path = args.config
