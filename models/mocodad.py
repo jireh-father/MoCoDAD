@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from models.stsae.stsae import STSAE, STSE
 from models.stsae.stsae_unet import STSAE_Unet, STSE_Unet
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve, classification_report, f1_score, recall_score, precision_score, accuracy_score
 from torch.optim import Adam
 from tqdm import tqdm
 from utils.diffusion_utils import Diffusion
@@ -577,10 +577,26 @@ class MoCoDAD(pl.LightningModule):
         auc = roc_auc_score(gt, pds)
         print(f'AUC: {auc:.4f}')
 
-        if self.args.slack_webhook_url:
-            slack.send_info_to_slack(
-                f"Clip AUC, Frame AUC, Clip Ori Score AUC, Frame Ori Score AUC\n{clip_auc * 100:.2f} {auc * 100:.2f} {clip_ori_score_auc * 100:.2f} {ori_score_auc * 100:.2f}",
-                self.args.slack_webhook_url)
+        fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_each_clip)
+        J = tpr - fpr
+        ix = np.argmax(J)
+        best_thr = thresholds[ix]
+
+        print('Best Threshold=%f, sensitivity = %.3f, specificity = %.3f, J=%.3f' % (best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
+        y_prob_pred = (pds_each_clip >= best_thr).astype(bool)
+
+        print(classification_report(gt_each_clip, y_prob_pred, target_names=['normal', 'abnormal']))
+        print(f'F1 Score: {f1_score(gt_each_clip, y_prob_pred)}')
+        print(f'Recall Score: {recall_score(gt_each_clip, y_prob_pred)}')
+        print(f'Precision Score: {precision_score(gt_each_clip, y_prob_pred)}')
+        print(f'Accuracy Score: {accuracy_score(gt_each_clip, y_prob_pred)}')
+
+
+
+        # if self.args.slack_webhook_url:
+        #     slack.send_info_to_slack(
+        #         f"Clip AUC, Frame AUC, Clip Ori Score AUC, Frame Ori Score AUC\n{clip_auc * 100:.2f} {auc * 100:.2f} {clip_ori_score_auc * 100:.2f} {ori_score_auc * 100:.2f}",
+        #         self.args.slack_webhook_url)
 
         # gt (85,)
         # clip_score (85,)
