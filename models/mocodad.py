@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from models.stsae.stsae import STSAE, STSE
 from models.stsae.stsae_unet import STSAE_Unet, STSE_Unet
-from sklearn.metrics import roc_auc_score, roc_curve, classification_report, f1_score, recall_score, precision_score, accuracy_score
+from sklearn.metrics import roc_auc_score, roc_curve, classification_report, f1_score, recall_score, precision_score, accuracy_score, confusion_matrix
 from torch.optim import Adam
 from tqdm import tqdm
 from utils.diffusion_utils import Diffusion
@@ -591,6 +591,7 @@ class MoCoDAD(pl.LightningModule):
         print(f'Precision Score: {precision_score(gt_each_clip, y_prob_pred)}')
         print(f'Accuracy Score: {accuracy_score(gt_each_clip, y_prob_pred)}')
 
+        print(f'Confusion Matrix: {confusion_matrix(gt_each_clip, y_prob_pred)}')
 
 
         # if self.args.slack_webhook_url:
