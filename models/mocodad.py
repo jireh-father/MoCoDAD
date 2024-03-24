@@ -10,7 +10,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from models.stsae.stsae import STSAE, STSE
 from models.stsae.stsae_unet import STSAE_Unet, STSE_Unet
-from sklearn.metrics import roc_auc_score, roc_curve, classification_report, f1_score, recall_score, precision_score, accuracy_score, confusion_matrix
+from sklearn.metrics import roc_auc_score, roc_curve, classification_report, f1_score, recall_score, precision_score, \
+    accuracy_score, confusion_matrix
 from torch.optim import Adam
 from tqdm import tqdm
 from utils.diffusion_utils import Diffusion
@@ -85,6 +86,9 @@ class MoCoDAD(pl.LightningModule):
 
         # Build the model
         self.build_model()
+
+        self.best_clip_auc = 0.0
+        self.best_metrics = None
 
         self.args = args
 
@@ -326,10 +330,18 @@ class MoCoDAD(pl.LightningModule):
                        'trans': trans, 'metadata': meta, 'frames': frames}
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
-        auc_score = self.post_processing(out, gt_data, trans, meta, frames)
-        self.log('AUC', auc_score, sync_dist=True)
-        print(f'AUC score: {auc_score:.6f}')
-        return auc_score
+        metrics = self.post_processing(out, gt_data, trans, meta, frames)
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy = metrics[0]
+        self.log('AUC', clip_auc, sync_dist=True)
+        print(f'AUC score: {clip_auc:.6f}')
+
+        if self.best_clip_auc < clip_auc:
+            self.best_clip_auc = clip_auc
+            self.best_metrics = {
+                'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
+                'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy
+            }
+        return clip_auc
 
     def configure_optimizers(self) -> Dict:
         """
@@ -582,7 +594,8 @@ class MoCoDAD(pl.LightningModule):
         ix = np.argmax(J)
         best_thr = thresholds[ix]
 
-        print('Best Threshold=%f, sensitivity = %.3f, specificity = %.3f, J=%.3f' % (best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
+        print('Best Threshold=%f, sensitivity = %.3f, specificity = %.3f, J=%.3f' % (
+        best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
         y_prob_pred = (pds_each_clip >= best_thr).astype(bool)
 
         print(classification_report(gt_each_clip, y_prob_pred, target_names=['normal', 'abnormal']))
@@ -592,7 +605,6 @@ class MoCoDAD(pl.LightningModule):
         print(f'Accuracy Score: {accuracy_score(gt_each_clip, y_prob_pred)}')
 
         print(f'Confusion Matrix: {confusion_matrix(gt_each_clip, y_prob_pred)}')
-
 
         # if self.args.slack_webhook_url:
         #     slack.send_info_to_slack(
@@ -610,7 +622,10 @@ class MoCoDAD(pl.LightningModule):
 
         # computing the AUC
 
-        return clip_auc
+        return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
+                                                                                    y_prob_pred), recall_score(
+            gt_each_clip, y_prob_pred), precision_score(gt_each_clip, y_prob_pred), accuracy_score(gt_each_clip,
+                                                                                                   y_prob_pred)
 
     def test_on_saved_tensors(self, split_name: str) -> float:
         """

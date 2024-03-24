@@ -74,3 +74,6 @@ if __name__== '__main__':
     
     # Train the model    
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+
+    print("best metrics")
+    print(model.best_metrics)
