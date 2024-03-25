@@ -330,7 +330,7 @@ class MoCoDAD(pl.LightningModule):
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
         metrics = self.post_processing(out, gt_data, trans, meta, frames)
-        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy = metrics[0]
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy = metrics
         self.log('AUC', clip_auc, sync_dist=True)
         print(f'AUC score: {clip_auc:.6f}')
 
