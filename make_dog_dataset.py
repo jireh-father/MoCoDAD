@@ -82,6 +82,13 @@ TARGET_KP_COL_DICT = {
         'R_B_Elbow', 'R_B_Knee', 'R_B_Paw',
         'L_B_Elbow', 'L_B_Knee', 'L_B_Paw'
     ],
+    "only_nose_withers_throat": [
+        'Nose', "withers", 'Throat',
+    ],
+    "only_nose": [
+        'Nose'
+    ],
+
 }
 
 
