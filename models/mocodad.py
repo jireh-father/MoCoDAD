@@ -18,7 +18,6 @@ from utils.diffusion_utils import Diffusion
 from utils.eval_utils import (compute_var_matrix, filter_vectors_by_cond,
                               get_avenue_mask, get_hr_ubnormal_mask, pad_scores, score_process)
 from utils.model_utils import processing_data
-from utils import slack
 
 
 class MoCoDAD(pl.LightningModule):
