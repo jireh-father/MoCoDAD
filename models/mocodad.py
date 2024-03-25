@@ -330,7 +330,7 @@ class MoCoDAD(pl.LightningModule):
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
         metrics = self.post_processing(out, gt_data, trans, meta, frames)
-        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy = metrics
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix = metrics
         self.log('AUC', clip_auc, sync_dist=True)
         print(f'AUC score: {clip_auc:.6f}')
 
@@ -338,7 +338,8 @@ class MoCoDAD(pl.LightningModule):
             self.best_clip_auc = clip_auc
             self.best_metrics = {
                 'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
-                'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy
+                'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
+                'confusion_matrix': cf_matrix
             }
         return clip_auc
 
@@ -594,7 +595,7 @@ class MoCoDAD(pl.LightningModule):
         best_thr = thresholds[ix]
 
         print('Best Threshold=%f, sensitivity = %.3f, specificity = %.3f, J=%.3f' % (
-        best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
+            best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
         y_prob_pred = (pds_each_clip >= best_thr).astype(bool)
 
         print(classification_report(gt_each_clip, y_prob_pred, target_names=['normal', 'abnormal']))
@@ -624,7 +625,8 @@ class MoCoDAD(pl.LightningModule):
         return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
                                                                                     y_prob_pred), recall_score(
             gt_each_clip, y_prob_pred), precision_score(gt_each_clip, y_prob_pred), accuracy_score(gt_each_clip,
-                                                                                                   y_prob_pred)
+                                                                                                   y_prob_pred), confusion_matrix(
+            gt_each_clip, y_prob_pred)
 
     def test_on_saved_tensors(self, split_name: str) -> float:
         """
