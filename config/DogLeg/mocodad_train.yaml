@@ -13,9 +13,9 @@ devices: [0] # indices of cuda devices to use
 
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
-data_dir: './data/DogLeg/' # path to the data
+data_dir: './data/dog_leg/' # path to the data
 exp_dir: './checkpoints_baseline' # path to the directory that will contain the current experiment directory
-test_path: './data/DogLeg/validating/test_frame_mask' # path to the test data
+test_path: './data/dog_leg/validating/test_frame_mask' # path to the test data
 load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
 
@@ -78,7 +78,7 @@ aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 
                              # if 'median_poses', the median of the generated poses will be selected;
                              # if 'all', all the generated poses will be selected
 filter_kernel_size: 30 # size of the kernel to use for smoothing the anomaly score of each clip
-frames_shift: 18 # it compensates the shift of the anomaly score due to the sliding window; 
+frames_shift: 6 # it compensates the shift of the anomaly score due to the sliding window;
                  # in conjuction with pad_size and filter_kernel_size, it strongly depends on the dataset
 save_tensors: true # if true, save the generated tensors for faster inference
 load_tensors: false # if true, load the generated tensors for faster inference
