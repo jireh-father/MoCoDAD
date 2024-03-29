@@ -76,7 +76,7 @@ aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 
                              # if 'mean_poses', the mean of the generated poses will be selected;
                              # if 'median_poses', the median of the generated poses will be selected;
                              # if 'all', all the generated poses will be selected
-filter_kernel_size: 5 # size of the kernel to use for smoothing the anomaly score of each clip
+filter_kernel_size: 10 # size of the kernel to use for smoothing the anomaly score of each clip
 frames_shift: 9 # it compensates the shift of the anomaly score due to the sliding window;
                  # in conjuction with pad_size and filter_kernel_size, it strongly depends on the dataset
 save_tensors: true # if true, save the generated tensors for faster inference
