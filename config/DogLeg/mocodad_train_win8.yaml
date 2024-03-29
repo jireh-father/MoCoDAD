@@ -106,5 +106,6 @@ num_workers: 8
 seg_stride: 1
 seg_th: 0
 start_offset: 0
+custom_num_joints: null
 symm_range: true
 use_fitted_scaler: false
