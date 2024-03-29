@@ -13,9 +13,9 @@ devices: [0] # indices of cuda devices to use
 
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
-data_dir: './data/dog_leg_win8/' # path to the data
-exp_dir: './checkpoints_win8' # path to the directory that will contain the current experiment directory
-test_path: './data/dog_leg_win8/validating/test_frame_mask' # path to the test data
+data_dir: './data/dog_leg_only_paws/' # path to the data
+exp_dir: './checkpoints_only_paws_win8' # path to the directory that will contain the current experiment directory
+test_path: './data/dog_leg_only_paws/validating/test_frame_mask' # path to the test data
 load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
 
@@ -102,10 +102,10 @@ kp18_format: false # use the 18 keypoints format
 normalization_strategy: 'robust' # use 'none' to avoid normalization, 'robust' otherwise
 num_coords: 2 # number of coordinates to use
 num_transform: 5 # number of transformations to apply
-num_workers: 8
+num_workers: 2
 seg_stride: 1
 seg_th: 0
 start_offset: 0
-custom_num_joints: null
+custom_num_joints: 4
 symm_range: true
 use_fitted_scaler: false
