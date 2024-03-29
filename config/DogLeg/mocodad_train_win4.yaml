@@ -108,3 +108,4 @@ seg_th: 0
 start_offset: 0
 symm_range: true
 use_fitted_scaler: false
+custom_num_joints: null
