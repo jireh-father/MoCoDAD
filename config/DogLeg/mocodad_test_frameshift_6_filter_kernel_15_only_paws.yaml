@@ -12,7 +12,7 @@ accelerator: 'gpu'
 devices: [0,] # indices of cuda devices to use
 
 ## Paths
-dir_name: 'train_experiment' # name of the directory of the current experiment
+dir_name: 'only_paws_fs6_fk15' # name of the directory of the current experiment
 data_dir: './data/dog_leg_only_paws/' # path to the data
 exp_dir: './checkpoints_only_paws' # path to the directory that will contain the current experiment directory
 test_path: './data/dog_leg_only_paws/testing/test_frame_mask' # path to the test data

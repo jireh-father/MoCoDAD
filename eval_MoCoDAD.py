@@ -44,5 +44,5 @@ if __name__== '__main__':
         keys = ['clip_auc', 'auc', 'f1', 'recall', 'precision', 'best_thr', 'ori_clip_auc', 'ori_auc']
 
         slack.send_info_to_slack(
-            f"Mocodad Trained. {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(model.best_metrics[k] * 100, 2)) for k in keys])}\nconfusion matrix: {model.best_metrics['confusion_matrix']}",
+            f"Mocodad Trained. {args.dir_name}.\n{', '.join(keys)}\n{' '.join([str(round(model.best_metrics[k] * 100, 2)) for k in keys])}\nconfusion matrix: {model.best_metrics['confusion_matrix']}",
             slack_webhook_url)
