@@ -277,9 +277,18 @@ class MoCoDAD(pl.LightningModule):
                        'trans': trans, 'metadata': meta, 'frames': frames}
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
-        auc_score = self.post_processing(out, gt_data, trans, meta, frames)
-        self.log('AUC', auc_score)
-        return auc_score
+        metrics = self.post_processing(out, gt_data, trans, meta, frames)
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix = metrics
+        self.log('AUC', clip_auc)
+
+        self.best_clip_auc = clip_auc
+        self.best_metrics = {
+            'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
+            'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
+            'confusion_matrix': cf_matrix
+        }
+        print(metrics)
+        return clip_auc
 
     def validation_step(self, batch: List[torch.Tensor], batch_idx: int) -> None:
         """
