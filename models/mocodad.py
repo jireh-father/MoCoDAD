@@ -639,11 +639,32 @@ class MoCoDAD(pl.LightningModule):
 
         # computing the AUC
 
-        #pds
+        # pds
+        # best thr 기반으로 postive, negative로 나눠서 저장
+        #
         clip_fname_pred_map = {}
-        for fname, num_frames in clip_pred_frames:
+        for i, (fname, num_frames) in enumerate(clip_pred_frames):
             # convert pds to list
-            clip_fname_pred_map[fname] = pds[:num_frames].tolist()
+            clip_fname_pred_map[fname] = {
+                "sample_anomaly_scores": pds[:num_frames].tolist(),
+                "clip_gt": bool(gt_each_clip[i]),
+                "clip_pred": y_prob_pred[i],
+                "clip_gt_desc": "abnormal" if gt_each_clip[i] else "normal",
+                "clip_pred_desc": "abnormal" if y_prob_pred[i] else "normal",
+                "pred_result": "correct" if gt_each_clip[i] == y_prob_pred[i] else "wrong",
+                "clip_anomaly_score": pds_each_clip[i],
+            }
+            # check TFPN
+            TFPN = None
+            if gt_each_clip[i] == y_prob_pred[i] and gt_each_clip[i] == 1:
+                TFPN = "TP"
+            elif gt_each_clip[i] != y_prob_pred[i] and gt_each_clip[i] == 1:
+                TFPN = "FP"
+            elif gt_each_clip[i] == y_prob_pred[i] and gt_each_clip[i] == 0:
+                TFPN = "TN"
+            elif gt_each_clip[i] != y_prob_pred[i] and gt_each_clip[i] == 0:
+                TFPN = "FN"
+            clip_fname_pred_map[fname]["TFPN"] = TFPN
             pds = pds[num_frames:]
 
         return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
