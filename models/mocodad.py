@@ -435,8 +435,6 @@ class MoCoDAD(pl.LightningModule):
                 scene_idx, clip_idx = scene_clips[idx]
                 is_pos = scene_idx < 1000
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
-                print("==================\n" + all_gts[idx])
-                print("gt shape", gt.shape)
                 n_frames = gt.shape[0]
 
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
@@ -454,9 +452,7 @@ class MoCoDAD(pl.LightningModule):
                     cond_fig = (meta_scene_clip[:, 2] == fig)
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip],
                                                                     cond_fig)
-                    print("out_fig shape", out_fig.shape)
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
-                    print("loss_matrix shape", loss_matrix.shape)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
 
                     if self.anomaly_score_pad_size != -1:
@@ -464,10 +460,7 @@ class MoCoDAD(pl.LightningModule):
 
                     error_per_person.append(fig_reconstruction_loss)
 
-                print("n_frames", n_frames)
-                print("num error_per_person", len(error_per_person[0]))
                 clip_score = np.stack(error_per_person, axis=0)
-                print("num clip_score", clip_score.shape)
 
                 clip_score_orig = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.mean(clip_score_orig, axis=0)
@@ -491,7 +484,6 @@ class MoCoDAD(pl.LightningModule):
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift,
                                            self.anomaly_score_filter_kernel_size)
-                print("postprocessed clip_score shape", clip_score.shape)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
 
