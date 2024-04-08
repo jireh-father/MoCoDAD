@@ -1,4 +1,5 @@
 import argparse
+import pickle
 import os
 import random
 
@@ -78,7 +79,8 @@ if __name__ == '__main__':
 
     print("best metrics")
     clip_fname_pred_map = model.best_metrics['clip_fname_pred_map']
-    np.save(os.path.join(args.ckpt_dir, 'clip_fname_pred_map.npy'), clip_fname_pred_map)
+    pickle.dump(clip_fname_pred_map, open(os.path.join(args.ckpt_dir, 'clip_fname_pred_map.pkl'), 'wb+'))
+    # np.save(os.path.join(args.ckpt_dir, 'clip_fname_pred_map.npy'), clip_fname_pred_map)
     del model.best_metrics['clip_fname_pred_map']
     print(model.best_metrics)
     # save clip_fname_pred_map
