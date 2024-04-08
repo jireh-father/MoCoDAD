@@ -46,8 +46,9 @@ if __name__ == '__main__':
 
     cv_results = []
     for data_dir in data_dirs:
+        print("data_dir", data_dir)
         args.data_dir = data_dir
-        args.test_path = os.path.join(data_dir, "validating", "test_frame_mask")
+        args.test_path = os.path.join(data_dir,  "validating", "test_frame_mask")
         args.exp_dir = os.path.join(args.exp_dir, os.path.basename(data_dir))
         # Save config file to ckpt_dir
         os.system(f'cp {config_path} {os.path.join(args.ckpt_dir, "config.yaml")}')
