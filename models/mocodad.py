@@ -460,9 +460,9 @@ class MoCoDAD(pl.LightningModule):
                         fig_reconstruction_loss = pad_scores(fig_reconstruction_loss, gt, self.anomaly_score_pad_size)
 
                     error_per_person.append(fig_reconstruction_loss)
-
+                print("================== "+all_gts[idx])
                 print("n_frames", n_frames)
-                print("num error_per_person", len(error_per_person))
+                print("num error_per_person", len(error_per_person[0]))
                 clip_score = np.stack(error_per_person, axis=0)
                 print("num clip_score", clip_score.shape)
 
