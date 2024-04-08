@@ -533,7 +533,8 @@ class MoCoDAD(pl.LightningModule):
                     neg_mean_orig_scores.append(np.mean(clip_score_orig))
 
                 # append average clip score for each transformation
-                model_scores_each_clip.append(np.mean(clip_score))
+                each_clip_score = clip_score[:len(clip_score) - self.n_frames + 1]
+                model_scores_each_clip.append(np.mean(each_clip_score))
                 dataset_gt_each_clip.append(np.mean(gt))
                 if transformation == 0:
                     clip_pred_frames.append((all_gts[idx].split(".")[0], len(clip_score)))
@@ -652,8 +653,10 @@ class MoCoDAD(pl.LightningModule):
         clip_fname_pred_map = {}
         for i, (fname, num_frames) in enumerate(clip_pred_frames):
             # convert pds to list
+            sample_anomaly_scores = pds[:num_frames].tolist()
+            sample_anomaly_scores = sample_anomaly_scores[:len(sample_anomaly_scores) - self.n_frames + 1]
             clip_fname_pred_map[fname] = {
-                "sample_anomaly_scores": pds[:num_frames].tolist(),
+                "sample_anomaly_scores": sample_anomaly_scores,
                 "clip_gt": bool(gt_each_clip[i]),
                 "clip_pred": y_prob_pred[i],
                 "clip_gt_desc": "abnormal" if gt_each_clip[i] else "normal",
