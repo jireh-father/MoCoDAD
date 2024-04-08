@@ -136,6 +136,7 @@ def main(args):
         kp_sample_prefix = "0" if label else "1"
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
+            csv_path = path_and_dir["keypoint_full_path"]
             csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
 
             try:
@@ -203,9 +204,8 @@ def main(args):
                                                           f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                     os.makedirs(os.path.dirname(test_label_output_path), exist_ok=True)
                     np.save(test_label_output_path, label_np)
-                    csv_fname = os.path.basename(csv_file)
                     moco_fname = os.path.splitext(os.path.basename(test_label_output_path))[0]
-                    moco_fname_to_csv_fname_dict[moco_fname] = csv_fname
+                    moco_fname_to_csv_fname_dict[moco_fname] = csv_path
 
     if moco_fname_to_csv_fname_dict:
         with open(os.path.join(args.output_dir, "moco_fname_to_csv_fname_dict.json"), "w") as f:
