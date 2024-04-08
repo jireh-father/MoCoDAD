@@ -101,6 +101,8 @@ def main(args):
     x_axis_keys = [f"{k}_x" for k in use_keys]
     keypoint_root = args.keypoint_dir
 
+    moco_fname_to_csv_fname_dict = {}
+
     label_key = "lameness"
     for sample_idx, sample in enumerate(labels):
         print(f"processing {sample_idx}th sample")
@@ -201,6 +203,13 @@ def main(args):
                                                           f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                     os.makedirs(os.path.dirname(test_label_output_path), exist_ok=True)
                     np.save(test_label_output_path, label_np)
+                    csv_fname = os.path.basename(csv_file)
+                    moco_fname = os.path.splitext(os.path.basename(test_label_output_path))[0]
+                    moco_fname_to_csv_fname_dict[moco_fname] = csv_fname
+
+    if moco_fname_to_csv_fname_dict:
+        with open(os.path.join(args.output_dir, "moco_fname_to_csv_fname_dict.json"), "w") as f:
+            json.dump(moco_fname_to_csv_fname_dict, f, ensure_ascii=False, indent=4)
 
     print("done")
 
