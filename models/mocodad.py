@@ -461,7 +461,10 @@ class MoCoDAD(pl.LightningModule):
 
                     error_per_person.append(fig_reconstruction_loss)
 
+                print("n_frames", n_frames)
+                print("num error_per_person", len(error_per_person))
                 clip_score = np.stack(error_per_person, axis=0)
+                print("num clip_score", clip_score.shape)
 
                 clip_score_orig = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.mean(clip_score_orig, axis=0)
@@ -485,6 +488,7 @@ class MoCoDAD(pl.LightningModule):
 
                 clip_score = score_process(clip_score, self.anomaly_score_frames_shift,
                                            self.anomaly_score_filter_kernel_size)
+                print("postprocessed clip_score shape", clip_score.shape)
                 model_scores.append(clip_score)
                 dataset_gt.append(gt)
 
@@ -529,7 +533,7 @@ class MoCoDAD(pl.LightningModule):
                 model_scores_each_clip.append(np.mean(clip_score))
                 dataset_gt_each_clip.append(np.mean(gt))
                 if transformation == 0:
-                    clip_pred_frames.append((all_gts[idx], len(clip_score)))
+                    clip_pred_frames.append((all_gts[idx].split(".")[0], len(clip_score)))
 
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
@@ -653,6 +657,7 @@ class MoCoDAD(pl.LightningModule):
                 "clip_pred_desc": "abnormal" if y_prob_pred[i] else "normal",
                 "pred_result": "correct" if gt_each_clip[i] == y_prob_pred[i] else "wrong",
                 "clip_anomaly_score": pds_each_clip[i],
+                "threshold": best_thr,
             }
             # check TFPN
             TFPN = None
