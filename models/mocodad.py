@@ -435,6 +435,8 @@ class MoCoDAD(pl.LightningModule):
                 scene_idx, clip_idx = scene_clips[idx]
                 is_pos = scene_idx < 1000
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
+                print("==================\n" + all_gts[idx])
+                print("gt shape", gt.shape)
                 n_frames = gt.shape[0]
 
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
@@ -445,7 +447,7 @@ class MoCoDAD(pl.LightningModule):
                 # person ids
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
                 error_per_person = []
-                print("==================\n" + all_gts[idx])
+
                 for fig in figs_ids:
                     # iterating over each actor A in each clip C with transformation T
 
