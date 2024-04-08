@@ -278,16 +278,18 @@ class MoCoDAD(pl.LightningModule):
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
         metrics = self.post_processing(out, gt_data, trans, meta, frames)
-        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix = metrics
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix, clip_fname_pred_map = metrics
         self.log('AUC', clip_auc)
 
         self.best_clip_auc = clip_auc
         self.best_metrics = {
             'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
             'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
-            'confusion_matrix': cf_matrix
+            'confusion_matrix': cf_matrix,
+
         }
-        print(metrics)
+        print(self.best_metrics)
+        self.best_metrics['clip_fname_pred_map'] = clip_fname_pred_map
         return clip_auc
 
     def validation_step(self, batch: List[torch.Tensor], batch_idx: int) -> None:
@@ -339,7 +341,7 @@ class MoCoDAD(pl.LightningModule):
             self._save_tensors(tensors, split_name=self.split, aggr_strategy=self.aggregation_strategy,
                                n_gen=self.n_generated_samples)
         metrics = self.post_processing(out, gt_data, trans, meta, frames)
-        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix = metrics
+        clip_auc, auc, best_thr, ori_clip_auc, ori_auc, f1, recall, precision, accuracy, cf_matrix, clip_fname_pred_map = metrics
         self.log('AUC', clip_auc, sync_dist=True)
         print(f'AUC score: {clip_auc:.6f}')
 
@@ -348,7 +350,8 @@ class MoCoDAD(pl.LightningModule):
             self.best_metrics = {
                 'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
                 'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
-                'confusion_matrix': cf_matrix
+                'confusion_matrix': cf_matrix,
+                'clip_fname_pred_map': clip_fname_pred_map
             }
         return clip_auc
 
@@ -409,6 +412,8 @@ class MoCoDAD(pl.LightningModule):
         pos_mean_scores = []
         neg_mean_scores = []
 
+        clip_pred_frames = []
+
         for transformation in tqdm(range(num_transform)):
             # iterating over each transformation T
 
@@ -457,6 +462,7 @@ class MoCoDAD(pl.LightningModule):
                     error_per_person.append(fig_reconstruction_loss)
 
                 clip_score = np.stack(error_per_person, axis=0)
+
                 clip_score_orig = np.stack(error_per_person, axis=0)
                 clip_score_orig = np.mean(clip_score_orig, axis=0)
 
@@ -522,6 +528,8 @@ class MoCoDAD(pl.LightningModule):
                 # append average clip score for each transformation
                 model_scores_each_clip.append(np.mean(clip_score))
                 dataset_gt_each_clip.append(np.mean(gt))
+
+                clip_pred_frames.append((all_gts[idx], len(clip_score)))
 
             model_scores = np.concatenate(model_scores, axis=0)
             dataset_gt = np.concatenate(dataset_gt, axis=0)
@@ -631,11 +639,18 @@ class MoCoDAD(pl.LightningModule):
 
         # computing the AUC
 
+        #pds
+        clip_fname_pred_map = {}
+        for fname, num_frames in clip_pred_frames:
+            # convert pds to list
+            clip_fname_pred_map[fname] = pds[:num_frames].tolist()
+            pds = pds[num_frames:]
+
         return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
                                                                                     y_prob_pred), recall_score(
             gt_each_clip, y_prob_pred), precision_score(gt_each_clip, y_prob_pred), accuracy_score(gt_each_clip,
                                                                                                    y_prob_pred), confusion_matrix(
-            gt_each_clip, y_prob_pred)
+            gt_each_clip, y_prob_pred), clip_fname_pred_map
 
     def test_on_saved_tensors(self, split_name: str) -> float:
         """

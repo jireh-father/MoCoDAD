@@ -77,7 +77,11 @@ if __name__ == '__main__':
     trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
 
     print("best metrics")
+    clip_fname_pred_map = model.best_metrics['clip_fname_pred_map']
+    del model.best_metrics['clip_fname_pred_map']
     print(model.best_metrics)
+    # save clip_fname_pred_map
+    np.save(os.path.join(args.ckpt_dir, 'clip_fname_pred_map.npy'), clip_fname_pred_map)
 
     if slack_webhook_url:
         keys = ['clip_auc', 'auc', 'f1', 'recall', 'precision', 'best_thr', 'ori_clip_auc', 'ori_auc']
