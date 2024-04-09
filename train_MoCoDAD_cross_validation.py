@@ -116,6 +116,7 @@ if __name__ == '__main__':
         print(f"Average {metric}: {avg_metric}")
         avg_results_dict[metric] = avg_metric
         best_results_dict[metric] = max([result[metric] for result in cv_results])
+        worst_results_dict[metric] = min([result[metric] for result in cv_results])
     print("avg_results_dict")
     print(avg_results_dict)
     print("best_results_dict")
