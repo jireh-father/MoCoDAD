@@ -53,6 +53,7 @@ if __name__ == '__main__':
         args.gt_path = os.path.join(data_dir, "validating", "test_frame_mask")
         args.exp_dir = os.path.join(ori_exp_dir, os.path.basename(data_dir))
         args.ckpt_dir = args.exp_dir
+        os.makedirs(args.ckpt_dir, exist_ok=True)
         # Save config file to ckpt_dir
         os.system(f'cp {config_path} {os.path.join(args.ckpt_dir, "config.yaml")}')
 
