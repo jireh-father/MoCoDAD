@@ -45,6 +45,7 @@ class MoCoDAD(pl.LightningModule):
         # Data parameters
         self.n_frames = args.seg_len
         self.num_coords = args.num_coords
+        self.remove_last_remain_frame = args.remove_last_remain_frame if hasattr(args, 'remove_last_remain_frame') else False
         self.n_joints = self._infer_number_of_joint(args)
 
         # Model parameters
@@ -525,7 +526,10 @@ class MoCoDAD(pl.LightningModule):
                     neg_mean_orig_scores.append(np.mean(clip_score_orig))
 
                 # append average clip score for each transformation
-                each_clip_score = clip_score[:len(clip_score) - self.n_frames + 1]
+                if self.remove_last_remain_frame:
+                    each_clip_score = clip_score[:len(clip_score) - self.n_frames + 1]
+                else:
+                    each_clip_score = clip_score
                 model_scores_each_clip.append(np.mean(each_clip_score))
                 dataset_gt_each_clip.append(np.mean(gt))
                 if transformation == 0:

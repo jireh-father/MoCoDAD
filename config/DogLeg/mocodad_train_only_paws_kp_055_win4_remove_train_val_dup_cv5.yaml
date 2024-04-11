@@ -109,3 +109,4 @@ seg_th: 0
 start_offset: 0
 symm_range: true
 use_fitted_scaler: false
+remove_last_remain_frame: false
