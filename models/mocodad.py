@@ -675,6 +675,7 @@ class MoCoDAD(pl.LightningModule):
             total_num_frames += num_frames
             sample_anomaly_scores = pds[i * num_frames:(i + 1) * num_frames]
             ori_sample_anomaly_scores = pds_orig[i * num_frames:(i + 1) * num_frames]
+            print(fname, "num_frames: ", num_frames)
             print("sample_anomaly_scores: ", len(sample_anomaly_scores))
             print("ori sample_anomaly_scores: ", len(ori_sample_anomaly_scores))
             # sample_anomaly_scores = sample_anomaly_scores[:len(sample_anomaly_scores) - self.n_frames + 1]
