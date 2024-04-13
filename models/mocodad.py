@@ -1,4 +1,5 @@
 import argparse
+import copy
 import os
 from math import prod
 from typing import Dict, List, Tuple
@@ -671,11 +672,13 @@ class MoCoDAD(pl.LightningModule):
               "len ori pds_each_clip: ", len(pds_orig_each_clip))
         total_num_frames = 0
         print("len pds", len(pds), "len ori pds", len(pds_orig))
+        tmp_pds = copy.deepcopy(pds)
+        tmp_pds_orig = copy.deepcopy(pds_orig)
         for i, (fname, num_frames) in enumerate(clip_pred_frames):
             # convert pds to list
             total_num_frames += num_frames
-            sample_anomaly_scores = pds[i * num_frames:(i + 1) * num_frames]
-            ori_sample_anomaly_scores = pds_orig[i * num_frames:(i + 1) * num_frames]
+            sample_anomaly_scores = tmp_pds[:num_frames]
+            ori_sample_anomaly_scores = tmp_pds_orig[:num_frames]
             print(fname, "num_frames: ", num_frames)
             print(i * num_frames, (i + 1) * num_frames, len(pds))
             print("sample_anomaly_scores: ", len(sample_anomaly_scores))
@@ -707,6 +710,8 @@ class MoCoDAD(pl.LightningModule):
             elif gt_each_clip[i] != y_prob_pred[i] and gt_each_clip[i] == 0:
                 TFPN = "FN"
             clip_fname_pred_map[fname]["TFPN"] = TFPN
+            tmp_pds = tmp_pds[num_frames:]
+            tmp_pds_orig = tmp_pds_orig[num_frames:]
         print("total_num_frames: ", total_num_frames, "len pds: ", len(pds), "len ori pds: ", len(pds_orig))
         return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
                                                                                     y_prob_pred), recall_score(
