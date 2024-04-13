@@ -674,12 +674,13 @@ class MoCoDAD(pl.LightningModule):
             # convert pds to list
             total_num_frames += num_frames
             sample_anomaly_scores = pds[i * num_frames:(i + 1) * num_frames]
+            ori_sample_anomaly_scores = pds_orig[i * num_frames:(i + 1) * num_frames]
             print("sample_anomaly_scores: ", len(sample_anomaly_scores))
-            print("ori sample_anomaly_scores: ", len(pds_orig[i * num_frames:(i + 1) * num_frames]))
+            print("ori sample_anomaly_scores: ", len(ori_sample_anomaly_scores))
             # sample_anomaly_scores = sample_anomaly_scores[:len(sample_anomaly_scores) - self.n_frames + 1]
             clip_fname_pred_map[fname] = {
                 "sample_anomaly_scores": sample_anomaly_scores,
-                "ori_sample_anomaly_scores": pds_orig[i * num_frames:(i + 1) * num_frames],
+                "ori_sample_anomaly_scores": ori_sample_anomaly_scores,
                 "clip_gt": bool(gt_each_clip[i]),
                 "clip_pred": y_prob_pred[i],
                 "clip_gt_desc": "abnormal" if gt_each_clip[i] else "normal",
@@ -690,8 +691,8 @@ class MoCoDAD(pl.LightningModule):
                 "threshold": best_thr,
             }
             print("mean sample_anomaly_scores: ", np.mean(sample_anomaly_scores), "mean ori sample_anomaly_scores: ",
-                  np.mean(pds_orig[i * num_frames:(i + 1) * num_frames],
-                          "clip_anomaly_score", pds_each_clip[i], "ori_clip_anomaly_score", pds_orig_each_clip[i]))
+                  np.mean(ori_sample_anomaly_scores),
+                  "clip_anomaly_score", pds_each_clip[i], "ori_clip_anomaly_score", pds_orig_each_clip[i])
             # check TFPN
             TFPN = None
             if gt_each_clip[i] == y_prob_pred[i] and gt_each_clip[i] == 1:
