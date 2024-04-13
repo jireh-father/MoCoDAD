@@ -347,15 +347,27 @@ class MoCoDAD(pl.LightningModule):
         self.log('AUC', clip_auc, sync_dist=True)
         print(f'AUC score: {clip_auc:.6f}')
 
-        if self.best_clip_auc < clip_auc:
-            self.best_clip_auc = clip_auc
-            self.best_metrics = {
-                'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
-                'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
-                'confusion_matrix': cf_matrix,
-                'clip_fname_pred_map': clip_fname_pred_map
-            }
-        return clip_auc
+
+        if self.use_original_anomaly_score:
+            if self.best_clip_auc < ori_clip_auc:
+                self.best_clip_auc = ori_clip_auc
+                self.best_metrics = {
+                    'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
+                    'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
+                    'confusion_matrix': cf_matrix,
+                    'clip_fname_pred_map': clip_fname_pred_map
+                }
+            return ori_clip_auc
+        else:
+            if self.best_clip_auc < clip_auc:
+                self.best_clip_auc = clip_auc
+                self.best_metrics = {
+                    'clip_auc': clip_auc, 'auc': auc, 'best_thr': best_thr, 'ori_clip_auc': ori_clip_auc,
+                    'ori_auc': ori_auc, 'f1': f1, 'recall': recall, 'precision': precision, 'accuracy': accuracy,
+                    'confusion_matrix': cf_matrix,
+                    'clip_fname_pred_map': clip_fname_pred_map
+                }
+            return clip_auc
 
     def configure_optimizers(self) -> Dict:
         """
