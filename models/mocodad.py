@@ -704,7 +704,6 @@ class MoCoDAD(pl.LightningModule):
             elif gt_each_clip[i] != y_prob_pred[i] and gt_each_clip[i] == 0:
                 TFPN = "FN"
             clip_fname_pred_map[fname]["TFPN"] = TFPN
-            pds = pds[num_frames:]
         print("total_num_frames: ", total_num_frames, "len pds: ", len(pds), "len ori pds: ", len(pds_orig))
         return clip_auc, auc, best_thr, clip_ori_score_auc, ori_score_auc, f1_score(gt_each_clip,
                                                                                     y_prob_pred), recall_score(
