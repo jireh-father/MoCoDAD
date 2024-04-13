@@ -46,6 +46,7 @@ class MoCoDAD(pl.LightningModule):
         self.n_frames = args.seg_len
         self.num_coords = args.num_coords
         self.remove_last_remain_frame = args.remove_last_remain_frame if hasattr(args, 'remove_last_remain_frame') else False
+        self.use_original_anomaly_score = args.use_original_anomaly_score if hasattr(args, 'use_original_anomaly_score') else False
         self.n_joints = self._infer_number_of_joint(args)
 
         # Model parameters
@@ -610,14 +611,20 @@ class MoCoDAD(pl.LightningModule):
         auc = roc_auc_score(gt, pds)
         print(f'AUC: {auc:.4f}')
 
-        fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_each_clip)
+        if self.use_original_anomaly_score:
+            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_orig_each_clip)
+        else:
+            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_each_clip)
         J = tpr - fpr
         ix = np.argmax(J)
         best_thr = thresholds[ix]
 
         print('Best Threshold=%f, sensitivity = %.3f, specificity = %.3f, J=%.3f' % (
             best_thr, tpr[ix], 1 - fpr[ix], J[ix]))
-        y_prob_pred = (pds_each_clip >= best_thr).astype(bool)
+        if self.use_original_anomaly_score:
+            y_prob_pred = (pds_orig_each_clip >= best_thr).astype(bool)
+        else:
+            y_prob_pred = (pds_each_clip >= best_thr).astype(bool)
 
         print(classification_report(gt_each_clip, y_prob_pred, target_names=['normal', 'abnormal']))
         print(f'F1 Score: {f1_score(gt_each_clip, y_prob_pred)}')
@@ -653,13 +660,14 @@ class MoCoDAD(pl.LightningModule):
             # sample_anomaly_scores = sample_anomaly_scores[:len(sample_anomaly_scores) - self.n_frames + 1]
             clip_fname_pred_map[fname] = {
                 "sample_anomaly_scores": sample_anomaly_scores,
-                "ori_sample_anoamly_scores": pds_orig[:num_frames].tolist(),
+                "ori_sample_anomaly_scores": pds_orig[:num_frames].tolist(),
                 "clip_gt": bool(gt_each_clip[i]),
                 "clip_pred": y_prob_pred[i],
                 "clip_gt_desc": "abnormal" if gt_each_clip[i] else "normal",
                 "clip_pred_desc": "abnormal" if y_prob_pred[i] else "normal",
                 "pred_result": "correct" if gt_each_clip[i] == y_prob_pred[i] else "wrong",
                 "clip_anomaly_score": pds_each_clip[i],
+                "ori_clip_anomaly_score": pds_orig_each_clip[i],
                 "threshold": best_thr,
             }
             # check TFPN

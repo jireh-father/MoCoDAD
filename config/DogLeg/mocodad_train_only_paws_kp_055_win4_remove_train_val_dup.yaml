@@ -109,3 +109,4 @@ seg_th: 0
 start_offset: 0
 symm_range: true
 use_fitted_scaler: false
+use_original_anomaly_score: true
