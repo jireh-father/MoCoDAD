@@ -668,11 +668,11 @@ class MoCoDAD(pl.LightningModule):
         clip_fname_pred_map = {}
         for i, (fname, num_frames) in enumerate(clip_pred_frames):
             # convert pds to list
-            sample_anomaly_scores = pds[:num_frames].tolist()
+            sample_anomaly_scores = pds[i*num_frames:(i+1)*num_frames]
             # sample_anomaly_scores = sample_anomaly_scores[:len(sample_anomaly_scores) - self.n_frames + 1]
             clip_fname_pred_map[fname] = {
                 "sample_anomaly_scores": sample_anomaly_scores,
-                "ori_sample_anomaly_scores": pds_orig[:num_frames].tolist(),
+                "ori_sample_anomaly_scores": pds_orig[i*num_frames:(i+1)*num_frames],
                 "clip_gt": bool(gt_each_clip[i]),
                 "clip_pred": y_prob_pred[i],
                 "clip_gt_desc": "abnormal" if gt_each_clip[i] else "normal",
