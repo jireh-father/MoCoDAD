@@ -14,7 +14,7 @@ devices: [0] # indices of cuda devices to use
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
 data_dir: './data/dog_leg_only_paws_kp_055_win4_remove_train_val_dup_cv_pet_split/' # path to the data
-exp_dir: './checkpoints_only_paws_kp_055_win4_remove_train_val_dup_cv10_pet_split' # path to the directory that will contain the current experiment directory
+exp_dir: './checkpoints_only_paws_kp_055_win4_remove_train_val_dup_cv10_pet_split_ori_score' # path to the directory that will contain the current experiment directory
 test_path: './data/dog_leg_only_paws_kp_055_win4_remove_train_val_dup_cv_pet_split/validating/test_frame_mask' # path to the test data
 load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
