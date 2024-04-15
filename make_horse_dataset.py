@@ -35,7 +35,12 @@ TARGET_KP_COL_DICT = {
         'Front_Heel_L', 'Front_Heel_R', 'Front_Toe_L', 'Front_Toe_R', 'Rear_Heel_L', 'Rear_Heel_R', 'Rear_Toe_L',
         'Rear_Toe_R',
     ],
-
+    "only_heel": [
+        'Front_Heel_L', 'Front_Heel_R', 'Rear_Heel_L', 'Rear_Heel_R',
+    ],
+    "only_toe": [
+        'Front_Toe_L', 'Front_Toe_R', 'Rear_Toe_L', 'Rear_Toe_R',
+    ],
 }
 
 
@@ -168,7 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('--target_keypoint_name', type=str,
                         default='baseline')
     # keypoint_threshold
-    parser.add_argument('--keypoint_threshold', type=float, default=None)#0.6)
+    parser.add_argument('--keypoint_threshold', type=float, default=None)  # 0.6)
     # window_length
     parser.add_argument('--window_length', type=int, default=6)
     # output_dir
