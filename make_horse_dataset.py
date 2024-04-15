@@ -50,7 +50,7 @@ def main(args):
 
     moco_fname_to_csv_fname_dict = {}
 
-    label_key = "vet_label_lameness"
+    label_key = "lameness"
     for sample_idx, sample in enumerate(labels):
         print(f"processing {sample_idx}th sample")
         label = sample[label_key]
