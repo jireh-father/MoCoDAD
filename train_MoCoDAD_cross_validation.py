@@ -120,6 +120,12 @@ if __name__ == '__main__':
         avg_results_dict[metric] = avg_metric
         best_results_dict[metric] = max([result[metric] for result in cv_results])
         worst_results_dict[metric] = min([result[metric] for result in cv_results])
+
+    best_idx = np.argmax([result["clip_auc"] for result in cv_results])
+    worst_idx = np.argmin([result["clip_auc"] for result in cv_results])
+    best_results_dict["confusion_matrix"] = cv_results[best_idx]["confusion_matrix"]
+    worst_results_dict["confusion_matrix"] = cv_results[worst_idx]["confusion_matrix"]
+
     print("avg_results_dict")
     print(avg_results_dict)
     print("best_results_dict")
@@ -135,9 +141,9 @@ if __name__ == '__main__':
             slack_webhook_url)
 
         slack.send_info_to_slack(
-            f"Mocodad Trained(best). {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(best_results_dict[k] * 100, 2)) for k in keys])}",
+            f"Mocodad Trained(best). {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(best_results_dict[k] * 100, 2)) for k in keys])}\n{best_results_dict['confusion_matrix']}",
             slack_webhook_url)
 
         slack.send_info_to_slack(
-            f"Mocodad Trained(worst). {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(worst_results_dict[k] * 100, 2)) for k in keys])}",
+            f"Mocodad Trained(worst). {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(worst_results_dict[k] * 100, 2)) for k in keys])}\n{worst_results_dict['confusion_matrix']}",
             slack_webhook_url)

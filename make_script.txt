@@ -5,3 +5,16 @@ python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoi
 python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 8 --save_test --output_dir ./data/horse/only_heels_win8_cv10/cv8 --label_file ./horse_label_20231209_balance_seed_8.json
 python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 8 --save_test --output_dir ./data/horse/only_heels_win8_cv10/cv9 --label_file ./horse_label_20231209_balance_seed_9.json
 python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 8 --save_test --output_dir ./data/horse/only_heels_win8_cv10/cv10 --label_file ./horse_label_20231209_balance_seed_10.json
+
+
+# 1~10 make scripts
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv1 --label_file ./horse_label_20231209_balance_seed_1.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv2 --label_file ./horse_label_20231209_balance_seed_2.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv3 --label_file ./horse_label_20231209_balance_seed_3.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv4 --label_file ./horse_label_20231209_balance_seed_4.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv5 --label_file ./horse_label_20231209_balance_seed_5.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv6 --label_file ./horse_label_20231209_balance_seed_6.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv7 --label_file ./horse_label_20231209_balance_seed_7.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv8 --label_file ./horse_label_20231209_balance_seed_8.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv9 --label_file ./horse_label_20231209_balance_seed_9.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20231121/ --target_keypoint_name only_heel --window_length 16 --save_test --output_dir ./data/horse/only_heels_win16_cv10/cv10 --label_file ./horse_label_20231209_balance_seed_10.json
