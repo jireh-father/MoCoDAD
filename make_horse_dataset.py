@@ -125,11 +125,10 @@ def main(args):
 
             df = df[['index_col'] + x_axis_keys + y_axis_keys]
             # three digit number using sample index
-            sample_idx_str = f"{sample_idx:03d}"
-            print(sample_idx_str)
+            sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
                                                  "00001.csv")
-            if kp_sample_output_path.endswith("1893-0101/00001.csv"):
+            if kp_sample_output_path.endswith("01893-0101/00001.csv"):
                 print(kp_sample_output_path)
                 print(csv_file)
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
