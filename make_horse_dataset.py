@@ -57,7 +57,7 @@ def main(args):
 
     label_key = "lameness"
     for sample_idx, sample in enumerate(labels):
-        print(f"processing {sample_idx}th sample")
+        # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
 
         is_val = 'isVal' in sample and sample['isVal']
