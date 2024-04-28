@@ -131,9 +131,6 @@ def main(args):
             sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
                                                  "00001.csv")
-            if kp_sample_output_path.endswith("10893-0101/00001.csv"):
-                print(kp_sample_output_path)
-                print(csv_file)
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
 
             # save df to csv without header
