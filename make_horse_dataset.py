@@ -97,6 +97,7 @@ def main(args):
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
             # drop na rows even if one of the keypoints is na
+            print(df.columns)
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
 
             if len(df) < args.window_length:
