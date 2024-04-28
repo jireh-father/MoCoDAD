@@ -113,11 +113,7 @@ def main(args):
             #         df = df[df[k] > args.keypoint_threshold]
 
             # drop na rows even if one of the keypoints is na
-            ori_len = len(df)
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
-            drop_len = ori_len - len(df)
-            if drop_len > 0:
-                print(f"drop {drop_len} rows in {csv_file}")
             if len(df) < args.window_length:
                 continue
 
@@ -131,6 +127,7 @@ def main(args):
             sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
                                                  "00001.csv")
+            print(kp_sample_output_path)
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
 
             # save df to csv without header
