@@ -113,8 +113,11 @@ def main(args):
             #         df = df[df[k] > args.keypoint_threshold]
 
             # drop na rows even if one of the keypoints is na
+            ori_len = len(df)
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
-
+            drop_len = ori_len - len(df)
+            if drop_len > 0:
+                print(f"drop {drop_len} rows in {csv_file}")
             if len(df) < args.window_length:
                 continue
 
