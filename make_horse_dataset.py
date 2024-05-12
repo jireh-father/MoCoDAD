@@ -96,8 +96,11 @@ def main(args):
             if args.use_old_keypoint:
                 csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
                 csv_files = glob.glob(os.path.join(keypoint_root, csv_path))
-                if len(csv_files) == 0 or len(csv_files) > 1:
+                if len(csv_files) == 0:
                     print("no csv file", csv_path)
+                    continue
+                if len(csv_files) > 1:
+                    print("multiple csv files", csv_files)
                     sys.exit(1)
             else:
                 csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
