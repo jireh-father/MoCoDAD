@@ -102,15 +102,16 @@ def main(args):
                 if len(csv_files) > 1:
                     print("multiple csv files", csv_files)
                     sys.exit(1)
+
+                csv_file = csv_files[0]
+
             else:
                 csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
 
-                try:
-                    df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
-                except:
-                    df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
-
-
+            try:
+                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
+            except:
+                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
             if len(df) < args.window_length:
                 continue
