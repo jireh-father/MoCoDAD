@@ -1,6 +1,9 @@
 import argparse
+import glob
 import os
 import json
+import sys
+
 import pandas as pd
 import numpy as np
 
@@ -89,12 +92,20 @@ def main(args):
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_path = path_and_dir["keypoint_full_path"]
-            csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
 
-            try:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
-            except:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+            if args.use_old_keypoint:
+                csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
+                csv_files = glob.glob(os.path.join(keypoint_root, csv_path))
+                if len(csv_files) == 0 or len(csv_files) > 1:
+                    print("no csv file", csv_path)
+                    sys.exit(1)
+            else:
+                csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
+
+                try:
+                    df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
+                except:
+                    df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
 
 
@@ -188,5 +199,7 @@ if __name__ == '__main__':
     parser.add_argument('--reset_index', action='store_true', default=False)
     # save test
     parser.add_argument('--save_test', action='store_true', default=False)
+
+    parser.add_argument('--use_old_keypoint', action='store_true', default=False)
 
     main(parser.parse_args())
