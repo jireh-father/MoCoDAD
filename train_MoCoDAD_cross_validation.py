@@ -114,15 +114,15 @@ if __name__ == '__main__':
     avg_results_dict = {}
     best_results_dict = {}
     worst_results_dict = {}
+    best_idx = np.argmax([result["clip_auc"] for result in cv_results])
+    worst_idx = np.argmin([result["clip_auc"] for result in cv_results])
     for metric in ["clip_auc", "auc", "f1", "recall", "precision", "accuracy"]:
         avg_metric = np.mean([result[metric] for result in cv_results])
         print(f"Average {metric}: {avg_metric}")
         avg_results_dict[metric] = avg_metric
-        best_results_dict[metric] = max([result[metric] for result in cv_results])
-        worst_results_dict[metric] = min([result[metric] for result in cv_results])
+        best_results_dict[metric] = cv_results[best_idx][metric]
+        worst_results_dict[metric] = cv_results[worst_idx][metric]
 
-    best_idx = np.argmax([result["clip_auc"] for result in cv_results])
-    worst_idx = np.argmin([result["clip_auc"] for result in cv_results])
     best_results_dict["confusion_matrix"] = cv_results[best_idx]["confusion_matrix"]
     worst_results_dict["confusion_matrix"] = cv_results[worst_idx]["confusion_matrix"]
 
