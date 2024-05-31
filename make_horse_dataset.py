@@ -44,6 +44,13 @@ TARGET_KP_COL_DICT = {
     "only_toe": [
         'Front_Toe_L', 'Front_Toe_R', 'Rear_Toe_L', 'Rear_Toe_R',
     ],
+    "only_leg": [
+        'Stifle_Joint_R', 'Stifle_Joint_L', 'Rear_Tarsus_L', 'Rear_Tarsus_R', 'Rear_Fetlock_L', 'Rear_Fetlock_R',
+        'Rear_Heel_L', 'Rear_Heel_R', 'Rear_Toe_L', 'Rear_Toe_R',
+        'ElbowJoint_R', 'ElbowJoint_L', 'Carpuse_R', 'Carpuse_L', 'Fetlock_L', 'Fetlock_R',
+        'Front_Heel_L', 'Front_Heel_R', 'Front_Toe_L', 'Front_Toe_R',
+    ],
+
 }
 
 
