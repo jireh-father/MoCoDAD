@@ -25,6 +25,9 @@ KEYPOINT_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_
                  'Rear_Heel_R_y', 'Rear_Toe_L_x', 'Rear_Toe_L_y', 'Rear_Toe_R_x',
                  'Rear_Toe_R_y']
 
+FRONT_KP_COLS = ['Front_Heel_L', 'Front_Heel_R', 'Front_Toe_L', 'Front_Toe_R']
+BACK_KP_COLS = ['Rear_Heel_L', 'Rear_Heel_R', 'Rear_Toe_L', 'Rear_Toe_R']
+
 # Withers,Throat,R_F_Elbow,R_F_Knee,R_F_Paw,L_F_Elbow,L_F_Knee,L_F_Paw,TailBase,R_B_Elbow,R_B_Knee,R_B_Paw,L_B_Elbow,L_B_Knee,L_B_Paw
 TARGET_KP_COL_DICT = {
     "baseline": [
