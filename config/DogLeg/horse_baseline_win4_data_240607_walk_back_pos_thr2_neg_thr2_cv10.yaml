@@ -104,7 +104,7 @@ num_coords: 2 # number of coordinates to use
 num_transform: 5 # number of transformations to apply
 num_workers: 2
 seg_stride: 1
-custom_num_joints: 34
+custom_num_joints: 13
 seg_th: 0
 start_offset: 0
 symm_range: true
