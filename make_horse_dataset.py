@@ -25,8 +25,18 @@ KEYPOINT_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_
                  'Rear_Heel_R_y', 'Rear_Toe_L_x', 'Rear_Toe_L_y', 'Rear_Toe_R_x',
                  'Rear_Toe_R_y']
 
-FRONT_KP_COLS = ['Front_Heel_L', 'Front_Heel_R', 'Front_Toe_L', 'Front_Toe_R']
-BACK_KP_COLS = ['Rear_Heel_L', 'Rear_Heel_R', 'Rear_Toe_L', 'Rear_Toe_R']
+BACK_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Tail_root_x', 'Tail_root_y', 'T_Coxae_L_x',
+                'T_Coxae_L_y', 'T_Coxae_R_x', 'T_Coxae_R_y', 'Stifile_Joint_L_x', 'Stifile_Joint_L_y',
+                'Stifile_Joint_R_x', 'Stifile_Joint_R_y', 'T_ischiadicum_L_x', 'T_ischiadicum_L_y',
+                'T_ischiadicum_R_x', 'T_ischiadicum_R_y', 'Hock_L_x', 'Hock_L_y', 'Hock_R_x', 'Hock_R_y',
+                'Fetlock_Rear_L_x', 'Fetlock_Rear_L_y', 'Fetlock_Rear_R_x', 'Fetlock_Rear_R_y',
+                'Hoof_Rear_L_x', 'Hoof_Rear_L_y', 'Hoof_Rear_R_x', 'Hoof_Rear_R_y', ]
+FRONT_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Forehead_x', 'Forehead_y', 'Nasal_bridge_x',
+                 'Nasal_bridge_y', 'Muzzle_x', 'Muzzle_y', 'Elbow_L_x', 'Elbow_L_y', 'Elbow_R_x', 'Elbow_R_y',
+                 'Shoulder_C_x', 'Shoulder_C_y', 'Shoulder_L_x', 'Shoulder_L_y', 'Shoulder_R_x', 'Shoulder_R_y',
+                 'Carpus_Front_L_x', 'Carpus_Front_L_y', 'Carpus_Front_R_x', 'Carpus_Front_R_y',
+                 'Fetlock_Front_L_x', 'Fetlock_Front_L_y', 'Fetlock_Front_R_x', 'Fetlock_Front_R_y',
+                 'Hoof_Front_L_x', 'Hoof_Front_L_y', 'Hoof_Front_R_x', 'Hoof_Front_R_y', ]
 
 # Withers,Throat,R_F_Elbow,R_F_Knee,R_F_Paw,L_F_Elbow,L_F_Knee,L_F_Paw,TailBase,R_B_Elbow,R_B_Knee,R_B_Paw,L_B_Elbow,L_B_Knee,L_B_Paw
 TARGET_KP_COL_DICT = {
@@ -53,6 +63,14 @@ TARGET_KP_COL_DICT = {
         'ElbowJoint_R', 'ElbowJoint_L', 'Carpuse_R', 'Carpuse_L', 'Fetlock_L', 'Fetlock_R',
         'Front_Heel_L', 'Front_Heel_R', 'Front_Toe_L', 'Front_Toe_R',
     ],
+    'front_baseline': [
+        'Forehead', 'Nasal_bridge', 'Muzzle', 'Elbow_L', 'Elbow_R', 'Shoulder_C', 'Shoulder_L', 'Shoulder_R',
+        'Carpus_Front_L', 'Carpus_Front_R', 'Fetlock_Front_L', 'Fetlock_Front_R', 'Hoof_Front_L', 'Hoof_Front_R',
+    ],
+    'back_baseline': [
+        'Tail_root', 'T_Coxae_L', 'T_Coxae_R', 'Stifile_Joint_L', 'Stifile_Joint_R', 'T_ischiadicum_L',
+        'T_ischiadicum_R', 'Hock_L', 'Hock_R', 'Fetlock_Rear_L', 'Fetlock_Rear_R', 'Hoof_Rear_L', 'Hoof_Rear_R',
+    ],
 
 }
 
@@ -60,7 +78,7 @@ TARGET_KP_COL_DICT = {
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
-    use_keys = TARGET_KP_COL_DICT[args.target_keypoint_name]
+    use_keys = TARGET_KP_COL_DICT[args.target_keypoint_name if args.direction == 'side' else f"{args.direction}_{args.target_keypoint_name}"]
     # score_keys = [f"{k}_score" for k in use_keys]
     y_axis_keys = [f"{k}_y" for k in use_keys]
     x_axis_keys = [f"{k}_x" for k in use_keys]
@@ -128,9 +146,18 @@ def main(args):
 
             len_df = len(df)
 
-            if len(df.columns) != len(KEYPOINT_COLS):
+            if args.direction == 'side':
+                cols = KEYPOINT_COLS
+            elif args.direction == 'front':
+                cols = FRONT_KP_COLS
+            elif args.direction == 'back':
+                cols = BACK_KP_COLS
+            else:
+                raise Exception("invalid direction", args.direction)
+
+            if len(df.columns) != len(cols):
                 raise Exception("invalid df keys", df.columns, csv_file)
-            df.columns = KEYPOINT_COLS
+            df.columns = cols
 
             # if args.keypoint_threshold and args.keypoint_threshold > 0:
             #     # drop rows by self.keypoint_threshold and score_keys
@@ -215,5 +242,8 @@ if __name__ == '__main__':
     parser.add_argument('--save_test', action='store_true', default=False)
 
     parser.add_argument('--use_old_keypoint', action='store_true', default=False)
+
+    # direction
+    parser.add_argument('--direction', type=str, default='side') # side, front, back
 
     main(parser.parse_args())
