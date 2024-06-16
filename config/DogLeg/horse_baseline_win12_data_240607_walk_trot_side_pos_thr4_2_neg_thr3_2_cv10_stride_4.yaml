@@ -14,7 +14,7 @@ devices: [0] # indices of cuda devices to use
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
 data_dir: './data/horse/baseline_data_240607_win12_side_walk_side_tr_150_pos_thr_4_neg_thr_3_trot_pos_thr_2_neg_thr_2_cv10/' # path to the data
-exp_dir: './baseline_data_240607_win12_side_walk_side_tr_150_pos_thr_4_neg_thr_3_trot_pos_thr_2_neg_thr_2_cv10' # path to the directory that will contain the current experiment directory
+exp_dir: './baseline_data_240607_win12_side_walk_side_tr_150_pos_thr_4_neg_thr_3_trot_pos_thr_2_neg_thr_2_cv10_stride_4' # path to the directory that will contain the current experiment directory
 test_path: './data/horse/baseline_data_240607_win12_side_walk_side_tr_150_pos_thr_4_neg_thr_3_trot_pos_thr_2_neg_thr_2_cv10/validating/test_frame_mask' # path to the test data
 load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
