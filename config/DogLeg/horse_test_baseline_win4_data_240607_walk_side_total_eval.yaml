@@ -88,7 +88,7 @@ load_tensors: false # if true, load the generated tensors for faster inference
 ### Dataset's configuration
 
 ## Important parameters
-dataset_choice: 'UBnormal'
+dataset_choice: ''
 seg_len: 4 # length of the window (cond+noised)
 vid_res: [10800,7200]
 batch_size: 1024
