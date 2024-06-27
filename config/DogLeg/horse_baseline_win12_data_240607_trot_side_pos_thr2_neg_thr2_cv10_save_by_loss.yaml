@@ -14,7 +14,7 @@ devices: [0] # indices of cuda devices to use
 ## Paths
 dir_name: 'train_experiment' # name of the directory of the current experiment
 data_dir: './data/horse/baseline_data_240607_win12_trot_side_pos_thr2_neg_thr2_cv10/' # path to the data
-exp_dir: './checkpoints_horse_baseline_data_240607_win12_trot_side_pos_thr2_neg_thr2_cv10_base' # path to the directory that will contain the current experiment directory
+exp_dir: './checkpoints_horse_baseline_data_240607_win12_trot_side_pos_thr2_neg_thr2_cv10_base_save_by_loss' # path to the directory that will contain the current experiment directory
 test_path: './data/horse/baseline_data_240607_win12_trot_side_pos_thr2_neg_thr2_cv10/validating/test_frame_mask' # path to the test data
 load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
@@ -111,4 +111,5 @@ symm_range: true
 use_fitted_scaler: false
 remove_last_remain_frame: false
 use_original_anomaly_score: true
-save_top_k: 100
+monitored_metric: 'loss_noise'
+metric_mode: 'min'
