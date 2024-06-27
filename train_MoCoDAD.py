@@ -50,7 +50,7 @@ if __name__ == '__main__':
     else:
         monitored_metric = 'loss_noise'
         metric_mode = 'min'
-    callbacks = [ModelCheckpoint(dirpath=args.ckpt_dir, save_top_k=2,
+    callbacks = [ModelCheckpoint(dirpath=args.ckpt_dir, save_top_k=args.save_top_k if hasattr(args, "save_top_k") else 2,
                                  monitor=monitored_metric,
                                  mode=metric_mode)]
 
