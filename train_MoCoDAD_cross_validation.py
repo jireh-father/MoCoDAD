@@ -27,6 +27,7 @@ if __name__ == '__main__':
                         default='/your_default_config_file_path')
     parser.add_argument('--slack_webhook_url', type=str, default=None)
     parser.add_argument('--data_root', type=str, default=None)
+    parser.add_argument('--num_cv', type=int, default=None)
 
     args = parser.parse_args()
     data_root = args.data_root
@@ -43,6 +44,8 @@ if __name__ == '__main__':
     pl.seed_everything(args.seed)
 
     data_dirs = glob.glob(os.path.join(data_root, "*"))
+    if args.num_cv:
+        data_dirs = data_dirs[:args.num_cv]
 
     ori_exp_dir = args.exp_dir
     cv_results = []

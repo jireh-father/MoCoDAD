@@ -90,7 +90,7 @@ load_tensors: false # if true, load the generated tensors for faster inference
 
 ## Important parameters
 dataset_choice: 'UBnormal'
-seg_len: 4 # length of the window (cond+noised)
+seg_len: 12 # length of the window (cond+noised)
 vid_res: [10800,7200]
 batch_size: 1024
 pad_size: -1 # size of the padding 
