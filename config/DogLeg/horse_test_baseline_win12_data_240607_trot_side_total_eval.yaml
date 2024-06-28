@@ -16,7 +16,7 @@ dir_name: 'cv1' # name of the directory of the current experiment
 data_dir: './data/horse/baseline_data_240607_win12_trot_side_total_test' # path to the data
 exp_dir: './checkpoints_horse_baseline_data_240607_win12_trot_side_pos_thr2_neg_thr2_cv10_base_save_by_loss' # path to the directory that will contain the current experiment directory
 test_path: './data/horse/baseline_data_240607_win12_trot_side_total_test/testing/test_frame_mask' # path to the test data
-load_ckpt: 'epoch=98-step=4851.ckpt' # name of the checkpoint to load at inference time
+load_ckpt: 'epoch=28-step=1247.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: false # if true, create a new directory for the current experiment
 
 ## WANDB configuration
