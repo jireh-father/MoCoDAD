@@ -103,3 +103,7 @@ python make_horse_dataset.py --keypoint_dir ./horse_kp_20240607/ --target_keypoi
 
 python make_horse_dataset.py --keypoint_dir ./horse_kp_20240607/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240607_win4_walk_side_total_test --label_file ./horse_20240607_walk_side_total_test.json
 python make_horse_dataset.py --keypoint_dir ./horse_kp_20240607/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240607_win4_walk_side_total_train --label_file ./horse_20240607_walk_side_total_train.json
+
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240607/ --target_keypoint_name baseline --window_length 12 --save_test --output_dir ./data/horse/baseline_data_240607_win12_trot_side_total_test --label_file ./horse_20240607_trot_side_total_test.json
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240607/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240607_win4_trot_side_total_test --label_file ./horse_20240607_trot_side_total_test.json
+
