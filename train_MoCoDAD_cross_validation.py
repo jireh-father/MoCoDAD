@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     data_root = args.data_root
+    num_cv = args.num_cv
     slack_webhook_url = args.slack_webhook_url
     config_path = args.config
     args = yaml.load(open(args.config), Loader=yaml.FullLoader)
@@ -44,8 +45,8 @@ if __name__ == '__main__':
     pl.seed_everything(args.seed)
 
     data_dirs = glob.glob(os.path.join(data_root, "*"))
-    if args.num_cv:
-        data_dirs = data_dirs[:args.num_cv]
+    if num_cv:
+        data_dirs = data_dirs[:num_cv]
 
     ori_exp_dir = args.exp_dir
     cv_results = []
