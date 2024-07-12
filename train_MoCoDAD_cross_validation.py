@@ -18,9 +18,11 @@ from utils.dataset import get_dataset_and_loader
 from utils.ema import EMACallback
 from utils import slack
 from collections import defaultdict
-
+import datetime
 if __name__ == '__main__':
-
+    #print start date and time
+    print("start date and time")
+    print(datetime.datetime.now())
     # Parse command line arguments and load config file
     parser = argparse.ArgumentParser(description='Pose_AD_Experiment')
     parser.add_argument('-c', '--config', type=str, required=True,
@@ -154,3 +156,6 @@ if __name__ == '__main__':
         slack.send_info_to_slack(
             f"Mocodad Trained(worst). {args.exp_dir}.\n{', '.join(keys)}\n{' '.join([str(round(worst_results_dict[k] * 100, 2)) for k in keys])}\n{worst_results_dict['confusion_matrix']}",
             slack_webhook_url)
+    print("end date and time")
+    # "2024-07-01 12:00:00 format"
+    print(datetime.datetime.now())
