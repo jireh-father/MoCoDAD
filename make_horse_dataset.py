@@ -136,6 +136,9 @@ def main(args):
             else:
                 csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
 
+            if args.kp_file_name:
+                csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
+
             try:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
             except:
@@ -245,5 +248,7 @@ if __name__ == '__main__':
 
     # direction
     parser.add_argument('--direction', type=str, default='side') # side, front, back
+    # kp_file_name
+    parser.add_argument('--kp_file_name', type=str, default=None)#coords.csv
 
     main(parser.parse_args())
