@@ -87,6 +87,7 @@ def main(args):
     moco_fname_to_csv_fname_dict = {}
 
     label_key = "lameness"
+    center_frames = []
     for sample_idx, sample in enumerate(labels):
         # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
@@ -144,6 +145,8 @@ def main(args):
             except:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
+
+
             if len(df) < args.window_length:
                 continue
 
@@ -178,6 +181,27 @@ def main(args):
             df['index_col'] = df.index + 1
 
             df = df[['index_col'] + x_axis_keys + y_axis_keys]
+
+            if args.num_div:
+                min_x = df[x_axis_keys].min().min()
+                max_x = df[x_axis_keys].max().max()
+                width = max_x - min_x
+                div_width = width / args.num_div
+                thr_width = div_width * args.num_thr_div
+                left_thr = min_x + thr_width
+                right_thr = max_x - thr_width
+
+                # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
+                df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
+
+                if args.center_max_frames and len(df) > args.center_max_frames:
+                    center_x = (min_x + max_x) / 2
+                    # remain args.center_max_frames rows that frames closest to center_x by first key in x_axis_keys.
+                    df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.center_max_frames]]
+
+                center_frames.append(len(df))
+
+
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
@@ -222,22 +246,24 @@ def main(args):
     if moco_fname_to_csv_fname_dict:
         with open(os.path.join(args.output_dir, "moco_fname_to_csv_fname_dict.json"), "w") as f:
             json.dump(moco_fname_to_csv_fname_dict, f, ensure_ascii=False, indent=4)
-
+    if center_frames:
+        print("avg center frames", sum(center_frames) / len(center_frames))
+        print("min center frames", min(center_frames))
     print("done")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Pose_AD_Experiment')
-    parser.add_argument('--label_file', type=str, default='./expert_label_20231031_balance_pos_neg.json')
-    parser.add_argument('--keypoint_dir', type=str, default='E:\dataset\\afp\pei_20231031')
+    parser.add_argument('--label_file', type=str, default='../dog-leg-disease-recognizer/horse_20240710_trot_side_pos_thr_2_neg_thr_2_rem_old_mis_seed_1.json')
+    parser.add_argument('--keypoint_dir', type=str, default='E:\dataset\\afp\horse_kp_20240710')
     parser.add_argument('--target_keypoint_name', type=str,
                         default='baseline')
     # keypoint_threshold
     parser.add_argument('--keypoint_threshold', type=float, default=None)  # 0.6)
     # window_length
-    parser.add_argument('--window_length', type=int, default=6)
+    parser.add_argument('--window_length', type=int, default=4)
     # output_dir
-    parser.add_argument('--output_dir', type=str, default='E:\dataset\\afp\dog_mocodad')
+    parser.add_argument('--output_dir', type=str, default='E:\dataset\\afp\horse_mocodad_dataset_test')
 
     # reset_index
     parser.add_argument('--reset_index', action='store_true', default=False)
@@ -249,6 +275,13 @@ if __name__ == '__main__':
     # direction
     parser.add_argument('--direction', type=str, default='side') # side, front, back
     # kp_file_name
-    parser.add_argument('--kp_file_name', type=str, default=None)#coords.csv
+    parser.add_argument('--kp_file_name', type=str, default=None)
+    # parser.add_argument('--kp_file_name', type=str, default='coords.csv')#coords.csv
+    # num_div
+    parser.add_argument('--num_div', type=int, default=None)#6
+    # num_thr_div
+    parser.add_argument('--num_thr_div', type=int, default=1)#1
+
+    parser.add_argument('--center_max_frames', type=int, default=None)#75
 
     main(parser.parse_args())
