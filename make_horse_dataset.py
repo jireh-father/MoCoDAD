@@ -182,6 +182,10 @@ def main(args):
 
             df = df[['index_col'] + x_axis_keys + y_axis_keys]
 
+            if args.frame_stride and args.frame_stride > 1:
+                # remove rows by frame_stride
+                df = df[df['index_col'] % args.frame_stride == 0]
+
             if args.num_div:
                 min_x = df[x_axis_keys].min().min()
                 max_x = df[x_axis_keys].max().max()
@@ -284,6 +288,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--center_max_frames', type=int, default=None)#75
 
-    #
+    # frame_stride
+    parser.add_argument('--frame_stride', type=int, default=None)
 
     main(parser.parse_args())
