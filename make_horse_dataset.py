@@ -25,6 +25,30 @@ KEYPOINT_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_
                  'Rear_Heel_R_y', 'Rear_Toe_L_x', 'Rear_Toe_L_y', 'Rear_Toe_R_x',
                  'Rear_Toe_R_y']
 
+KEYPOINT_COLS_WITH_SCORE = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_y', 'Nostril_score',
+                            'Eye_x', 'Eye_y', 'Eye_score', 'Poll_x', 'Poll_y', 'Poll_score', 'Withers_x', 'Withers_y',
+                            'Withers_score', 'LowestBack_x', 'LowestBack_y', 'LowestBack_score', 'T16L1_x', 'T16L1_y',
+                            'T16L1_score', 'T_sacrale_x', 'T_sacrale_y', 'T_sacrale_score', 'Tail_Root_x', 'Tail_Root_y',
+                            'Tail_Root_score', 'T_ischiadicum_x', 'T_ischiadicum_y', 'T_ischiadicum_score', 'Tub_x',
+                            'Tub_y', 'Tub_score', 'Spina_scapulae_x', 'Spina_scapulae_y', 'Spina_scapulae_score',
+                            'ElbowJoint_L_x', 'ElbowJoint_L_y', 'ElbowJoint_L_score', 'ElbowJoint_R_x', 'ElbowJoint_R_y',
+                            'ElbowJoint_R_score', 'Carpuse_L_x', 'Carpuse_L_y', 'Carpuse_L_score', 'Carpuse_R_x',
+                            'Carpuse_R_y', 'Carpuse_R_score', 'Fetlock_L_x', 'Fetlock_L_y', 'Fetlock_L_score',
+                            'Fetlock_R_x', 'Fetlock_R_y', 'Fetlock_R_score', 'Front_Heel_L_x', 'Front_Heel_L_y',
+                            'Front_Heel_L_score', 'Front_Heel_R_x', 'Front_Heel_R_y', 'Front_Heel_R_score',
+                            'Front_Toe_L_x', 'Front_Toe_L_y', 'Front_Toe_L_score', 'Front_Toe_R_x', 'Front_Toe_R_y',
+                            'Front_Toe_R_score', 'Abdomen_x', 'Abdomen_y', 'Abdomen_score', 'T_Coxae_x', 'T_Coxae_y',
+                            'T_Coxae_score', 'Coxofemoral_x', 'Coxofemoral_y', 'Coxofemoral_score',
+                            'Stifle_Joint_L_x', 'Stifle_Joint_L_y', 'Stifle_Joint_L_score', 'Stifle_Joint_R_x',
+                            'Stifle_Joint_R_y', 'Stifle_Joint_R_score', 'Rear_Tarsus_L_x', 'Rear_Tarsus_L_y',
+                            'Rear_Tarsus_L_score', 'Rear_Tarsus_R_x', 'Rear_Tarsus_R_y', 'Rear_Tarsus_R_score',
+                            'Rear_Fetlock_L_x', 'Rear_Fetlock_L_y', 'Rear_Fetlock_L_score', 'Rear_Fetlock_R_x',
+                            'Rear_Fetlock_R_y', 'Rear_Fetlock_R_score', 'Rear_Heel_L_x', 'Rear_Heel_L_y',
+                            'Rear_Heel_L_score', 'Rear_Heel_R_x', 'Rear_Heel_R_y', 'Rear_Heel_R_score',
+                            'Rear_Toe_L_x', 'Rear_Toe_L_y', 'Rear_Toe_L_score', 'Rear_Toe_R_x', 'Rear_Toe_R_y',
+                            'Rear_Toe_R_score']
+
+
 BACK_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Tail_root_x', 'Tail_root_y', 'T_Coxae_L_x',
                 'T_Coxae_L_y', 'T_Coxae_R_x', 'T_Coxae_R_y', 'Stifile_Joint_L_x', 'Stifile_Joint_L_y',
                 'Stifile_Joint_R_x', 'Stifile_Joint_R_y', 'T_ischiadicum_L_x', 'T_ischiadicum_L_y',
@@ -154,6 +178,8 @@ def main(args):
 
             if args.direction == 'side':
                 cols = KEYPOINT_COLS
+                if args.use_score_col:
+                    cols = KEYPOINT_COLS_WITH_SCORE
             elif args.direction == 'front':
                 cols = FRONT_KP_COLS
             elif args.direction == 'back':
@@ -290,5 +316,8 @@ if __name__ == '__main__':
 
     # frame_stride
     parser.add_argument('--frame_stride', type=int, default=None)
+
+    # use_score_col
+    parser.add_argument('--use_score_col', action='store_true', default=False)
 
     main(parser.parse_args())
