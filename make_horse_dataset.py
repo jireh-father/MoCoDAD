@@ -28,10 +28,12 @@ KEYPOINT_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_
 KEYPOINT_COLS_WITH_SCORE = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_y', 'Nostril_score',
                             'Eye_x', 'Eye_y', 'Eye_score', 'Poll_x', 'Poll_y', 'Poll_score', 'Withers_x', 'Withers_y',
                             'Withers_score', 'LowestBack_x', 'LowestBack_y', 'LowestBack_score', 'T16L1_x', 'T16L1_y',
-                            'T16L1_score', 'T_sacrale_x', 'T_sacrale_y', 'T_sacrale_score', 'Tail_Root_x', 'Tail_Root_y',
+                            'T16L1_score', 'T_sacrale_x', 'T_sacrale_y', 'T_sacrale_score', 'Tail_Root_x',
+                            'Tail_Root_y',
                             'Tail_Root_score', 'T_ischiadicum_x', 'T_ischiadicum_y', 'T_ischiadicum_score', 'Tub_x',
                             'Tub_y', 'Tub_score', 'Spina_scapulae_x', 'Spina_scapulae_y', 'Spina_scapulae_score',
-                            'ElbowJoint_L_x', 'ElbowJoint_L_y', 'ElbowJoint_L_score', 'ElbowJoint_R_x', 'ElbowJoint_R_y',
+                            'ElbowJoint_L_x', 'ElbowJoint_L_y', 'ElbowJoint_L_score', 'ElbowJoint_R_x',
+                            'ElbowJoint_R_y',
                             'ElbowJoint_R_score', 'Carpuse_L_x', 'Carpuse_L_y', 'Carpuse_L_score', 'Carpuse_R_x',
                             'Carpuse_R_y', 'Carpuse_R_score', 'Fetlock_L_x', 'Fetlock_L_y', 'Fetlock_L_score',
                             'Fetlock_R_x', 'Fetlock_R_y', 'Fetlock_R_score', 'Front_Heel_L_x', 'Front_Heel_L_y',
@@ -47,7 +49,6 @@ KEYPOINT_COLS_WITH_SCORE = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x'
                             'Rear_Heel_L_score', 'Rear_Heel_R_x', 'Rear_Heel_R_y', 'Rear_Heel_R_score',
                             'Rear_Toe_L_x', 'Rear_Toe_L_y', 'Rear_Toe_L_score', 'Rear_Toe_R_x', 'Rear_Toe_R_y',
                             'Rear_Toe_R_score']
-
 
 BACK_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Tail_root_x', 'Tail_root_y', 'T_Coxae_L_x',
                 'T_Coxae_L_y', 'T_Coxae_R_x', 'T_Coxae_R_y', 'Stifile_Joint_L_x', 'Stifile_Joint_L_y',
@@ -95,14 +96,34 @@ TARGET_KP_COL_DICT = {
         'Tail_root', 'T_Coxae_L', 'T_Coxae_R', 'Stifile_Joint_L', 'Stifile_Joint_R', 'T_ischiadicum_L',
         'T_ischiadicum_R', 'Hock_L', 'Hock_R', 'Fetlock_Rear_L', 'Fetlock_Rear_R', 'Hoof_Rear_L', 'Hoof_Rear_R',
     ],
-
+    "no_head": [
+        'Stifle_Joint_R', 'Front_Heel_L', 'Front_Heel_R', 'Spina_scapulae', 'T16L1', 'Abdomen', 'LowestBack',
+        'T_sacrale', 'T_ischiadicum', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Front_Toe_L', 'Rear_Toe_L',
+        'Stifle_Joint_L', 'T_Coxae', 'Rear_Toe_R', 'ElbowJoint_R', 'Tub', 'Coxofemoral', 'ElbowJoint_L',
+        'Rear_Fetlock_R', 'Withers', 'Carpuse_R', 'Rear_Heel_R', 'Fetlock_L', 'Front_Toe_R', 'Rear_Tarsus_R',
+    ],
+    'no_foot': [
+        'Stifle_Joint_R', 'Spina_scapulae', 'T16L1', 'Abdomen', 'LowestBack',
+        'T_sacrale', 'Nostril', 'T_ischiadicum', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Eye',
+        'Stifle_Joint_L', 'T_Coxae', 'ElbowJoint_R', 'Tub', 'Coxofemoral', 'ElbowJoint_L',
+        'Rear_Fetlock_R', 'Withers', 'Carpuse_R', 'Fetlock_L', 'Rear_Tarsus_R', 'Poll',
+        'Carpuse_L', 'Fetlock_R', 'Tail_Root'
+    ],
+    'no_head_and_foot': [
+        'Stifle_Joint_R', 'Spina_scapulae', 'T16L1', 'Abdomen', 'LowestBack',
+        'T_sacrale', 'T_ischiadicum', 'Rear_Fetlock_L', 'Rear_Tarsus_L',
+        'Stifle_Joint_L', 'T_Coxae', 'ElbowJoint_R', 'Tub', 'Coxofemoral', 'ElbowJoint_L',
+        'Rear_Fetlock_R', 'Withers', 'Carpuse_R', 'Fetlock_L', 'Rear_Tarsus_R',
+        'Carpuse_L', 'Fetlock_R', 'Tail_Root'
+    ],
 }
 
 
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
-    use_keys = TARGET_KP_COL_DICT[args.target_keypoint_name if args.direction == 'side' else f"{args.direction}_{args.target_keypoint_name}"]
+    use_keys = TARGET_KP_COL_DICT[
+        args.target_keypoint_name if args.direction == 'side' else f"{args.direction}_{args.target_keypoint_name}"]
     # score_keys = [f"{k}_score" for k in use_keys]
     y_axis_keys = [f"{k}_y" for k in use_keys]
     x_axis_keys = [f"{k}_x" for k in use_keys]
@@ -169,8 +190,6 @@ def main(args):
             except:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
-
-
             if len(df) < args.window_length:
                 continue
 
@@ -236,7 +255,6 @@ def main(args):
 
                     center_frames.append(len(df))
 
-
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
@@ -289,7 +307,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Pose_AD_Experiment')
-    parser.add_argument('--label_file', type=str, default='../dog-leg-disease-recognizer/horse_20240710_trot_side_pos_thr_2_neg_thr_2_rem_old_mis_seed_1.json')
+    parser.add_argument('--label_file', type=str,
+                        default='../dog-leg-disease-recognizer/horse_20240710_trot_side_pos_thr_2_neg_thr_2_rem_old_mis_seed_1.json')
     parser.add_argument('--keypoint_dir', type=str, default='E:\dataset\\afp\horse_kp_20240710')
     parser.add_argument('--target_keypoint_name', type=str,
                         default='baseline')
@@ -308,16 +327,16 @@ if __name__ == '__main__':
     parser.add_argument('--use_old_keypoint', action='store_true', default=False)
 
     # direction
-    parser.add_argument('--direction', type=str, default='side') # side, front, back
+    parser.add_argument('--direction', type=str, default='side')  # side, front, back
     # kp_file_name
     parser.add_argument('--kp_file_name', type=str, default=None)
     # parser.add_argument('--kp_file_name', type=str, default='coords.csv')#coords.csv
     # num_div
-    parser.add_argument('--num_div', type=int, default=None)#6
+    parser.add_argument('--num_div', type=int, default=None)  # 6
     # num_thr_div
-    parser.add_argument('--num_thr_div', type=int, default=1)#1
+    parser.add_argument('--num_thr_div', type=int, default=1)  # 1
 
-    parser.add_argument('--max_frames', type=int, default=None)#75
+    parser.add_argument('--max_frames', type=int, default=None)  # 75
 
     # frame_stride
     parser.add_argument('--frame_stride', type=int, default=None)
@@ -327,6 +346,5 @@ if __name__ == '__main__':
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
-
 
     main(parser.parse_args())
