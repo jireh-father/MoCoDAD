@@ -213,23 +213,28 @@ def main(args):
                 df = df[df['index_col'] % args.frame_stride == 0]
 
             if args.num_div:
-                min_x = df[x_axis_keys].min().min()
-                max_x = df[x_axis_keys].max().max()
-                width = max_x - min_x
-                div_width = width / args.num_div
-                thr_width = div_width * args.num_thr_div
-                left_thr = min_x + thr_width
-                right_thr = max_x - thr_width
+                if args.use_random_frame_range and args.max_frames:
+                    if len(df) > args.max_frames:
+                        start_idx = np.random.randint(0, len(df) - args.max_frames)
+                        df = df.iloc[start_idx:start_idx + args.max_frames]
+                else:
+                    min_x = df[x_axis_keys].min().min()
+                    max_x = df[x_axis_keys].max().max()
+                    width = max_x - min_x
+                    div_width = width / args.num_div
+                    thr_width = div_width * args.num_thr_div
+                    left_thr = min_x + thr_width
+                    right_thr = max_x - thr_width
 
-                # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
+                    # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
+                    df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
 
-                if args.center_max_frames and len(df) > args.center_max_frames:
-                    center_x = (min_x + max_x) / 2
-                    # remain args.center_max_frames rows that frames closest to center_x by first key in x_axis_keys.
-                    df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.center_max_frames]]
+                    if args.max_frames and len(df) > args.max_frames:
+                        center_x = (min_x + max_x) / 2
+                        # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
+                        df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
 
-                center_frames.append(len(df))
+                    center_frames.append(len(df))
 
 
             # three digit number using sample index
@@ -312,12 +317,16 @@ if __name__ == '__main__':
     # num_thr_div
     parser.add_argument('--num_thr_div', type=int, default=1)#1
 
-    parser.add_argument('--center_max_frames', type=int, default=None)#75
+    parser.add_argument('--max_frames', type=int, default=None)#75
 
     # frame_stride
     parser.add_argument('--frame_stride', type=int, default=None)
 
     # use_score_col
     parser.add_argument('--use_score_col', action='store_true', default=False)
+
+    # use_random_frame_range
+    parser.add_argument('--use_random_frame_range', action='store_true', default=False)
+
 
     main(parser.parse_args())
