@@ -34,3 +34,9 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 
 # 20240720 20fps, center5_1 maxf 75 rem mis all, walk
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240720_20fps_walk_side_pos_thr4_neg_thr3_rem_mis_all_cv10.yaml --data_root ./data/horse/baseline_data_240720_20fps_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_all_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240720_20fps_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_all_cv10 &
+
+# interpolation, walk, rem old mis
+nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_data_240716_inter_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10.yaml --data_root ./data/horse/baseline_data_240716_inter_win4_walk_side_pos_thr_4_neg_thr_3_rem_old_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240716_inter_win4_walk_side_pos_thr_4_neg_thr_3_rem_old_mis_cv10 &
+
+# interpolation, walk and trot, rem old mis
+nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_data_240716_inter_walk_and_trot_side_43_22_rem_old_mis_cv10.yaml --data_root ./data/horse/baseline_data_240716_inter_win4_walk_and_trot_side_43_22_rem_old_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240716_inter_win4_walk_and_trot_side_43_22_rem_old_mis_cv10 &
