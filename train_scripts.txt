@@ -53,6 +53,8 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 # trot, no head, rem_mis, center5_1 maxf 75, 20240710
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_no_head_win4_center5_1_maxf_75_data_240710_trot_side_pos_thr2_neg_thr2_rem_mis_cv10.yaml --data_root ./data/horse/no_head_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_no_head_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10 &
 
+>>>>>>>>>> 여기까지 완료됨
+
 # trot, no foot, rem_mis, center5_1 maxf 75, 20240710
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_no_foot_win4_center5_1_maxf_75_data_240710_trot_side_pos_thr2_neg_thr2_rem_mis_cv10.yaml --data_root ./data/horse/no_foot_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_no_foot_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10 &
 
