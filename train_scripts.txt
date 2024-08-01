@@ -64,3 +64,6 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 # interpolation, walk, all, center5_1 maxf 75, 20240716
 # --> 안됨. center 프레임 추출하는게 안됨.
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240716_inter_walk_side_pos_thr4_neg_thr3_cv10.yaml --data_root ./data/horse/baseline_data_240716_inter_win4_center5_1_maxf_75_walk_side_pos_thr_4_neg_thr_3_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240716_inter_win4_center5_1_maxf_75_walk_side_pos_thr_4_neg_thr_3_cv10 &
+
+# trot, labeler1, rem mis, center5_1 maxf 75, 20240710
+nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_data_240710_trot_side_pos_thr_1_neg_thr_1_rem_mis_cv10.yaml  --data_root ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr_1_neg_thr_1_rem_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr_1_neg_thr_1_rem_mis_cv10 &
