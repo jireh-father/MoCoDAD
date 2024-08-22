@@ -228,6 +228,7 @@ class MoCoDAD(pl.LightningModule):
         loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
         print("loss_noise", loss_noise.shape)
         loss_noise = F.cosine_similarity(predicted_noise, noise, dim=1)
+        loss_noise = torch.mean(loss_noise)
         print("loss_noise",loss_noise.shape)
         self.log('loss_noise', loss_noise)
 
