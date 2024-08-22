@@ -225,11 +225,13 @@ class MoCoDAD(pl.LightningModule):
         # Predict the noise
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
         # Compute the loss
-        loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
+        # loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
+        loss_noise = F.cosine_similarity(predicted_noise, noise, dim=1)
         self.log('loss_noise', loss_noise)
 
         if self.conditioning_architecture == 'AE':
-            loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            loss_rec_cond = F.cosine_similarity(rec_cond_data, condition_data, dim=1)
             loss = loss_noise + loss_rec_cond * self.rec_weight
             self.log("loss_recons", loss_rec_cond)
         else:
