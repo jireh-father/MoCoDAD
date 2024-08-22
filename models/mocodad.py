@@ -233,8 +233,11 @@ class MoCoDAD(pl.LightningModule):
         self.log('loss_noise', loss_noise)
 
         if self.conditioning_architecture == 'AE':
-            # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            self.log("loss_rec_cond", loss_rec_cond.shape)
             loss_rec_cond = F.cosine_similarity(rec_cond_data, condition_data, dim=1)
+            loss_rec_cond = torch.mean(loss_rec_cond)
+            self.log("loss_rec_cond", loss_rec_cond.shape)
             loss = loss_noise + loss_rec_cond * self.rec_weight
             self.log("loss_recons", loss_rec_cond)
         else:
