@@ -803,7 +803,6 @@ class MoCoDAD(pl.LightningModule):
             cent_loss = F.cross_entropy(F.normalize(x), input_sequence, reduction="mean")
             print("cent_loss: ", cent_loss.shape)
             loss_noise = cosine_loss + 0.1 * cent_loss
-            torch.mean(loss_noise.reshape(-1, prod(repr_shape)), dim=-1)
             return loss_noise
         losses = [compute_loss(x, input_sequence) for x in generated_xs]
         losses_ori = [compute_loss_ori(x) for x in generated_xs]
