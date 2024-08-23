@@ -789,7 +789,7 @@ class MoCoDAD(pl.LightningModule):
             return generated_xs[np.random.randint(len(generated_xs))]
 
         B, repr_shape = input_sequence.shape[0], input_sequence.shape[1:]
-        # compute_loss = lambda x: torch.mean(self.loss_fn(x, input_sequence).reshape(-1, prod(repr_shape)), dim=-1)
+        compute_loss_ori = lambda x: torch.mean(self.loss_fn(x, input_sequence).reshape(-1, prod(repr_shape)), dim=-1)
         def compute_loss(x, input_sequence):
             x = x.reshape(-1, self.num_coords * 2)
             input_sequence = input_sequence.reshape(-1, self.num_coords * 2)
@@ -800,6 +800,9 @@ class MoCoDAD(pl.LightningModule):
             loss_noise = cosine_loss + 0.1 * cent_loss
             return loss_noise
         losses = [compute_loss(x, input_sequence) for x in generated_xs]
+        losses_ori = [compute_loss_ori(x) for x in generated_xs]
+        print("losses: ", losses[0].shape)
+        print("losses_ori: ", losses_ori[0].shape)
 
         if aggr_strategy == 'all':
             dims_idxs = list(range(2, len(repr_shape) + 2))
