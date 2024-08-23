@@ -226,8 +226,9 @@ class MoCoDAD(pl.LightningModule):
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
         # Compute the loss
         # loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
-        predicted_noise_vectors = predicted_noise.reshape(-1, self.num_coords * 2)
-        noise_vectors = noise.reshape(-1, self.num_coords * 2)
+        ori_shape = predicted_noise.shape
+        predicted_noise_vectors = predicted_noise.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
+        noise_vectors = noise.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
 
         cosine_loss = F.cosine_embedding_loss(predicted_noise_vectors, noise_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
         cent_loss = F.cross_entropy(F.normalize(predicted_noise_vectors), noise_vectors, reduction="mean")
@@ -241,8 +242,8 @@ class MoCoDAD(pl.LightningModule):
 
         if self.conditioning_architecture == 'AE':
             # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
-            rec_cond_data_vectors = rec_cond_data.reshape(-1, self.num_coords * 2 * 3)
-            condition_data_vectors = condition_data.reshape(-1, self.num_coords * 2 * 3)
+            rec_cond_data_vectors = rec_cond_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
+            condition_data_vectors = condition_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
             cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
             cent_loss = F.cross_entropy(F.normalize(rec_cond_data_vectors), condition_data_vectors, reduction="mean")
             loss_rec_cond = cosine_loss + 0.1 * cent_loss
@@ -793,8 +794,8 @@ class MoCoDAD(pl.LightningModule):
         def compute_loss(x, input_sequence):
             print("x: ", x.shape)
             print("input_sequence: ", input_sequence.shape)
-            x = x.reshape(-1, self.num_coords * 2)
-            input_sequence = input_sequence.reshape(-1, self.num_coords * 2)
+            x = x.reshape(-1, prod(repr_shape))
+            input_sequence = input_sequence.reshape(-1, prod(repr_shape))
             print("x re: ", x.shape)
             print("input_sequence re: ", input_sequence.shape)
             cosine_loss = F.cosine_embedding_loss(x, input_sequence,
@@ -803,7 +804,7 @@ class MoCoDAD(pl.LightningModule):
             cent_loss = F.cross_entropy(F.normalize(x), input_sequence, reduction="mean")
             print("cent_loss: ", cent_loss.shape)
             loss_noise = cosine_loss + 0.1 * cent_loss
-            return loss_noise
+            return loss_noise.reshape(-1, prod(repr_shape))
         losses = [compute_loss(x, input_sequence) for x in generated_xs]
         losses_ori = [compute_loss_ori(x) for x in generated_xs]
         print("losses: ", losses[0].shape)
