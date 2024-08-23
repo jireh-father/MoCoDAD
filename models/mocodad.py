@@ -229,7 +229,7 @@ class MoCoDAD(pl.LightningModule):
         predicted_noise_vectors = predicted_noise.reshape(-1, self.num_coords * 2)
         noise_vectors = noise.reshape(-1, self.num_coords * 2)
 
-        cosine_loss = F.cosine_embedding_loss(predicted_noise_vectors, noise_vectors, torch.Tensor([1]), reduction="mean")
+        cosine_loss = F.cosine_embedding_loss(predicted_noise_vectors, noise_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
         cent_loss = F.cross_entropy(F.normalize(predicted_noise_vectors), noise_vectors, reduction="mean")
         loss_noise = cosine_loss + 0.1 * cent_loss
 
