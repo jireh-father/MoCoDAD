@@ -243,7 +243,7 @@ class MoCoDAD(pl.LightningModule):
             # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
             rec_cond_data_vectors = rec_cond_data.reshape(-1, self.num_coords * 2 * 3)
             condition_data_vectors = condition_data.reshape(-1, self.num_coords * 2 * 3)
-            cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]), reduction="mean")
+            cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
             cent_loss = F.cross_entropy(F.normalize(rec_cond_data_vectors), condition_data_vectors, reduction="mean")
             loss_rec_cond = cosine_loss + 0.1 * cent_loss
             # print("loss_rec_cond", loss_rec_cond.shape, loss_rec_cond)
