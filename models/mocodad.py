@@ -791,13 +791,19 @@ class MoCoDAD(pl.LightningModule):
         B, repr_shape = input_sequence.shape[0], input_sequence.shape[1:]
         compute_loss_ori = lambda x: torch.mean(self.loss_fn(x, input_sequence).reshape(-1, prod(repr_shape)), dim=-1)
         def compute_loss(x, input_sequence):
+            print("x: ", x.shape)
+            print("input_sequence: ", input_sequence.shape)
             x = x.reshape(-1, self.num_coords * 2)
             input_sequence = input_sequence.reshape(-1, self.num_coords * 2)
-
+            print("x re: ", x.shape)
+            print("input_sequence re: ", input_sequence.shape)
             cosine_loss = F.cosine_embedding_loss(x, input_sequence,
                                                   torch.Tensor([1]).to(self.device), reduction="mean")
+            print("cosine_loss: ", cosine_loss.shape)
             cent_loss = F.cross_entropy(F.normalize(x), input_sequence, reduction="mean")
+            print("cent_loss: ", cent_loss.shape)
             loss_noise = cosine_loss + 0.1 * cent_loss
+            torch.mean(loss_noise.reshape(-1, prod(repr_shape)), dim=-1)
             return loss_noise
         losses = [compute_loss(x, input_sequence) for x in generated_xs]
         losses_ori = [compute_loss_ori(x) for x in generated_xs]
