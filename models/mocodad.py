@@ -225,13 +225,13 @@ class MoCoDAD(pl.LightningModule):
         # Predict the noise
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
         # Compute the loss
-        loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
-        # predicted_noise_vectors = predicted_noise.reshape(-1, self.num_coords * 2)
-        # noise_vectors = noise.reshape(-1, self.num_coords * 2)
-        #
-        # cosine_loss = F.cosine_embedding_loss(predicted_noise_vectors, noise_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
-        # cent_loss = F.cross_entropy(F.normalize(predicted_noise_vectors), noise_vectors, reduction="mean")
-        # loss_noise = cosine_loss + 0.1 * cent_loss
+        # loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
+        predicted_noise_vectors = predicted_noise.reshape(-1, self.num_coords * 2)
+        noise_vectors = noise.reshape(-1, self.num_coords * 2)
+
+        cosine_loss = F.cosine_embedding_loss(predicted_noise_vectors, noise_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
+        cent_loss = F.cross_entropy(F.normalize(predicted_noise_vectors), noise_vectors, reduction="mean")
+        loss_noise = cosine_loss + 0.1 * cent_loss
 
         # print("loss_noise", loss_noise.shape, loss_noise, loss_noise.dtype)
         # loss_noise = F.cosine_similarity(predicted_noise, noise, dim=1)
@@ -240,12 +240,12 @@ class MoCoDAD(pl.LightningModule):
         self.log('loss_noise', loss_noise)
 
         if self.conditioning_architecture == 'AE':
-            loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
-            # rec_cond_data_vectors = rec_cond_data.reshape(-1, self.num_coords * 2 * 3)
-            # condition_data_vectors = condition_data.reshape(-1, self.num_coords * 2 * 3)
-            # cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
-            # cent_loss = F.cross_entropy(F.normalize(rec_cond_data_vectors), condition_data_vectors, reduction="mean")
-            # loss_rec_cond = cosine_loss + 0.1 * cent_loss
+            # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            rec_cond_data_vectors = rec_cond_data.reshape(-1, self.num_coords * 2 * 3)
+            condition_data_vectors = condition_data.reshape(-1, self.num_coords * 2 * 3)
+            cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
+            cent_loss = F.cross_entropy(F.normalize(rec_cond_data_vectors), condition_data_vectors, reduction="mean")
+            loss_rec_cond = cosine_loss + 0.1 * cent_loss
             # print("loss_rec_cond", loss_rec_cond.shape, loss_rec_cond)
             # loss_rec_cond = F.cosine_similarity(rec_cond_data, condition_data, dim=1)
             # loss_rec_cond = torch.mean(loss_rec_cond)
@@ -789,8 +789,17 @@ class MoCoDAD(pl.LightningModule):
             return generated_xs[np.random.randint(len(generated_xs))]
 
         B, repr_shape = input_sequence.shape[0], input_sequence.shape[1:]
-        compute_loss = lambda x: torch.mean(self.loss_fn(x, input_sequence).reshape(-1, prod(repr_shape)), dim=-1)
-        losses = [compute_loss(x) for x in generated_xs]
+        # compute_loss = lambda x: torch.mean(self.loss_fn(x, input_sequence).reshape(-1, prod(repr_shape)), dim=-1)
+        def compute_loss(x, input_sequence):
+            x = x.reshape(-1, self.num_coords * 2)
+            input_sequence = input_sequence.reshape(-1, self.num_coords * 2)
+
+            cosine_loss = F.cosine_embedding_loss(x, input_sequence,
+                                                  torch.Tensor([1]).to(self.device), reduction="mean")
+            cent_loss = F.cross_entropy(F.normalize(x), input_sequence, reduction="mean")
+            loss_noise = cosine_loss + 0.1 * cent_loss
+            return loss_noise
+        losses = [compute_loss(x, input_sequence) for x in generated_xs]
 
         if aggr_strategy == 'all':
             dims_idxs = list(range(2, len(repr_shape) + 2))
