@@ -225,16 +225,24 @@ class MoCoDAD(pl.LightningModule):
         # Predict the noise
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
         # Compute the loss
-        loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
-        # print("loss_noise", loss_noise.shape, loss_noise, loss_noise.dtype)
+        # loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
+
+        cosine_loss = F.cosine_embedding_loss(predicted_noise, noise, torch.Tensor([1]), reduction="mean")
+        cent_loss = F.cross_entropy(F.normalize(predicted_noise), noise, reduction="mean")
+        loss_noise = cosine_loss + 0.1 * cent_loss
+
+        print("loss_noise", loss_noise.shape, loss_noise, loss_noise.dtype)
         # loss_noise = F.cosine_similarity(predicted_noise, noise, dim=1)
         # loss_noise = torch.mean(loss_noise)
         # print("loss_noise",loss_noise.shape, loss_noise, loss_noise.dtype)
         self.log('loss_noise', loss_noise)
 
         if self.conditioning_architecture == 'AE':
-            loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
-            # print("loss_rec_cond", loss_rec_cond.shape)
+            # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            cosine_loss = F.cosine_embedding_loss(rec_cond_data, condition_data, torch.Tensor([1]), reduction="mean")
+            cent_loss = F.cross_entropy(F.normalize(rec_cond_data), condition_data, reduction="mean")
+            loss_rec_cond = cosine_loss + 0.1 * cent_loss
+            print("loss_rec_cond", loss_rec_cond.shape, loss_rec_cond)
             # loss_rec_cond = F.cosine_similarity(rec_cond_data, condition_data, dim=1)
             # loss_rec_cond = torch.mean(loss_rec_cond)
             # print("loss_rec_cond", loss_rec_cond.shape)
