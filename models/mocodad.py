@@ -242,6 +242,7 @@ class MoCoDAD(pl.LightningModule):
 
         if self.conditioning_architecture == 'AE':
             # loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+            ori_shape = rec_cond_data.shape
             rec_cond_data_vectors = rec_cond_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
             condition_data_vectors = condition_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
             cosine_loss = F.cosine_embedding_loss(rec_cond_data_vectors, condition_data_vectors, torch.Tensor([1]).to(self.device), reduction="mean")
