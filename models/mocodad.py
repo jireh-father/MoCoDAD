@@ -800,9 +800,9 @@ class MoCoDAD(pl.LightningModule):
             print("x re: ", x.shape)
             print("input_sequence re: ", input_sequence.shape)
             cosine_loss = F.cosine_embedding_loss(x, input_sequence,
-                                                  torch.Tensor([1]).to(self.device), reduction="mean")
+                                                  torch.Tensor([1]).to(self.device))
             print("cosine_loss: ", cosine_loss.shape)
-            cent_loss = F.cross_entropy(F.normalize(x), input_sequence, reduction="mean")
+            cent_loss = F.cross_entropy(F.normalize(x), input_sequence)
             print("cent_loss: ", cent_loss.shape)
             loss_noise = cosine_loss + 0.1 * cent_loss
             return loss_noise.reshape(-1, prod(repr_shape))
