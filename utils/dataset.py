@@ -238,7 +238,8 @@ class PoseDatasetRobust(PoseDataset):
                                                  exp_dir=self.exp_dir, reconstruct_original_data=False,
                                                  normalize_pose=self.normalize_pose_seg,
                                                  include_global=self.include_global,
-                                                 debug=self.debug)
+                                                 debug=self.debug,
+                                                 use_age=dataset_args.get('use_age', False),)
         
         X_global, _ = global_
         X_local, X_local_meta = local_ # X_local has shape (number of segments, window lenght, 34)
@@ -310,7 +311,8 @@ def get_dataset_and_loader(args, split='train', validation=False):
                     'symm_range': args.symm_range, 'hip_center': args.hip_center, 
                     'normalization_strategy': args.normalization_strategy, 'ckpt': args.ckpt_dir, 'scaler': scaler, 
                     'kp_threshold': 0, 'double_item': False,
-                    'custom_num_joints': args.custom_num_joints}
+                    'custom_num_joints': args.custom_num_joints,
+                    'use_angle': args.use_angle}
 
     loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
     

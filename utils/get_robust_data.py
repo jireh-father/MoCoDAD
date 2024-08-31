@@ -29,6 +29,8 @@ def data_of_combined_model(**args):
     trajectories_path = args.get('trajectories_path', '')
     include_global = args.get('include_global', True)
     debug = args.get('debug', False)
+    use_angle = args.get('use_angle', False)
+    use_angle_norm = args.get('use_angle_norm', False)
     if 'train' in split:
         subfolder = 'training'
     elif 'test' in split:
@@ -57,10 +59,10 @@ def data_of_combined_model(**args):
     # trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,
 #                                              frames=trajectory_frames,
 #                                              coordinates=trajectory_coordinates)
-
-    trajectories = remove_short_trajectories(trajectories, input_length=input_length,
-                                             input_gap=seg_stride, pred_length=pred_length)
-    print('\nRemoved short trajectories. Number of trajectories left: %d.' % len(trajectories))
+    if not use_angle:
+        trajectories = remove_short_trajectories(trajectories, input_length=input_length,
+                                                 input_gap=seg_stride, pred_length=pred_length)
+        print('\nRemoved short trajectories. Number of trajectories left: %d.' % len(trajectories))
 
     # trajectories, trajectories_val = split_into_train_and_test(trajectories, train_ratio=0.8, seed=42)
 
@@ -82,7 +84,7 @@ def data_of_combined_model(**args):
                                                                                         input_gap=seg_stride, pred_length=pred_length, 
                                                                                         return_ids=True)
         
-        if normalize_pose == True:
+        if normalize_pose == True and (not use_angle or use_angle_norm):
             scaler_path = os.path.join(exp_dir, f'global_{global_normalisation_strategy}.pickle')
             
             if split == 'train':
@@ -107,9 +109,10 @@ def data_of_combined_model(**args):
     local_trajectories = deepcopy(trajectories) if reconstruct_original_data else trajectories
 
     # print("local_trajectories:", local_trajectories)
-    local_trajectories = change_coordinate_system(local_trajectories, video_resolution=video_resolution,
-                                                  coordinate_system='bounding_box_centre', invert=False)
-    # print("changed local_trajectories:", local_trajectories)
+    if not use_angle:
+        local_trajectories = change_coordinate_system(local_trajectories, video_resolution=video_resolution,
+                                                      coordinate_system='bounding_box_centre', invert=False)
+        # print("changed local_trajectories:", local_trajectories)
 
     print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')
     
