@@ -213,7 +213,7 @@ class MoCoDAD(pl.LightningModule):
 
         # Unpack data: tensor_data is the input data, meta_out is a list of metadata
         tensor_data, _ = self._unpack_data(batch)
-        print("tensor_data", tensor_data)
+        # print("tensor_data", tensor_data)
         # Select frames to condition on and to corrupt according to the conditioning strategy
         condition_data, corrupt_data, idxs = self._select_frames(tensor_data)
         # Encode the condition data
