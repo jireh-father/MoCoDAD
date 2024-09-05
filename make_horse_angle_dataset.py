@@ -6,6 +6,7 @@ import sys
 
 import pandas as pd
 import numpy as np
+import math
 
 KEYPOINT_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Nostril_x', 'Nostril_y', 'Eye_x',
                  'Eye_y', 'Poll_x', 'Poll_y', 'Withers_x', 'Withers_y', 'LowestBack_x',
@@ -106,6 +107,55 @@ TARGET_KP_COL_DICT = {
 }
 
 
+# 두 벡터의 내적을 계산하는 함수
+def dot_product(v1, v2):
+    return v1[0] * v2[0] + v1[1] * v2[1]
+
+
+# 벡터의 크기를 계산하는 함수
+def magnitude(v):
+    return math.sqrt(v[0] ** 2 + v[1] ** 2)
+
+
+# 두 벡터 사이의 각도를 구하는 함수 (라디안)
+def angle_between(v1, v2):
+    dot_prod = dot_product(v1, v2)
+    mag1 = magnitude(v1)
+    mag2 = magnitude(v2)
+
+    # magnitude 값이 0인 경우는 벡터의 크기가 0이므로 각도를 계산할 수 없으니 예외 처리
+    if mag1 == 0 or mag2 == 0:
+        return float('nan')
+
+    # 내적 결과를 -1과 1 사이로 제한하여 math.acos()에서 발생하는 에러 방지
+    cos_angle = dot_prod / (mag1 * mag2)
+    cos_angle = max(-1, min(1, cos_angle))  # 클램핑 처리
+
+    return math.acos(cos_angle)
+
+
+# 각도를 도(degree)로 변환하는 함수
+def rad_to_deg(rad):
+    return math.degrees(rad)
+
+
+# 세 점의 사이 각을 구하는 함수
+def angle_between_points(row, first_key, second_key, third_key):
+    p1 = (row[f'{first_key}_x'], row[f'{first_key}_y'])
+    p2 = (row[f'{second_key}_x'], row[f'{second_key}_y'])
+    p3 = (row[f'{third_key}_x'], row[f'{third_key}_y'])
+
+    # 벡터 p1->p2와 p1->p3을 구함
+    v1 = (p2[0] - p1[0], p2[1] - p1[1])
+    v2 = (p3[0] - p1[0], p3[1] - p1[1])
+
+    # 두 벡터 사이의 각도를 라디안으로 구함
+    angle_rad = angle_between(v1, v2)
+
+    # 각도를 도(degree)로 변환
+    return rad_to_deg(angle_rad)
+
+
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
@@ -161,6 +211,7 @@ def main(args):
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_path = path_and_dir["keypoint_full_path"]
+            direction = path_and_dir["direction"]
 
             if args.use_old_keypoint:
                 csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
@@ -212,6 +263,12 @@ def main(args):
             # reset index
             if args.reset_index:
                 df.reset_index(drop=True, inplace=True)
+
+            # if args.flip_rtol_to_ltor:
+            #     if direction == "RtoL":
+            #         for key in all_x_axis_keys:
+            #             df[key] = -df[key]
+
             df['index_col'] = df.index + 1
 
             df = df[['index_col'] + all_keys]
@@ -235,7 +292,8 @@ def main(args):
                     right_thr = max_x - thr_width
 
                     # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                    df = df[(df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
+                    df = df[
+                        (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
@@ -257,27 +315,44 @@ def main(args):
                     first_key = key_set[start_idx]
                     second_key = key_set[start_idx + 1]
                     third_key = key_set[start_idx + 2]
-                    angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
-                                       df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
-                        df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
-                    angle = np.degrees(angle)
-                    # 각도가 음수인 경우 360도를 더해줌
-                    angle[angle < 0] += 360
-                    df[f"{first_key}_{second_key}_{third_key}_angle"] = angle
+                    df[f"{first_key}_{second_key}_{third_key}_angle"] = df.apply(angle_between_points, axis=1,
+                                                                                 first_key=first_key,
+                                                                                 second_key=second_key,
+                                                                                 third_key=third_key)
 
-                    first_key = key_set[start_idx+2]
-                    second_key = key_set[start_idx ]
+                    # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
+                    #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
+                    #     df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
+                    # angle = np.degrees(angle)
+                    # # 각도가 음수인 경우 360도를 더해줌
+                    # # angle[angle < 0] += 360
+                    # df[f"{first_key}_{second_key}_{third_key}_angle"] = angle
+
+                    first_key = key_set[start_idx + 2]
+                    second_key = key_set[start_idx]
                     third_key = key_set[start_idx + 1]
-                    angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
-                                       df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
-                        df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
-                    angle = np.degrees(angle)
-                    # 각도가 음수인 경우 360도를 더해줌
-                    angle[angle < 0] += 360
-                    df[f"{first_key}_{second_key}_{third_key}_angle_2"] = angle
+                    df[f"{first_key}_{second_key}_{third_key}_angle_2"] = df.apply(angle_between_points, axis=1,
+                                                                                    first_key=first_key,
+                                                                                    second_key=second_key,
+                                                                                    third_key=third_key)
+
+                    # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
+                    #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
+                    #     df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
+                    # angle = np.degrees(angle)
+                    # # 각도가 음수인 경우 360도를 더해줌
+                    # # angle[angle < 0] += 360
+                    # df[f"{first_key}_{second_key}_{third_key}_angle_2"] = angle
 
             # drop df cols of all_keys
             df = df.drop(columns=all_keys)
+
+            # 각도 컬럼에 180초과 값이 있는지 확인
+            for col in df.columns:
+                if "angle" in col:
+                    if (df[col] > 180).any():
+                        print(f"angle over 180 in {col}")
+                        sys.exit()
 
             # save df to csv without header
             df.to_csv(kp_sample_output_path, index=False, header=False)
@@ -334,7 +409,7 @@ if __name__ == '__main__':
     # window_length
     parser.add_argument('--window_length', type=int, default=4)
     # output_dir
-    parser.add_argument('--output_dir', type=str, default='E:\dataset\\afp\horse_mocodad_test')
+    parser.add_argument('--output_dir', type=str, default='E:\dataset\\afp\horse_mocodad_test4')
 
     # reset_index
     parser.add_argument('--reset_index', action='store_true', default=False)
@@ -363,5 +438,6 @@ if __name__ == '__main__':
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
+    # parser.add_argument('--flip_rtol_to_ltor', action='store_true', default=False)
 
     main(parser.parse_args())
