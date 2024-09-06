@@ -103,6 +103,100 @@ TARGET_KP_COL_DICT = {
         [
             'Abdomen', 'LowestBack', 'T_Coxae'
         ]
+    ],
+    "no_head_and_tail": [
+        [
+            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+        ],
+        [
+            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
+        ],
+        [
+            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral', 'T_Coxae'
+        ],
+        [
+            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral', 'T_Coxae'
+        ],
+        [
+            'Withers', 'LowestBack', 'T16L1', 'T_sacrale', 'Tail_Root',
+        ],
+        [
+            'Coxofemoral', 'T_Coxae', 'LowestBack', 'Withers'
+        ],
+        [
+            'T_Coxae', 'LowestBack', 'T16L1'
+        ],
+        [
+            'Tub', 'Spina_scapulae', 'Withers', 'LowestBack'
+        ],
+        [
+            'Spina_scapulae', 'Withers', 'LowestBack', 'Poll'
+        ],
+        [
+            'Abdomen', 'LowestBack', 'Withers'
+        ],
+        [
+            'Abdomen', 'LowestBack', 'T16L1'
+        ],
+        [
+            'Abdomen', 'LowestBack', 'T_Coxae'
+        ]
+    ],
+    "only_legs": [
+        [
+            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+        ],
+        [
+            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
+        ],
+        [
+            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral', 'T_Coxae'
+        ],
+        [
+            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral', 'T_Coxae'
+        ],
+    ],
+    "only_foots": [
+        [
+            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R'
+        ],
+        [
+            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L'
+        ],
+        [
+            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R'
+        ],
+        [
+            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L'
+        ],
+    ],
+    "only_foots_and_fetlocks": [
+        [
+            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R'
+        ],
+        [
+            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L'
+        ],
+        [
+            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R'
+        ],
+        [
+            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L'
+        ],
+    ],
+    "only_foots_and_fetlocks_and_carpuse": [
+        [
+            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R'
+        ],
+        [
+            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L'
+        ],
+        [
+            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R'
+        ],
+        [
+            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L'
+        ],
     ]
 }
 
@@ -332,9 +426,9 @@ def main(args):
                     second_key = key_set[start_idx]
                     third_key = key_set[start_idx + 1]
                     df[f"{first_key}_{second_key}_{third_key}_angle_2"] = df.apply(angle_between_points, axis=1,
-                                                                                    first_key=first_key,
-                                                                                    second_key=second_key,
-                                                                                    third_key=third_key)
+                                                                                   first_key=first_key,
+                                                                                   second_key=second_key,
+                                                                                   third_key=third_key)
 
                     # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
                     #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
