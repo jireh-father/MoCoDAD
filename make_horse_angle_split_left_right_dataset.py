@@ -264,7 +264,7 @@ def main(args):
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_path = path_and_dir["keypoint_full_path"]
-            direction = path_and_dir["direction"]
+            direction = path_and_dir["direction"].lower()
 
             if args.use_old_keypoint:
                 csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
