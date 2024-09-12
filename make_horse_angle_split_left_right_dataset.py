@@ -64,140 +64,95 @@ FRONT_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Forehead_x', 'Forehea
                  'Fetlock_Front_L_x', 'Fetlock_Front_L_y', 'Fetlock_Front_R_x', 'Fetlock_Front_R_y',
                  'Hoof_Front_L_x', 'Hoof_Front_L_y', 'Hoof_Front_R_x', 'Hoof_Front_R_y', ]
 
-# Withers,Throat,R_F_Elbow,R_F_Knee,R_F_Paw,L_F_Elbow,L_F_Knee,L_F_Paw,TailBase,R_B_Elbow,R_B_Knee,R_B_Paw,L_B_Elbow,L_B_Knee,L_B_Paw
 TARGET_KP_COL_DICT = {
-    "baseline": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+    "no_head_and_tail": {
+        "left": [
+            [
+                'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
+            ],
+            [
+                'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral',
+                'T_Coxae'
+            ],
+            [
+                'Withers', 'LowestBack', 'T16L1', 'T_sacrale', 'Tail_Root',
+            ],
+            [
+                'Coxofemoral', 'T_Coxae', 'LowestBack', 'Withers'
+            ],
+            [
+                'T_Coxae', 'LowestBack', 'T16L1'
+            ],
+            [
+                'Tub', 'Spina_scapulae', 'Withers', 'LowestBack'
+            ],
+            [
+                'Spina_scapulae', 'Withers', 'LowestBack', 'Poll'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'Withers'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'T16L1'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'T_Coxae'
+            ]
         ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
-        ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral', 'T_Coxae'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral', 'T_Coxae'
-        ],
-        [
-            'Nostril', 'Eye', 'Poll', 'Withers', 'LowestBack', 'T16L1', 'T_sacrale', 'Tail_Root', 'T_ischiadicum',
-        ],
-        [
-            'Coxofemoral', 'T_Coxae', 'LowestBack', 'Withers'
-        ],
-        [
-            'T_Coxae', 'LowestBack', 'T16L1'
-        ],
-        [
-            'Tub', 'Spina_scapulae', 'Withers', 'LowestBack'
-        ],
-        [
-            'Spina_scapulae', 'Withers', 'LowestBack', 'Poll'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'Withers'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'T16L1'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'T_Coxae'
+        "right": [
+            [
+                'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+            ],
+            [
+                'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral',
+                'T_Coxae'
+            ],
+            [
+                'Withers', 'LowestBack', 'T16L1', 'T_sacrale', 'Tail_Root',
+            ],
+            [
+                'Coxofemoral', 'T_Coxae', 'LowestBack', 'Withers'
+            ],
+            [
+                'T_Coxae', 'LowestBack', 'T16L1'
+            ],
+            [
+                'Tub', 'Spina_scapulae', 'Withers', 'LowestBack'
+            ],
+            [
+                'Spina_scapulae', 'Withers', 'LowestBack', 'Poll'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'Withers'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'T16L1'
+            ],
+            [
+                'Abdomen', 'LowestBack', 'T_Coxae'
+            ]
         ]
-    ],
-    "no_head_and_tail": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+    },
+    "only_legs": {
+        "left": [
+            [
+                'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
+            ],
+            [
+                'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral',
+                'T_Coxae'
+            ],
         ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
+        "right": [
+            [
+                'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
+            ],
+            [
+                'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral',
+                'T_Coxae'
+            ],
         ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral', 'T_Coxae'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral', 'T_Coxae'
-        ],
-        [
-            'Withers', 'LowestBack', 'T16L1', 'T_sacrale', 'Tail_Root',
-        ],
-        [
-            'Coxofemoral', 'T_Coxae', 'LowestBack', 'Withers'
-        ],
-        [
-            'T_Coxae', 'LowestBack', 'T16L1'
-        ],
-        [
-            'Tub', 'Spina_scapulae', 'Withers', 'LowestBack'
-        ],
-        [
-            'Spina_scapulae', 'Withers', 'LowestBack', 'Poll'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'Withers'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'T16L1'
-        ],
-        [
-            'Abdomen', 'LowestBack', 'T_Coxae'
-        ]
-    ],
-    "only_legs": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
-        ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
-        ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R', 'Coxofemoral', 'T_Coxae'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L', 'Coxofemoral', 'T_Coxae'
-        ],
-    ],
-    "only_foots": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R'
-        ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L'
-        ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L'
-        ],
-    ],
-    "only_foots_and_fetlocks": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R'
-        ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L'
-        ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L'
-        ],
-    ],
-    "only_foots_and_fetlocks_and_carpuse": [
-        [
-            'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R'
-        ],
-        [
-            'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L'
-        ],
-        [
-            'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R', 'Rear_Tarsus_R', 'Stifle_Joint_R'
-        ],
-        [
-            'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L', 'Rear_Tarsus_L', 'Stifle_Joint_L'
-        ],
-    ]
+    }
 }
 
 
@@ -256,19 +211,21 @@ def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
     target_skeleton_key_sets = TARGET_KP_COL_DICT[args.target_keypoint_name]
-    y_axs_key_sets = []
-    x_axs_key_sets = []
-    all_key_sets = set()
-    all_x_axis_keys = []
-    all_y_axis_keys = []
-    for key_set in target_skeleton_key_sets:
-        y_axs_key_sets.append([f"{k}_y" for k in key_set])
-        x_axs_key_sets.append([f"{k}_x" for k in key_set])
-        all_key_sets.update(y_axs_key_sets[-1])
-        all_key_sets.update(x_axs_key_sets[-1])
-        all_x_axis_keys.extend(x_axs_key_sets[-1])
-        all_y_axis_keys.extend(y_axs_key_sets[-1])
-    all_keys = list(all_key_sets)
+    y_axs_key_sets = {"ltor": [], "rtol": []}
+    x_axs_key_sets = {"ltor": [], "rtol": []}
+    all_key_sets = {"ltor": set(), "rtol": set()}
+    all_x_axis_keys = {"ltor": [], "rtol": []}
+    all_y_axis_keys = {"ltor": [], "rtol": []}
+    all_keys = {}
+    for direction in ["ltor", "rtol"]:
+        for key_set in target_skeleton_key_sets[direction]:
+            y_axs_key_sets[direction].append([f"{k}_y" for k in key_set])
+            x_axs_key_sets[direction].append([f"{k}_x" for k in key_set])
+            all_key_sets[direction].update(y_axs_key_sets[direction][-1])
+            all_key_sets[direction].update(x_axs_key_sets[direction][-1])
+            all_x_axis_keys[direction].extend(x_axs_key_sets[direction][-1])
+            all_y_axis_keys[direction].extend(y_axs_key_sets[direction][-1])
+        all_keys[direction] = list(all_key_sets)
 
     moco_fname_to_csv_fname_dict = {}
 
@@ -352,7 +309,7 @@ def main(args):
                 raise Exception("invalid df keys", df.columns, csv_file)
             df.columns = cols
 
-            df = df.dropna(subset=all_keys, how='any')
+            df = df.dropna(subset=all_keys[direction], how='any')
             if len(df) < args.window_length:
                 continue
 
@@ -367,7 +324,7 @@ def main(args):
 
             df['index_col'] = df.index + 1
 
-            df = df[['index_col'] + all_keys]
+            df = df[['index_col'] + all_keys[direction]]
 
             if args.frame_stride and args.frame_stride > 1:
                 # remove rows by frame_stride
@@ -379,8 +336,8 @@ def main(args):
                         start_idx = np.random.randint(0, len(df) - args.max_frames)
                         df = df.iloc[start_idx:start_idx + args.max_frames]
                 else:
-                    min_x = df[all_x_axis_keys].min().min()
-                    max_x = df[all_x_axis_keys].max().max()
+                    min_x = df[all_x_axis_keys[direction]].min().min()
+                    max_x = df[all_x_axis_keys[direction]].max().max()
                     width = max_x - min_x
                     div_width = width / args.num_div
                     thr_width = div_width * args.num_thr_div
@@ -389,12 +346,12 @@ def main(args):
 
                     # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                     df = df[
-                        (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
+                        (df[all_x_axis_keys[direction]] > left_thr).all(axis=1) & (df[all_x_axis_keys[direction]] < right_thr).all(axis=1)]
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
-                        df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
+                        df = df.iloc[(df[all_x_axis_keys[direction][0]] - center_x).abs().argsort()[:args.max_frames]]
 
                     center_frames.append(len(df))
 
@@ -441,7 +398,7 @@ def main(args):
                     # df[f"{first_key}_{second_key}_{third_key}_angle_2"] = angle
 
             # drop df cols of all_keys
-            df = df.drop(columns=all_keys)
+            df = df.drop(columns=all_keys[direction])
 
             # 각도 컬럼에 180초과 값이 있는지 확인
             for col in df.columns:
