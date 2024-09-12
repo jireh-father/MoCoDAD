@@ -327,6 +327,7 @@ def main(args):
                 raise Exception("invalid df keys", df.columns, csv_file)
             df.columns = cols
             print("direction", direction)
+            print("all_keys", all_keys)
             print("all_keys", all_keys[direction])
             df = df.dropna(subset=all_keys[direction], how='any')
             if len(df) < args.window_length:
