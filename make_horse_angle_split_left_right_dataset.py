@@ -384,7 +384,7 @@ def main(args):
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
 
             # 좌표를 연결된 3개의 관절들의 사이 각도로 변환
-            for key_set in target_skeleton_key_sets:
+            for key_set in target_skeleton_key_sets[direction]:
                 for start_idx in range(len(key_set) - 2):
                     first_key = key_set[start_idx]
                     second_key = key_set[start_idx + 1]
