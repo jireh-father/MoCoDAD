@@ -243,7 +243,7 @@ def main(args):
             all_key_sets[direction].update(x_axs_key_sets[direction][-1])
             all_x_axis_keys[direction].extend(x_axs_key_sets[direction][-1])
             all_y_axis_keys[direction].extend(y_axs_key_sets[direction][-1])
-        all_keys[direction] = list(all_key_sets)
+        all_keys[direction] = list(all_key_sets[direction])
 
     moco_fname_to_csv_fname_dict = {}
 
