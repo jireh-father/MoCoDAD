@@ -66,7 +66,7 @@ FRONT_KP_COLS = ['bodyparts', 'Unnamed: 1', 'Unnamed: 2', 'Forehead_x', 'Forehea
 
 TARGET_KP_COL_DICT = {
     "no_head_and_tail": {
-        "left": [
+        "rtol": [
             [
                 'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
             ],
@@ -99,7 +99,7 @@ TARGET_KP_COL_DICT = {
                 'Abdomen', 'LowestBack', 'T_Coxae'
             ]
         ],
-        "right": [
+        "ltor": [
             [
                 'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
             ],
@@ -134,7 +134,7 @@ TARGET_KP_COL_DICT = {
         ]
     },
     "only_legs": {
-        "left": [
+        "rtol": [
             [
                 'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L', 'Carpuse_L', 'ElbowJoint_L', 'Tub', 'Spina_scapulae'
             ],
@@ -143,7 +143,7 @@ TARGET_KP_COL_DICT = {
                 'T_Coxae'
             ],
         ],
-        "right": [
+        "ltor": [
             [
                 'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R', 'Carpuse_R', 'ElbowJoint_R', 'Tub', 'Spina_scapulae'
             ],
@@ -154,7 +154,7 @@ TARGET_KP_COL_DICT = {
         ],
     },
     "only_foots": {
-        "left": [
+        "rtol": [
             [
                 'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L'
             ],
@@ -162,7 +162,7 @@ TARGET_KP_COL_DICT = {
                 'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L'
             ],
         ],
-        "right": [
+        "ltor": [
             [
                 'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R'
             ],
