@@ -152,6 +152,24 @@ TARGET_KP_COL_DICT = {
                 'T_Coxae'
             ],
         ],
+    },
+    "only_foots": {
+        "left": [
+            [
+                'Front_Toe_L', 'Front_Heel_L', 'Fetlock_L'
+            ],
+            [
+                'Rear_Toe_L', 'Rear_Heel_L', 'Rear_Fetlock_L'
+            ],
+        ],
+        "right": [
+            [
+                'Front_Toe_R', 'Front_Heel_R', 'Fetlock_R'
+            ],
+            [
+                'Rear_Toe_R', 'Rear_Heel_R', 'Rear_Fetlock_R'
+            ],
+        ],
     }
 }
 
@@ -346,7 +364,8 @@ def main(args):
 
                     # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                     df = df[
-                        (df[all_x_axis_keys[direction]] > left_thr).all(axis=1) & (df[all_x_axis_keys[direction]] < right_thr).all(axis=1)]
+                        (df[all_x_axis_keys[direction]] > left_thr).all(axis=1) & (
+                                df[all_x_axis_keys[direction]] < right_thr).all(axis=1)]
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
