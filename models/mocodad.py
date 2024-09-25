@@ -243,6 +243,10 @@ class MoCoDAD(pl.LightningModule):
 
         if self.conditioning_architecture == 'AE':
             loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
+
+            # diff abs rec_cond_data and condition_data
+            diff = torch.abs(rec_cond_data - condition_data)
+            print("diff", diff.shape)
             # ori_shape = rec_cond_data.shape
             # rec_cond_data_vectors = rec_cond_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
             # condition_data_vectors = condition_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
