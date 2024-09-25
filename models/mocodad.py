@@ -248,9 +248,13 @@ class MoCoDAD(pl.LightningModule):
             diff = torch.abs(rec_cond_data - condition_data)
             print("diff", diff.shape)
             # 1024, 2, 3, 12
-            # diff has 4 axis, 마지막 차원을 기준으로 1차원이 되도록 평균을 내라
-            diff = torch.mean(diff, dim=-1)
+            # diff has 4 axis, reduce mean on axis 1, 2, 3
+            diff = torch.mean(diff, dim=(0,1,2))
             print("diff", diff.shape)
+            # print index of max value of diff
+            print("max diff index", torch.argmax(diff), torch.max(diff))
+            print("min diff index", torch.argmin(diff), torch.min(diff))
+
             # ori_shape = rec_cond_data.shape
             # rec_cond_data_vectors = rec_cond_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
             # condition_data_vectors = condition_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
