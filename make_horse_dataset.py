@@ -133,6 +133,7 @@ def main(args):
 
     label_key = "lameness"
     center_frames = []
+    num_drop = 0
     for sample_idx, sample in enumerate(labels):
         # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
@@ -220,12 +221,13 @@ def main(args):
                 print("index is not continuous b", csv_file)
                 sys.exit()
             # print show na rows
-            print(df[df.isna().any(axis=1)])
+            # print(df[df.isna().any(axis=1)])
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
             if df.index.max() - df.index.min() + 1 != len(df):
-                print(df)
-                print("index is not continuous a", csv_file)
-                sys.exit()
+                num_drop += 1
+                # print(df)
+                # print("index is not continuous a", csv_file)
+                # sys.exit()
             if len(df) < args.window_length:
                 continue
 
@@ -334,6 +336,7 @@ def main(args):
         print("avg center frames", sum(center_frames) / len(center_frames))
         print("min center frames", min(center_frames))
     print("done")
+    print("num_drop", num_drop)
 
 
 if __name__ == '__main__':
