@@ -178,8 +178,12 @@ class PoseDataset(Dataset):
             elif self.normalization_strategy == 'robust':
                 segs_data_np, scaler_out = normalize_pose_robust(segs_data_np, **dataset_args)
                 if self.scaler is None:
-                    with open(self.ckpt+'/robust.pkl', 'wb') as handle:
-                        pickle.dump(scaler_out, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    if dataset_args['scaler_path']:
+                        with open(dataset_args['scaler_path'], 'wb') as handle:
+                            pickle.dump(scaler_out, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    else:
+                        with open(self.ckpt+'/robust.pkl', 'wb') as handle:
+                            pickle.dump(scaler_out, handle, protocol=pickle.HIGHEST_PROTOCOL)
             elif self.normalization_strategy == 'stan':
                 segs_data_np, segs_means = normalize_pose_stan(segs_data_np, **dataset_args)
             elif self.normalization_strategy == 'bbox':
@@ -361,7 +365,7 @@ def get_test_dataset_and_loader(args):
         'vid_res': args.vid_res, 'num_coords': args.num_coords, 'sub_mean': False,
         'return_indices': False, 'return_metadata': True, 'return_mean': False,
         'symm_range': args.symm_range, 'hip_center': args.hip_center,
-        'normalization_strategy': args.normalization_strategy, 'ckpt': args.ckpt_dir, 'scaler': scaler,
+        'normalization_strategy': args.normalization_strategy, 'scaler_path': args.scaler_path, 'scaler': scaler,
         'kp_threshold': 0, 'double_item': False,
         'custom_num_joints': args.custom_num_joints,
         'use_angle': args.use_angle
@@ -373,7 +377,7 @@ def get_test_dataset_and_loader(args):
     if args.normalization_strategy == 'robust':
         dataset = PoseDatasetRobust(
             path_to_data=args.test_data_dir,
-            exp_dir=args.ckpt_dir,
+            # exp_dir=args.ckpt_dir,
             include_global=(args.num_coords == 6), split='test', **dataset_args
         )
     else:
