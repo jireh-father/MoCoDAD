@@ -25,11 +25,12 @@ dataset, loader = get_test_dataset_and_loader(args)
 
 # Initialize trainer and test
 trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
-                     default_root_dir=args.ckpt_dir, max_epochs=1, logger=False)
+                     # default_root_dir=args.ckpt_dir,
+                     max_epochs=1, logger=False)
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 unpacked_result = processing_data(out)
 file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
-save_dir = os.path.join(args.ckpt_dir,
-                        f'saved_tensors_{args.split}_{args.aggregation_strategy}_{args.n_generated_samples}')
-for i in range(len(unpacked_result)):
-    torch.save(unpacked_result[i], os.path.join(save_dir, file_names[i] + '.pt'))
+# save_dir = os.path.join(args.ckpt_dir,
+#                         f'saved_tensors_{args.split}_{args.aggregation_strategy}_{args.n_generated_samples}')
+# for i in range(len(unpacked_result)):
+#     torch.save(unpacked_result[i], os.path.join(save_dir, file_names[i] + '.pt'))
