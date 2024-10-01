@@ -222,6 +222,9 @@ class MoCoDAD(pl.LightningModule):
         # Select frames to condition on and to corrupt according to the conditioning strategy
         print("tensor_data.shape", tensor_data.shape)
         condition_data, corrupt_data, idxs = self._select_frames(tensor_data)
+        print("condition_data.shape", condition_data.shape)
+        print("corrupt_data.shape", corrupt_data.shape)
+        print("idxs", idxs)
         # Encode the condition data
         condition_embedding, rec_cond_data = self._encode_condition(condition_data)
         # Sample the time steps and corrupt the data
