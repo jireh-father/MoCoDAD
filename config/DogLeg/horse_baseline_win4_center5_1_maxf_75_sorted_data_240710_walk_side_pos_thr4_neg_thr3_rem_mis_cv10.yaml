@@ -111,3 +111,4 @@ symm_range: true
 use_fitted_scaler: false
 remove_last_remain_frame: false
 use_original_anomaly_score: true
+use_angle: false
