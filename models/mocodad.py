@@ -248,7 +248,7 @@ class MoCoDAD(pl.LightningModule):
 
         if self.conditioning_architecture == 'AE':
             loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
-
+            print("diff", rec_cond_data.shape, condition_data.shape)
             # diff abs rec_cond_data and condition_data
             # diff = torch.abs(rec_cond_data - condition_data)
             # print("diff", diff.shape)
