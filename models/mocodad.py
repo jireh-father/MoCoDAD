@@ -74,7 +74,8 @@ class MoCoDAD(pl.LightningModule):
         self.aggregation_strategy = args.aggregation_strategy
         self.n_generated_samples = args.n_generated_samples
         self.model_return_value = args.model_return_value
-        self.gt_path = args.gt_path
+        if hasattr(args, 'gt_path'):
+            self.gt_path = args.gt_path
         self.split = args.split
         self.use_hr = args.use_hr
         self.ckpt_dir = args.ckpt_dir
