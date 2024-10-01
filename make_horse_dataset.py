@@ -257,6 +257,9 @@ def main(args):
                             df.sort_values(by='index_col', inplace=True)
 
                     center_frames.append(len(df))
+            else:
+                if args.max_frames and len(df) > args.max_frames:
+                    df = df.iloc[:args.max_frames]
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
