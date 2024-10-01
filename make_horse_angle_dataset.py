@@ -331,6 +331,7 @@ def main(args):
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
             except:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+            print(df.index)
 
             if len(df) < args.window_length:
                 continue
@@ -353,6 +354,7 @@ def main(args):
             df.columns = cols
 
             df = df.dropna(subset=all_keys, how='any')
+            print(df.index)
             if len(df) < args.window_length:
                 continue
 
@@ -366,18 +368,23 @@ def main(args):
             #             df[key] = -df[key]
 
             df['index_col'] = df.index + 1
+            print(df.index)
 
             df = df[['index_col'] + all_keys]
 
             if args.frame_stride and args.frame_stride > 1:
                 # remove rows by frame_stride
                 df = df[df['index_col'] % args.frame_stride == 0]
+                print("frame_stride", len(df))
+                print(df.index)
 
             if args.num_div:
                 if args.use_random_frame_range and args.max_frames:
                     if len(df) > args.max_frames:
                         start_idx = np.random.randint(0, len(df) - args.max_frames)
                         df = df.iloc[start_idx:start_idx + args.max_frames]
+                        print("random frame range", len(df))
+                        print(df.index)
                 else:
                     min_x = df[all_x_axis_keys].min().min()
                     max_x = df[all_x_axis_keys].max().max()
@@ -390,11 +397,15 @@ def main(args):
                     # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                     df = df[
                         (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
+                    print("num_div", len(df))
+                    print(df.index)
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
+                        print("max_frames", len(df))
+                        print(df.index)
 
                     center_frames.append(len(df))
 
@@ -415,6 +426,7 @@ def main(args):
                                                                                  first_key=first_key,
                                                                                  second_key=second_key,
                                                                                  third_key=third_key)
+
 
                     # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
                     #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
@@ -442,6 +454,8 @@ def main(args):
 
             # drop df cols of all_keys
             df = df.drop(columns=all_keys)
+            print("drop")
+            print(df.index)
 
             # 각도 컬럼에 180초과 값이 있는지 확인
             for col in df.columns:
@@ -450,8 +464,8 @@ def main(args):
                         print(f"angle over 180 in {col}")
                         sys.exit()
 
-            # save df to csv without header
-            print(df.index)
+            # save df to csv without header'
+            sys.exit()
             df.to_csv(kp_sample_output_path, index=False, header=False)
 
             if args.save_test and is_val:
