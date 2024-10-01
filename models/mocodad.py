@@ -77,7 +77,8 @@ class MoCoDAD(pl.LightningModule):
         if hasattr(args, 'gt_path'):
             self.gt_path = args.gt_path
         self.split = args.split
-        self.use_hr = args.use_hr
+        if hasattr(args, 'use_hr'):
+            self.use_hr = args.use_hr
         self.ckpt_dir = args.ckpt_dir
         self.save_tensors = args.save_tensors
         self.num_transforms = args.num_transform
