@@ -252,10 +252,9 @@ def main(args):
                         center_x = (min_x + max_x) / 2
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        # sort by index_col
-                        df.sort_values(by='index_col', inplace=True)
-                        print(df.index.values)
-                        sys.exit()
+                        if args.sort_max_frames:
+                            # sort by index_col
+                            df.sort_values(by='index_col', inplace=True)
 
                     center_frames.append(len(df))
 
@@ -347,6 +346,9 @@ if __name__ == '__main__':
 
     # use_score_col
     parser.add_argument('--use_score_col', action='store_true', default=False)
+
+    # sort_max_frames
+    parser.add_argument('--sort_max_frames', action='store_true', default=False)
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
