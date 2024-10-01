@@ -273,11 +273,11 @@ def main(args):
                             sys.exit()
 
                         # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                        sdf = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
-                        indexes = [i for i in range(sdf.index.min(), sdf.index.max() + 1) if i in df.index.values]
-                        print(df.index.values)
-                        print(indexes)
-                        df = df.loc[indexes]
+                        df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
+                        # indexes = [i for i in range(sdf.index.min(), sdf.index.max() + 1) if i in df.index.values]
+                        # print(df.index.values)
+                        # print(indexes)
+                        # df = df.loc[indexes]
                         if df.index.max() - df.index.min() + 1 != len(df):
                             print("index is not continuous 2", csv_file)
                             sys.exit()
