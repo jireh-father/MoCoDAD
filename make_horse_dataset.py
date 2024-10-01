@@ -193,9 +193,6 @@ def main(args):
             if len(df) < args.window_length:
                 continue
 
-            is_continuous = True
-            if df.index.max() - df.index.min() + 1 != len(df):
-                is_continuous = False
             len_df = len(df)
 
             if args.direction == 'side':
@@ -219,7 +216,13 @@ def main(args):
             #         df = df[df[k] > args.keypoint_threshold]
 
             # drop na rows even if one of the keypoints is na
+            if df.index.max() - df.index.min() + 1 != len(df):
+                print("index is not continuous b", csv_file)
+                sys.exit()
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
+            if df.index.max() - df.index.min() + 1 != len(df):
+                print("index is not continuous a", csv_file)
+                sys.exit()
             if len(df) < args.window_length:
                 continue
 
@@ -253,9 +256,9 @@ def main(args):
                         left_thr = min_x + thr_width
                         right_thr = max_x - thr_width
 
-                        # if df.index.max() - df.index.min() + 1 != len(df):
-                        #     print("index is not continuous 1", csv_file)
-                        #     sys.exit()
+                        if df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous 1", csv_file)
+                            sys.exit()
 
                         # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                         sdf = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
@@ -263,7 +266,7 @@ def main(args):
                         print(df.index.values)
                         print(indexes)
                         df = df.loc[indexes]
-                        if is_continuous and df.index.max() - df.index.min() + 1 != len(df):
+                        if df.index.max() - df.index.min() + 1 != len(df):
                             print("index is not continuous 2", csv_file)
                             sys.exit()
 
