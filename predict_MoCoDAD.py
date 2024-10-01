@@ -40,8 +40,8 @@ diff = np.abs(prediction - gt_data)
 print("diff", diff.shape)
 print("diff", diff.shape)
 print(prediction)
-print("max diff index", torch.argmax(diff), torch.max(diff))
-print("min diff index", torch.argmin(diff), torch.min(diff))
+print("max diff index", diff.argmax(), np.max(diff))
+print("min diff index", diff.argmin(), np.min(diff))
 # file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
 # for i in range(len(unpacked_result)):
 #     print(file_names[i])
