@@ -318,8 +318,9 @@ def get_dataset_and_loader(args, split='train', validation=False):
                     'symm_range': args.symm_range, 'hip_center': args.hip_center, 
                     'normalization_strategy': args.normalization_strategy, 'ckpt': args.ckpt_dir, 'scaler': scaler, 
                     'kp_threshold': 0, 'double_item': False,
-                    'custom_num_joints': args.custom_num_joints,
-                    'use_angle': args.use_angle}
+                    'custom_num_joints': args.custom_num_joints,}
+    if hasattr(args,"use_angle"):
+        dataset_args['use_angle'] = args.use_angle
 
     loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
     
