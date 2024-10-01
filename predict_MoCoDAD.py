@@ -37,9 +37,8 @@ print(gt_data.shape)
 import numpy as np
 # np abs
 diff = np.abs(prediction - gt_data)
+diff = torch.mean(diff, dim=(0,1,2))
 print("diff", diff.shape)
-print("diff", diff.shape)
-print(prediction)
 print("max diff index", diff.argmax(), np.max(diff))
 print("min diff index", diff.argmin(), np.min(diff))
 # file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
