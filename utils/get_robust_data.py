@@ -8,7 +8,7 @@ from utils.data import load_trajectories, extract_global_features
 from utils.data import change_coordinate_system, scale_trajectories, aggregate_autoencoder_data
 from utils.data import input_trajectories_missing_steps
 from utils.preprocessing import remove_short_trajectories, aggregate_rnn_autoencoder_data
-
+from collections import OrderedDict
 
 def save_scaler(scaler, path):
     with open(path, 'wb') as scaler_file:
@@ -53,7 +53,6 @@ def data_of_combined_model(**args):
         global_normalisation_strategy = args.get('normalization_strategy', 'robust')
         local_normalisation_strategy = args.get('normalization_strategy', 'robust')
         out_normalisation_strategy = args.get('normalization_strategy', 'robust')
-
 
     trajectories = load_trajectories(trajectories_path, debug=debug, split=split)
     print('\nLoaded %d trajectories.' % len(trajectories))

@@ -222,9 +222,19 @@ class Trajectory:
 
 
 def load_trajectories(trajectories_path, debug, split='train'):
+    trajectories = OrderedDict()  # {}	    trajectories = OrderedDict() # {}
+    if split == "test":
+        trajectory_id = "00001-0101_00001"
+        trajectory = np.loadtxt(trajectories_path, dtype=np.float32, delimiter=',', ndmin=2)
+        trajectory_frames, trajectory_coordinates = trajectory[:, 0].astype(np.int32), trajectory[:, 1:]
+        trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,
+                                                      frames=trajectory_frames,
+                                                      coordinates=trajectory_coordinates)
+        return trajectories
     # print("trajectories_path: ", trajectories_path)
-    trajectories = OrderedDict() # {}	    trajectories = OrderedDict() # {}
+
     folder_names = os.listdir(trajectories_path)
+
     # print("folder_names: ", folder_names)
     if debug: # and (split == 'train'):
         folder_names = folder_names[:5]
