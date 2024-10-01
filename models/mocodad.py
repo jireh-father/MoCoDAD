@@ -227,13 +227,17 @@ class MoCoDAD(pl.LightningModule):
         print("idxs", idxs)
         # Encode the condition data
         condition_embedding, rec_cond_data = self._encode_condition(condition_data)
+        print("condition_embedding.shape", condition_embedding.shape)
+        print("rec_cond_data.shape", rec_cond_data.shape)
         # Sample the time steps and corrupt the data
         t = self.noise_scheduler.sample_timesteps(corrupt_data.shape[0]).to(self.device)
         x_t, noise = self.noise_scheduler.noise_graph(corrupt_data, t)
         # Prepare the input data for the conditioning strategies 'concat', 'random_imp' and 'inbetween_imp'
         x_t = self._prepare_input_data(condition_data, x_t, idxs[1])
+        print("x_t.shape", x_t.shape)
         # Predict the noise
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
+        print("predicted_noise.shape", predicted_noise.shape)
         # Compute the loss
         loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
         # ori_shape = predicted_noise.shape
