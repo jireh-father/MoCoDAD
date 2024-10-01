@@ -402,6 +402,9 @@ def main(args):
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
+                        # find index of frame closest to center_x
+                        closest_idx = (df[all_x_axis_keys[0]] - center_x).abs().idxmin()
+                        print("closest_idx", closest_idx)
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
                         print("max_frames", len(df))
