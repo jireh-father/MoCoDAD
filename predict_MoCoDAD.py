@@ -29,7 +29,14 @@ trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
                      max_epochs=1, logger=False)
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 unpacked_result = processing_data(out)
-file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
-for i in range(len(unpacked_result)):
-    print(file_names[i])
-    print(unpacked_result[i].shape)
+prediction = unpacked_result[0]
+pred_window = prediction.shape[2]
+gt_data = unpacked_result[0][-pred_window:]
+print(prediction.shape)
+print(gt_data.shape)
+
+
+# file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
+# for i in range(len(unpacked_result)):
+#     print(file_names[i])
+#     print(unpacked_result[i].shape)

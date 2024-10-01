@@ -220,24 +220,24 @@ class MoCoDAD(pl.LightningModule):
         tensor_data, _ = self._unpack_data(batch)
         # print("tensor_data", tensor_data)
         # Select frames to condition on and to corrupt according to the conditioning strategy
-        print("tensor_data.shape", tensor_data.shape)
+        # print("tensor_data.shape", tensor_data.shape)
         condition_data, corrupt_data, idxs = self._select_frames(tensor_data)
-        print("condition_data.shape", condition_data.shape)
-        print("corrupt_data.shape", corrupt_data.shape)
-        print("idxs", idxs)
+        # print("condition_data.shape", condition_data.shape)
+        # print("corrupt_data.shape", corrupt_data.shape)
+        # print("idxs", idxs)
         # Encode the condition data
         condition_embedding, rec_cond_data = self._encode_condition(condition_data)
-        print("condition_embedding.shape", condition_embedding.shape)
-        print("rec_cond_data.shape", rec_cond_data.shape)
+        # print("condition_embedding.shape", condition_embedding.shape)
+        # print("rec_cond_data.shape", rec_cond_data.shape)
         # Sample the time steps and corrupt the data
         t = self.noise_scheduler.sample_timesteps(corrupt_data.shape[0]).to(self.device)
         x_t, noise = self.noise_scheduler.noise_graph(corrupt_data, t)
         # Prepare the input data for the conditioning strategies 'concat', 'random_imp' and 'inbetween_imp'
         x_t = self._prepare_input_data(condition_data, x_t, idxs[1])
-        print("x_t.shape", x_t.shape)
+        # print("x_t.shape", x_t.shape)
         # Predict the noise
         predicted_noise = self._unet_forward(x_t, t=t, condition_data=condition_embedding, corrupt_idxs=idxs[1])
-        print("predicted_noise.shape", predicted_noise.shape)
+        # print("predicted_noise.shape", predicted_noise.shape)
         # Compute the loss
         loss_noise = torch.mean(self.loss_fn(predicted_noise, noise))
         # ori_shape = predicted_noise.shape
@@ -256,7 +256,7 @@ class MoCoDAD(pl.LightningModule):
 
         if self.conditioning_architecture == 'AE':
             loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
-            print("diff", rec_cond_data.shape, condition_data.shape)
+            # print("diff", rec_cond_data.shape, condition_data.shape)
             # diff abs rec_cond_data and condition_data
             # diff = torch.abs(rec_cond_data - condition_data)
             # print("diff", diff.shape)
