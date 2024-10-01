@@ -250,6 +250,10 @@ def main(args):
                         left_thr = min_x + thr_width
                         right_thr = max_x - thr_width
 
+                        if df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous 1", csv_file)
+                            sys.exit()
+
                         # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                         sdf = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
                         indexes = [i for i in range(sdf.index.min(), sdf.index.max() + 1) if i in df.index.values]
@@ -257,7 +261,7 @@ def main(args):
                         print(indexes)
                         df = df.loc[indexes]
                         if df.index.max() - df.index.min() + 1 != len(df):
-                            print("index is not continuous", csv_file)
+                            print("index is not continuous 2", csv_file)
                             sys.exit()
 
                         if args.max_frames and len(df) > args.max_frames:
