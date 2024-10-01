@@ -331,7 +331,7 @@ def main(args):
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
             except:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
-            print(df.index)
+            print(df.index.values)
 
             if len(df) < args.window_length:
                 continue
@@ -354,7 +354,7 @@ def main(args):
             df.columns = cols
 
             df = df.dropna(subset=all_keys, how='any')
-            print(df.index)
+            print(df.index.values)
             if len(df) < args.window_length:
                 continue
 
@@ -368,7 +368,7 @@ def main(args):
             #             df[key] = -df[key]
 
             df['index_col'] = df.index + 1
-            print(df.index)
+            print(df.index.values)
 
             df = df[['index_col'] + all_keys]
 
@@ -406,7 +406,6 @@ def main(args):
                         closest_idx = (df[all_x_axis_keys[0]] - center_x).abs().idxmin()
                         print("closest_idx", closest_idx)
                         print(center_x)
-                        print(df.loc[closest_idx])
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
                         print("max_frames", len(df))
