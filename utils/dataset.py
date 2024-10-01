@@ -243,6 +243,7 @@ class PoseDatasetRobust(PoseDataset):
                                                  normalize_pose=self.normalize_pose_seg,
                                                  include_global=self.include_global,
                                                  debug=self.debug,
+                                                 scaler_path=dataset_args.get('scaler_path', None),
                                                  use_age=dataset_args.get('use_age', False),)
         
         X_global, _ = global_
