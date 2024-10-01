@@ -223,6 +223,7 @@ def main(args):
             print(df[df.isna().any(axis=1)])
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
             if df.index.max() - df.index.min() + 1 != len(df):
+                print(df)
                 print("index is not continuous a", csv_file)
                 sys.exit()
             if len(df) < args.window_length:
