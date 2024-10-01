@@ -34,8 +34,9 @@ pred_window = prediction.shape[2]
 gt_data = unpacked_result[1][:,:,-pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
-
-diff = torch.abs(prediction - gt_data)
+import numpy as np
+# np abs
+diff = np.abs(prediction - gt_data)
 print("diff", diff.shape)
 print("diff", diff.shape)
 print(prediction)
