@@ -321,6 +321,8 @@ def get_dataset_and_loader(args, split='train', validation=False):
                     'custom_num_joints': args.custom_num_joints,}
     if hasattr(args,"use_angle"):
         dataset_args['use_angle'] = args.use_angle
+    else:
+        dataset_args['use_angle'] = False
 
     loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
     
