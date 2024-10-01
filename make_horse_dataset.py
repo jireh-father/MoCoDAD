@@ -193,10 +193,9 @@ def main(args):
             if len(df) < args.window_length:
                 continue
 
+            is_continuous = True
             if df.index.max() - df.index.min() + 1 != len(df):
-                print("index is not continuous 1", csv_file)
-                sys.exit()
-
+                is_continuous = False
             len_df = len(df)
 
             if args.direction == 'side':
@@ -264,9 +263,9 @@ def main(args):
                         print(df.index.values)
                         print(indexes)
                         df = df.loc[indexes]
-                        # if df.index.max() - df.index.min() + 1 != len(df):
-                        #     print("index is not continuous 2", csv_file)
-                        #     sys.exit()
+                        if is_continuous and df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous 2", csv_file)
+                            sys.exit()
 
                         if args.max_frames and len(df) > args.max_frames:
                             center_x = (min_x + max_x) / 2
