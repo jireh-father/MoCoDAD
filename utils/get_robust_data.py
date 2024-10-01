@@ -35,7 +35,7 @@ def data_of_combined_model(**args):
     if 'train' in split:
         subfolder = 'training'
         trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
-    else:
+    elif 'valid' in split:
         subfolder = 'validating'
         trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
     video_resolution = args.get('vid_res', (1080,720))
