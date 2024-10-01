@@ -24,9 +24,9 @@ torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
 # torch.backends.cudnn.deterministic = True
-torch.backends.cudnn.benchmark = False
-torch.backends.cudnn.enabled = False
-torch.use_deterministic_algorithms(True)
+# torch.backends.cudnn.benchmark = False
+# torch.backends.cudnn.enabled = False
+# torch.use_deterministic_algorithms(True)
 
 random.seed(args.seed)
 
