@@ -249,15 +249,15 @@ class MoCoDAD(pl.LightningModule):
             loss_rec_cond = F.mse_loss(rec_cond_data, condition_data)
 
             # diff abs rec_cond_data and condition_data
-            diff = torch.abs(rec_cond_data - condition_data)
-            print("diff", diff.shape)
+            # diff = torch.abs(rec_cond_data - condition_data)
+            # print("diff", diff.shape)
             # 1024, 2, 3, 12
             # diff has 4 axis, reduce mean on axis 1, 2, 3
-            diff = torch.mean(diff, dim=(0,1,2))
-            print("diff", diff.shape)
+            # diff = torch.mean(diff, dim=(0,1,2))
+            # print("diff", diff.shape)
             # print index of max value of diff
-            print("max diff index", torch.argmax(diff), torch.max(diff))
-            print("min diff index", torch.argmin(diff), torch.min(diff))
+            # print("max diff index", torch.argmax(diff), torch.max(diff))
+            # print("min diff index", torch.argmin(diff), torch.min(diff))
 
             # ori_shape = rec_cond_data.shape
             # rec_cond_data_vectors = rec_cond_data.reshape(ori_shape[0], ori_shape[1] * ori_shape[2] * ori_shape[3])
