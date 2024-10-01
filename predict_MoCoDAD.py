@@ -30,7 +30,6 @@ trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 unpacked_result = processing_data(out)
 file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
-# save_dir = os.path.join(args.ckpt_dir,
-#                         f'saved_tensors_{args.split}_{args.aggregation_strategy}_{args.n_generated_samples}')
-# for i in range(len(unpacked_result)):
-#     torch.save(unpacked_result[i], os.path.join(save_dir, file_names[i] + '.pt'))
+for i in range(len(unpacked_result)):
+    print(file_names[i])
+    print(unpacked_result[i].shape)
