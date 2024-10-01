@@ -1,6 +1,6 @@
 import argparse
 import os
-
+import time
 import torch
 import pytorch_lightning as pl
 import yaml
@@ -27,6 +27,7 @@ dataset, loader = get_test_dataset_and_loader(args)
 trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
                      # default_root_dir=args.ckpt_dir,
                      max_epochs=1, logger=False)
+start = time.time()
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 unpacked_result = processing_data(out)
 prediction = unpacked_result[0]
@@ -38,7 +39,7 @@ import numpy as np
 # np abs
 diff = np.abs(prediction - gt_data)
 diff = np.mean(diff, axis=(0,1,2))
-
+print(time.time() - start)
 print("diff", diff.shape)
 print("max diff index", diff.argmax(), np.max(diff))
 print("min diff index", diff.argmin(), np.min(diff))
