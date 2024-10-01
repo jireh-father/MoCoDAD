@@ -35,7 +35,12 @@ gt_data = unpacked_result[1][:,:,-pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
 
-
+diff = torch.abs(prediction - gt_data)
+print("diff", diff.shape)
+print("diff", diff.shape)
+print(prediction)
+print("max diff index", torch.argmax(diff), torch.max(diff))
+print("min diff index", torch.argmin(diff), torch.min(diff))
 # file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
 # for i in range(len(unpacked_result)):
 #     print(file_names[i])
