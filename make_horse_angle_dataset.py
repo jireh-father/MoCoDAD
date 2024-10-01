@@ -451,6 +451,7 @@ def main(args):
                         sys.exit()
 
             # save df to csv without header
+            print(df.index)
             df.to_csv(kp_sample_output_path, index=False, header=False)
 
             if args.save_test and is_val:
