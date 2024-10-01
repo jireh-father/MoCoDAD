@@ -228,6 +228,10 @@ def main(args):
                 num_drop += 1
                 if label:
                     num_drop_lameness += 1
+                if args.skip_not_continuous_sample:
+                    print("skip. index is not continuous", csv_file)
+                    continue
+
                 # print(df)
                 # print("index is not continuous a", csv_file)
                 # sys.exit()
@@ -264,9 +268,9 @@ def main(args):
                         left_thr = min_x + thr_width
                         right_thr = max_x - thr_width
 
-                        # if df.index.max() - df.index.min() + 1 != len(df):
-                        #     print("index is not continuous 1", csv_file)
-                        #     sys.exit()
+                        if df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous 1", csv_file)
+                            sys.exit()
 
                         # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                         sdf = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
@@ -274,9 +278,9 @@ def main(args):
                         print(df.index.values)
                         print(indexes)
                         df = df.loc[indexes]
-                        # if df.index.max() - df.index.min() + 1 != len(df):
-                        #     print("index is not continuous 2", csv_file)
-                        #     sys.exit()
+                        if df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous 2", csv_file)
+                            sys.exit()
 
                         if args.max_frames and len(df) > args.max_frames:
                             center_x = (min_x + max_x) / 2
@@ -386,6 +390,7 @@ if __name__ == '__main__':
 
     # sort_max_frames
     parser.add_argument('--sort_max_frames', action='store_true', default=False)
+    parser.add_argument('--skip_not_continuous_sample', action='store_true', default=False)
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
