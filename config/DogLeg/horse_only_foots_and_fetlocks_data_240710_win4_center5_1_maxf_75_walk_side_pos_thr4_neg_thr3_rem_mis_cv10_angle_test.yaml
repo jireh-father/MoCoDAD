@@ -1,7 +1,7 @@
 ### Experiment configuration
 # best hp v1: kp score 0.55, window 4, paws
 ## General settings
-split: 'train' # data split; choices ['train', 'test']
+split: 'test' # data split; choices ['train', 'test']
 debug: false # if true, load only a few data samples
 seed: 999
 validation: true # use validation; only for UBnormal
