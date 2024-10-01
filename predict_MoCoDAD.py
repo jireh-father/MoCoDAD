@@ -31,7 +31,7 @@ out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_pre
 unpacked_result = processing_data(out)
 prediction = unpacked_result[0]
 pred_window = prediction.shape[2]
-gt_data = unpacked_result[0][-pred_window:]
+gt_data = unpacked_result[1][:,:,-pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
 
