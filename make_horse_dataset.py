@@ -239,24 +239,32 @@ def main(args):
                 else:
                     min_x = df[x_axis_keys].min().min()
                     max_x = df[x_axis_keys].max().max()
-                    width = max_x - min_x
-                    div_width = width / args.num_div
-                    thr_width = div_width * args.num_thr_div
-                    left_thr = min_x + thr_width
-                    right_thr = max_x - thr_width
-
-                    # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                    df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
-
-                    if args.max_frames and len(df) > args.max_frames:
+                    if args.use_center_frame_index:
                         center_x = (min_x + max_x) / 2
-                        # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
-                        df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        if args.sort_max_frames:
-                            # sort by index_col
-                            df.sort_values(by='index_col', inplace=True)
+                        closest_idx = (df[x_axis_keys].mean() - center_x).abs().idxmin()
 
-                    center_frames.append(len(df))
+                    else:
+                        width = max_x - min_x
+                        div_width = width / args.num_div
+                        thr_width = div_width * args.num_thr_div
+                        left_thr = min_x + thr_width
+                        right_thr = max_x - thr_width
+
+                        # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
+                        df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
+                        if df.index.max() - df.index.min() + 1 != len(df):
+                            print("index is not continuous", csv_file)
+                            sys.exit()
+
+                        if args.max_frames and len(df) > args.max_frames:
+                            center_x = (min_x + max_x) / 2
+                            # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
+                            df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
+                            if args.sort_max_frames:
+                                # sort by index_col
+                                df.sort_values(by='index_col', inplace=True)
+
+                        center_frames.append(len(df))
             else:
                 if args.max_frames and len(df) > args.max_frames:
                     df = df.iloc[:args.max_frames]
@@ -341,6 +349,8 @@ if __name__ == '__main__':
     parser.add_argument('--num_div', type=int, default=None)  # 6
     # num_thr_div
     parser.add_argument('--num_thr_div', type=int, default=1)  # 1
+    # use center frame index
+    parser.add_argument('--use_center_frame_index', action='store_true', default=False)
 
     parser.add_argument('--max_frames', type=int, default=None)  # 75
 
