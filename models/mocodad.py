@@ -195,6 +195,7 @@ class MoCoDAD(pl.LightningModule):
             # Append the generated sequence to the list of generated sequences
             generated_xs.append(x)
 
+        print("generated_xs.shape", len(generated_xs), generated_xs[0].shape)
         selected_x, loss_of_selected_x = self._aggregation_strategy(generated_xs, corrupt_data, aggr_strategy)
 
         return self._pack_out_data(selected_x, loss_of_selected_x, [tensor_data] + meta_out, return_=return_)
