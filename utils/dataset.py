@@ -140,6 +140,8 @@ class PoseDataset(Dataset):
         person_keys = dict()
         
         dir_list = os.listdir(self.path_to_json)
+        print("self.path_to_json", self.path_to_json)
+        print("dir_list", dir_list)
         json_list = sorted([fn for fn in dir_list if fn.endswith('.json')])
         
         if self.num_clips is not None:
