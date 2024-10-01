@@ -252,12 +252,8 @@ def main(args):
                         center_x = (min_x + max_x) / 2
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        indexs = df.index.values
-                        sorted_indexs = np.sort(indexs)
-                        print(indexs)
-                        if list(indexs) != list(sorted_indexs):
-                            print("not sorted", indexs, sorted_indexs)
-                            sys.exit(1)
+                        # sort by index_col
+                        df.sort_values(by='index_col', inplace=True)
 
                     center_frames.append(len(df))
 
