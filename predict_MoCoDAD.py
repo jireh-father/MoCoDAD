@@ -37,7 +37,7 @@ print(gt_data.shape)
 import numpy as np
 # np abs
 diff = np.abs(prediction - gt_data)
-diff = np.mean(diff, axis=0)
+diff = np.mean(diff, axis=(0,1,2))
 
 print("diff", diff.shape)
 print("max diff index", diff.argmax(), np.max(diff))
