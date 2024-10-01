@@ -340,6 +340,7 @@ def main(args):
         print("min center frames", min(center_frames))
     print("done")
     print("num_drop", num_drop)
+    print("num_drop_lameness", num_drop_lameness)
 
 
 if __name__ == '__main__':
