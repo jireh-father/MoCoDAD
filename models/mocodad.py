@@ -79,13 +79,15 @@ class MoCoDAD(pl.LightningModule):
         self.split = args.split
         if hasattr(args, 'use_hr'):
             self.use_hr = args.use_hr
-        self.ckpt_dir = args.ckpt_dir
+        if hasattr(args, 'ckpt_dir'):
+            self.ckpt_dir = args.ckpt_dir
         self.save_tensors = args.save_tensors
         self.num_transforms = args.num_transform
         self.anomaly_score_pad_size = args.pad_size
         self.anomaly_score_filter_kernel_size = args.filter_kernel_size
         self.anomaly_score_frames_shift = args.frames_shift
-        self.dataset_name = args.dataset_choice
+        if hasattr(args, 'dataset_choice'):
+            self.dataset_name = args.dataset_choice
 
         # Set the noise scheduler for the diffusion process
         self._set_diffusion_variables()
