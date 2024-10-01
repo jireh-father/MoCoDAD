@@ -12,7 +12,6 @@ from utils.model_utils import processing_data
 # Parse command line arguments and load config file
 parser = argparse.ArgumentParser(description='MoCoDAD')
 parser.add_argument('-c', '--config', type=str, required=True)
-parser.add_argument('--ckpt_dir', type=str, required=True)
 args = parser.parse_args()
 args = yaml.load(open(args.config), Loader=yaml.FullLoader)
 args = argparse.Namespace(**args)
