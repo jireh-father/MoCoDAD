@@ -254,6 +254,7 @@ def main(args):
                         df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
                         indexs = df.index.values
                         sorted_indexs = np.sort(indexs)
+                        print(indexs.shape)
                         if indexs != sorted_indexs:
                             print("not sorted", indexs, sorted_indexs)
                             sys.exit(1)
