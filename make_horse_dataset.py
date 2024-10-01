@@ -134,6 +134,7 @@ def main(args):
     label_key = "lameness"
     center_frames = []
     num_drop = 0
+    num_drop_lameness = 0
     for sample_idx, sample in enumerate(labels):
         # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
@@ -225,6 +226,8 @@ def main(args):
             df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
             if df.index.max() - df.index.min() + 1 != len(df):
                 num_drop += 1
+                if label:
+                    num_drop_lameness += 1
                 # print(df)
                 # print("index is not continuous a", csv_file)
                 # sys.exit()
