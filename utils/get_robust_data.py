@@ -31,6 +31,7 @@ def data_of_combined_model(**args):
     debug = args.get('debug', False)
     use_angle = args.get('use_angle', False)
     use_angle_norm = args.get('use_angle_norm', False)
+    scaler_path = args.get('scaler_path', None)
     if 'train' in split:
         subfolder = 'training'
     elif 'test' in split:
@@ -85,7 +86,8 @@ def data_of_combined_model(**args):
                                                                                         return_ids=True)
         
         if normalize_pose == True and (not use_angle or use_angle_norm):
-            scaler_path = os.path.join(exp_dir, f'global_{global_normalisation_strategy}.pickle')
+            if scaler_path is None:
+                scaler_path = os.path.join(exp_dir, f'global_{global_normalisation_strategy}.pickle')
             
             if split == 'train':
                 _, global_scaler = scale_trajectories(aggregate_autoencoder_data(global_trajectories),
@@ -125,7 +127,8 @@ def data_of_combined_model(**args):
     # if y_local_meta:
     #     print("y_local_meta shape:", y_local_meta.shape)
     if normalize_pose == True:
-        scaler_path = os.path.join(exp_dir, f'local_{local_normalisation_strategy}.pickle')
+        if scaler_path is None:
+            scaler_path = os.path.join(exp_dir, f'local_{local_normalisation_strategy}.pickle')
         
         if split == 'train':
             _, local_scaler = scale_trajectories(aggregate_autoencoder_data(local_trajectories),
@@ -150,8 +153,9 @@ def data_of_combined_model(**args):
                                                     coordinate_system='global', invert=False)
     
         print('\nChanged target trajectories\'s coordinate system to global.')
-        
-        scaler_path = os.path.join(exp_dir, f'out_{out_normalisation_strategy}.pickle')
+
+        if scaler_path is None:
+            scaler_path = os.path.join(exp_dir, f'out_{out_normalisation_strategy}.pickle')
     
         if split == 'train':
             _, out_scaler = scale_trajectories(aggregate_autoencoder_data(out_trajectories),

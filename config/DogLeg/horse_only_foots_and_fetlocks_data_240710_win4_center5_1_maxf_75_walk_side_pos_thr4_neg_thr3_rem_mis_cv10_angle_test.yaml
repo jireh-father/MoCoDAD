@@ -4,30 +4,16 @@
 split: 'test' # data split; choices ['train', 'test']
 debug: false # if true, load only a few data samples
 seed: 999
-validation: true # use validation; only for UBnormal
-use_hr: false # for validation and test on UBnormal
 
 ## Computational resources
 accelerator: 'gpu'
 devices: [0] # indices of cuda devices to use
 
 ## Paths
-dir_name: 'train_experiment' # name of the directory of the current experiment
-data_dir: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/' # path to the data
-exp_dir: './checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle' # path to the directory that will contain the current experiment directory
-test_path: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1' # path to the test data
-load_ckpt: '' # name of the checkpoint to load at inference time
+test_data_dir: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1' # path to the test data
+scaler_path: './checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_ang/cv1/local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1/best_metrics.pkl' # name of the checkpoint to load at inference time
 create_experiment_dir: true
-
-## WANDB configuration
-use_wandb: false
-project_name: "project_name"
-wandb_entity: "entity_name"
-group_name: "group_name"
-use_ema: false
-
-##############################
-
 
 ### Model's configuration
 
@@ -55,7 +41,6 @@ channels: [32,16,32] # channels for the encoder (ignored if conditioning_archite
 noise_steps: 10 # how many diffusion steps to perform
 
 ### Optimizer and scheduler's configuration
-n_epochs: 100
 opt_lr: 0.001
 
 ## Losses' configuration

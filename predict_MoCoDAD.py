@@ -12,16 +12,16 @@ from utils.model_utils import processing_data
 # Parse command line arguments and load config file
 parser = argparse.ArgumentParser(description='MoCoDAD')
 parser.add_argument('-c', '--config', type=str, required=True)
+parser.add_argument('--ckpt_dir', type=str, required=True)
 args = parser.parse_args()
 args = yaml.load(open(args.config), Loader=yaml.FullLoader)
 args = argparse.Namespace(**args)
-args = init_args(args)
 
 # Initialize the model
 model = MoCoDAD(args)
 
 print('Loading data and creating loaders.....')
-ckpt_path = os.path.join(args.ckpt_dir, args.load_ckpt)
+ckpt_path = args.load_ckpt
 dataset, loader = get_test_dataset_and_loader(args)
 
 # Initialize trainer and test
