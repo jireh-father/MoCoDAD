@@ -71,6 +71,7 @@ class PoseDataset(Dataset):
             sample_index = index % self.num_samples
             trans_index = index // self.num_samples
             data_numpy = np.array(self.segs_data_np[sample_index])
+            print("data_numpy.shape: ", data_numpy.shape)
             data_transformed = self.transform_list[trans_index](data_numpy)
             data_transformed = data_transformed[:self.num_coords,:,:]
         else:
