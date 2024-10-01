@@ -254,6 +254,8 @@ def main(args):
                         df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
                         # sort by index_col
                         df.sort_values(by='index_col', inplace=True)
+                        print(df.index.values)
+                        sys.exit()
 
                     center_frames.append(len(df))
 
