@@ -34,11 +34,10 @@ def data_of_combined_model(**args):
     scaler_path = args.get('scaler_path', None)
     if 'train' in split:
         subfolder = 'training'
-    elif 'test' in split:
-        subfolder = 'testing'
+        trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
     else:
         subfolder = 'validating'
-    trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
+        trajectories_path = os.path.join(trajectories_path, f'{subfolder}/trajectories')
     video_resolution = args.get('vid_res', (1080,720))
     video_resolution = np.array(video_resolution, dtype=np.float32)
     # Architecture
