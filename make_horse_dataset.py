@@ -255,7 +255,7 @@ def main(args):
                         indexs = df.index.values
                         sorted_indexs = np.sort(indexs)
                         print(indexs)
-                        if indexs != sorted_indexs:
+                        if list(indexs) != list(sorted_indexs):
                             print("not sorted", indexs, sorted_indexs)
                             sys.exit(1)
 
