@@ -8,6 +8,8 @@ from models.mocodad import MoCoDAD
 from utils.argparser import init_args
 from utils.dataset import get_test_dataset_and_loader
 from utils.model_utils import processing_data
+import random
+import numpy as np
 
 # Parse command line arguments and load config file
 parser = argparse.ArgumentParser(description='MoCoDAD')
@@ -15,6 +17,21 @@ parser.add_argument('-c', '--config', type=str, required=True)
 args = parser.parse_args()
 args = yaml.load(open(args.config), Loader=yaml.FullLoader)
 args = argparse.Namespace(**args)
+
+
+# seed set all modules
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.enabled = False
+torch.use_deterministic_algorithms(True)
+
+random.seed(args.seed)
+
+np.random.seed(args.seed)
+
 
 # Initialize the model
 model = MoCoDAD(args)
@@ -35,7 +52,6 @@ pred_window = prediction.shape[2]
 gt_data = unpacked_result[1][:,:,-pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
-import numpy as np
 # np abs
 diff = np.abs(prediction - gt_data)
 diff = np.mean(diff, axis=(0,1,2))
