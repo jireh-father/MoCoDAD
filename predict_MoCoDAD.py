@@ -22,7 +22,7 @@ model = MoCoDAD(args)
 
 print('Loading data and creating loaders.....')
 ckpt_path = os.path.join(args.ckpt_dir, args.load_ckpt)
-_, _, dataset, loader = get_test_dataset_and_loader(args)
+dataset, loader = get_test_dataset_and_loader(args)
 
 # Initialize trainer and test
 trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
