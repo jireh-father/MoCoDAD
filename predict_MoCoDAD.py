@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 import yaml
 from models.mocodad import MoCoDAD
 from utils.argparser import init_args
-from utils.dataset import get_dataset_and_loader
+from utils.dataset import get_test_dataset_and_loader
 from utils.model_utils import processing_data
 
 # Parse command line arguments and load config file
@@ -22,7 +22,7 @@ model = MoCoDAD(args)
 
 print('Loading data and creating loaders.....')
 ckpt_path = os.path.join(args.ckpt_dir, args.load_ckpt)
-_, _, dataset, loader = get_dataset_and_loader(args, split=args.split)
+_, _, dataset, loader = get_test_dataset_and_loader(args)
 
 # Initialize trainer and test
 trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,

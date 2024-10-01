@@ -340,4 +340,45 @@ def get_dataset_and_loader(args, split='train', validation=False):
         val_dataset, val_loader = None, None
     
     return dataset, loader, val_dataset, val_loader
-    
+
+
+def get_test_dataset_and_loader(args):
+    if args.num_transform > 0:
+        trans_list = ae_trans_list[:args.num_transform]
+    else:
+        trans_list = None
+
+    if args.use_fitted_scaler:
+        with open('{}/robust.pkl'.format(args.ckpt_dir), 'rb') as handle:
+            scaler = pickle.load(handle)
+        print('Scaler loaded from {}'.format('{}/robust.pkl'.format(args.ckpt_dir)))
+    else:
+        scaler = None
+
+    dataset_args = {
+        'transform_list': trans_list, 'debug': args.debug, 'headless': args.headless,
+        'seg_len': args.seg_len, 'normalize_pose': (args.normalization_strategy != 'none'), 'kp18_format': args.kp18_format,
+        'vid_res': args.vid_res, 'num_coords': args.num_coords, 'sub_mean': False,
+        'return_indices': False, 'return_metadata': True, 'return_mean': False,
+        'symm_range': args.symm_range, 'hip_center': args.hip_center,
+        'normalization_strategy': args.normalization_strategy, 'ckpt': args.ckpt_dir, 'scaler': scaler,
+        'kp_threshold': 0, 'double_item': False,
+        'custom_num_joints': args.custom_num_joints,
+        'use_angle': args.use_angle
+    }
+
+    loader_args = {'batch_size': args.batch_size, 'num_workers': args.num_workers, 'pin_memory': True}
+
+    dataset_args['seg_stride'] = 1  # No strides for test set
+    if args.normalization_strategy == 'robust':
+        dataset = PoseDatasetRobust(
+            path_to_data=args.data_dir,
+            exp_dir=args.ckpt_dir,
+            include_global=(args.num_coords == 6), split='test', **dataset_args
+        )
+    else:
+        dataset = PoseDataset(args.pose_path['test'], **dataset_args)
+
+    loader = DataLoader(dataset, **loader_args, shuffle=False)
+
+    return dataset, loader
