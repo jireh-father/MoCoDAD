@@ -331,7 +331,7 @@ def main(args):
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
             except:
                 df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
-            print(df.index.values)
+            # print(df.index.values)
 
             if len(df) < args.window_length:
                 continue
@@ -354,7 +354,7 @@ def main(args):
             df.columns = cols
 
             df = df.dropna(subset=all_keys, how='any')
-            print(df.index.values)
+            # print(df.index.values)
             if df.index.max() - df.index.min() + 1 != len(df):
                 if args.skip_not_continuous_sample:
                     print("skip. index is not continuous", csv_file)
@@ -372,23 +372,23 @@ def main(args):
             #             df[key] = -df[key]
 
             df['index_col'] = df.index + 1
-            print(df.index.values)
+            # print(df.index.values)
 
             df = df[['index_col'] + all_keys]
 
             if args.frame_stride and args.frame_stride > 1:
                 # remove rows by frame_stride
                 df = df[df['index_col'] % args.frame_stride == 0]
-                print("frame_stride", len(df))
-                print(df.index)
+                # print("frame_stride", len(df))
+                # print(df.index)
 
             if args.num_div:
                 if args.use_random_frame_range and args.max_frames:
                     if len(df) > args.max_frames:
                         start_idx = np.random.randint(0, len(df) - args.max_frames)
                         df = df.iloc[start_idx:start_idx + args.max_frames]
-                        print("random frame range", len(df))
-                        print(df.index)
+                        # print("random frame range", len(df))
+                        # print(df.index)
                 else:
                     min_x = df[all_x_axis_keys].min().min()
                     max_x = df[all_x_axis_keys].max().max()
@@ -401,19 +401,19 @@ def main(args):
                     # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
                     df = df[
                         (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
-                    print("num_div", len(df))
-                    print(df.index)
+                    # print("num_div", len(df))
+                    # print(df.index)
 
                     if args.max_frames and len(df) > args.max_frames:
                         center_x = (min_x + max_x) / 2
                         # find index of frame closest to center_x
                         closest_idx = (df[all_x_axis_keys[0]] - center_x).abs().idxmin()
-                        print("closest_idx", closest_idx)
-                        print(center_x)
+                        # print("closest_idx", closest_idx)
+                        # print(center_x)
                         # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
                         df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        print("max_frames", len(df))
-                        print(df.index)
+                        # print("max_frames", len(df))
+                        # print(df.index)
 
                     center_frames.append(len(df))
             else:
@@ -424,7 +424,7 @@ def main(args):
             sample_idx_str = f"{sample_idx:04d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
                                                  "00001.csv")
-            print(kp_sample_output_path)
+            # print(kp_sample_output_path)
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
 
             # 좌표를 연결된 3개의 관절들의 사이 각도로 변환
@@ -465,8 +465,8 @@ def main(args):
 
             # drop df cols of all_keys
             df = df.drop(columns=all_keys)
-            print("drop")
-            print(df.index)
+            # print("drop")
+            # print(df.index)
 
             # 각도 컬럼에 180초과 값이 있는지 확인
             for col in df.columns:
@@ -476,7 +476,6 @@ def main(args):
                         sys.exit()
 
             # save df to csv without header'
-            sys.exit()
             df.to_csv(kp_sample_output_path, index=False, header=False)
 
             if args.save_test and is_val:
