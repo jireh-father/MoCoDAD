@@ -355,6 +355,10 @@ def main(args):
 
             df = df.dropna(subset=all_keys, how='any')
             print(df.index.values)
+            if df.index.max() - df.index.min() + 1 != len(df):
+                if args.skip_not_continuous_sample:
+                    print("skip. index is not continuous", csv_file)
+                    continue
             if len(df) < args.window_length:
                 continue
 
@@ -412,6 +416,9 @@ def main(args):
                         print(df.index)
 
                     center_frames.append(len(df))
+            else:
+                if args.max_frames and len(df) > args.max_frames:
+                    df = df.iloc[:args.max_frames]
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
@@ -550,6 +557,7 @@ if __name__ == '__main__':
 
     # use_score_col
     parser.add_argument('--use_score_col', action='store_true', default=False)
+    parser.add_argument('--skip_not_continuous_sample', action='store_true', default=False)
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
