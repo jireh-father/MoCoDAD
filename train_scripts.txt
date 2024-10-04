@@ -26,7 +26,7 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 # center5_1 maxf 75 not rem old mis -> rem mis
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10.yaml --data_root ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10 &
 
-## 20241001
+## 20241001 프레임 순서 뒤바뀐 오류 되잡기 위해 시도한것들
 # maxf75 sorted
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_sorted_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10.yaml --data_root ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_sorted_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/  > log_tr_baseline_data_240710_win4_center5_1_maxf_75_sorted_walk_side_pos_thr4_neg_thr3_rem_mis_cv10 &
 
@@ -35,6 +35,9 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 
 # first maxf75
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/  > log_tr_baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10 &
+
+# first maxf75, skip hole, trot
+nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_trot_side_pos_thr2_neg_thr2_rem_mis_cv10_skip_hole.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10_skip_hole/  > log_tr_baseline_data_240710_win4_first_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10_skip_hole &
 
 # 20240720 20fps, center5_1 maxf 75 rem mis
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240720_20fps_trot_side_pos_thr2_neg_thr2_rem_mis_cv10.yaml --data_root ./data/horse/baseline_data_240720_20fps_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10/ --slack_webhook_url https://hooks.slack.com/services/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 > log_tr_baseline_data_240720_20fps_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_mis_cv10 &

@@ -18,20 +18,11 @@ args = parser.parse_args()
 args = yaml.load(open(args.config), Loader=yaml.FullLoader)
 args = argparse.Namespace(**args)
 
-
-# seed set all modules
 torch.manual_seed(args.seed)
 torch.cuda.manual_seed(args.seed)
 torch.cuda.manual_seed_all(args.seed)
-# torch.backends.cudnn.deterministic = True
-# torch.backends.cudnn.benchmark = False
-# torch.backends.cudnn.enabled = False
-# torch.use_deterministic_algorithms(True)
-
 random.seed(args.seed)
-
 np.random.seed(args.seed)
-
 
 # Initialize the model
 model = MoCoDAD(args)
@@ -49,17 +40,13 @@ out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_pre
 unpacked_result = processing_data(out)
 prediction = unpacked_result[0]
 pred_window = prediction.shape[2]
-gt_data = unpacked_result[1][:,:,-pred_window:, :]
+gt_data = unpacked_result[1][:, :, -pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
 # np abs
 diff = np.abs(prediction - gt_data)
-diff = np.mean(diff, axis=(0,1,2))
+diff = np.mean(diff, axis=(0, 1, 2))
 print(time.time() - start)
 print("diff", diff.shape)
 print("max diff index", diff.argmax(), np.max(diff))
 print("min diff index", diff.argmin(), np.min(diff))
-# file_names = ['prediction', 'gt_data', 'trans', 'metadata', 'frames']
-# for i in range(len(unpacked_result)):
-#     print(file_names[i])
-#     print(unpacked_result[i].shape)
