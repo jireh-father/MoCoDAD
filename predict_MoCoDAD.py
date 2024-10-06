@@ -37,6 +37,7 @@ trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
                      max_epochs=1, logger=False)
 start = time.time()
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
+out = out[0]
 print("out length", len(out))
 for i in range(len(out)):
     print(f"{i}th out shape", out[i].shape)
