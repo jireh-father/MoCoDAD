@@ -61,12 +61,14 @@ def data_of_combined_model(**args):
     if not use_angle:
         trajectories = remove_short_trajectories(trajectories, input_length=input_length,
                                                  input_gap=seg_stride, pred_length=pred_length)
+        print("Removed, frames", trajectories[trajectories.keys()[0]].frames)
         print('\nRemoved short trajectories. Number of trajectories left: %d.' % len(trajectories))
 
     # trajectories, trajectories_val = split_into_train_and_test(trajectories, train_ratio=0.8, seed=42)
 
     if input_missing_steps:
         trajectories = input_trajectories_missing_steps(trajectories)
+        print("input_missing_steps, frames", trajectories[trajectories.keys()[0]].frames)
         print('\nInputted missing steps of trajectories.')
 
     # Global
@@ -112,6 +114,7 @@ def data_of_combined_model(**args):
     if not use_angle:
         local_trajectories = change_coordinate_system(local_trajectories, video_resolution=video_resolution,
                                                       coordinate_system='bounding_box_centre', invert=False)
+        print("change_coordinate_system, frames", trajectories[trajectories.keys()[0]].frames)
         # print("changed local_trajectories:", local_trajectories)
 
     print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')

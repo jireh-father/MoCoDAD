@@ -260,6 +260,8 @@ def aggregate_rnn_autoencoder_data(trajectories, input_length, input_gap=0, pred
             # this is the original line of code
             X, X_pred, input_ranges_idxs, future_ranges_idxs = _aggregate_rnn_autoencoder_data(trajectory.coordinates, input_length, 
                                                              input_gap, pred_length, return_start_idxs=return_ids) # added last two return values
+            print("x shape:", X.shape)
+            print("x_pred shape:", X_pred.shape)
             frames = trajectory.frames # added
             input_start_idxs = [range_[0] for range_ in input_ranges_idxs] # added
             scene_id, clip_id = map(lambda x: int(x), trajectory.trajectory_id.split('_')[0].split('-')) # added
