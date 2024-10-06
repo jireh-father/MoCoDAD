@@ -119,7 +119,7 @@ def data_of_combined_model(**args):
     X_local, y_local, X_local_meta, y_local_meta = aggregate_rnn_autoencoder_data(local_trajectories, input_length=input_length, 
                                                                                   input_gap=seg_stride, pred_length=pred_length,
                                                                                   return_ids=True)
-    
+    print("X_local shape:", X_local.shape)
     # if X_local_meta:
     #     print("X_local_meta shape:", X_local_meta.shape)
     # if y_local_meta:
@@ -174,7 +174,7 @@ def data_of_combined_model(**args):
             y_out, _ = scale_trajectories(y_out, scaler=out_scaler, strategy=out_normalisation_strategy)
             
         print('\nNormalised target trajectories using the %s normalisation strategy.' % out_normalisation_strategy)
-        
+    print("X_local shape:", X_local.shape)
             
     if pred_length > 0:
         
