@@ -175,6 +175,7 @@ def data_of_combined_model(**args):
             
         print('\nNormalised target trajectories using the %s normalisation strategy.' % out_normalisation_strategy)
     print("X_local shape:", X_local.shape)
+    #X_local shape: (72, 4, 16)
             
     if pred_length > 0:
         
