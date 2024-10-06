@@ -382,7 +382,7 @@ def get_test_dataset_and_loader(args):
     dataset_args['seg_stride'] = 1  # No strides for test set
     if args.normalization_strategy == 'robust':
         dataset = PoseDatasetRobust(
-            path_to_data=args.test_data_dir,
+            path_to_data=args.test_path,
             # exp_dir=args.ckpt_dir,
             include_global=(args.num_coords == 6), split='test', **dataset_args
         )

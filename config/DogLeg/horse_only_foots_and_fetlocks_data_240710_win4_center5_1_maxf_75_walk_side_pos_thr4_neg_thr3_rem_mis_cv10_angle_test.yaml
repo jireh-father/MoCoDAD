@@ -10,7 +10,7 @@ accelerator: 'gpu'
 devices: [0] # indices of cuda devices to use
 
 ## Paths
-test_data_dir: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1/testing/trajectories/00001-0101/00001.csv' # path to the test data
+test_path: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1/testing/trajectories/00001-0101/00001.csv' # path to the test data
 scaler_path: './checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1/local_robust.pickle' # path to the fitted scaler
 load_ckpt: 'checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1/epoch=34-step=3045.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: true

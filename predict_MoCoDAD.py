@@ -37,10 +37,16 @@ trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
                      max_epochs=1, logger=False)
 start = time.time()
 out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
-out = out[0]
-print("out length", len(out))
-for i in range(len(out)):
+
+print("out length", len(out[0]))
+for i in range(len(out[0])):
     print(f"{i}th out shape", out[i].shape)
+# # 1th out shape torch.Size([360, 2, 1, 8])
+# # 2th out shape torch.Size([360, 2, 4, 8])
+# # 3th out shape torch.Size([360])
+# # 4th out shape torch.Size([360, 4])
+# # 5th out shape torch.Size([360, 4])
+
 unpacked_result = processing_data(out)
 prediction = unpacked_result[0]
 pred_window = prediction.shape[2]
