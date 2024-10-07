@@ -50,20 +50,25 @@ for i in range(len(out[0])):
 # 4th out shape torch.Size([360, 4]
 
 # when return is pose and loss
-# # 1th out shape torch.Size([360, 2, 1, 8])
-# # 2th out shape torch.Size([360, 2, 4, 8])
-# # 3th out shape torch.Size([360])
-# # 4th out shape torch.Size([360, 4])
-# # 5th out shape torch.Size([360, 4])
+# out length 6
+# 0th out shape torch.Size([360])
+# 1th out shape torch.Size([360, 2, 1, 8])
+# 2th out shape torch.Size([360, 2, 4, 8])
+# 3th out shape torch.Size([360])
+# 4th out shape torch.Size([360, 4])
+# 5th out shape torch.Size([360, 4])
 # 360 = 72frames * 5(num transform)
 # [frames & transforms, keypoint axis, window, num of keypoint]
 
 unpacked_result = processing_data(out)
+
+loss = np.mean(unpacked_result[0], axis=0)
+print("loss", loss)
 print("unpacked_result length", len(unpacked_result))
-prediction = unpacked_result[0]
+prediction = unpacked_result[1]
 print("prediction shape", prediction.shape)
 pred_window = prediction.shape[2]
-gt_data = unpacked_result[1][:, :, -pred_window:, :]
+gt_data = unpacked_result[2][:, :, -pred_window:, :]
 print(prediction.shape)
 print(gt_data.shape)
 # np abs
