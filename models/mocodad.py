@@ -215,7 +215,7 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             torch.float32: loss of the model
         """
-
+        print("do training step")
         # Unpack data: tensor_data is the input data, meta_out is a list of metadata
         tensor_data, _ = self._unpack_data(batch)
         # print("tensor_data", tensor_data)
