@@ -18,7 +18,7 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
-def main(args, tmp_dir, data_json):
+def main(args, tmp_dir, data_json, keypoint_dir):
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
@@ -55,7 +55,7 @@ def main(args, tmp_dir, data_json):
             continue
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
-            csv_file = os.path.join(args.keypoint_dir, path_and_dir["keypoint_full_path"])
+            csv_file = os.path.join(keypoint_dir, path_and_dir["keypoint_full_path"])
 
             if args.use_angle:
                 df = make_horse_angle_dataset.read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets,
@@ -122,9 +122,12 @@ if __name__ == '__main__':
     parser.add_argument('--tmp_dir', type=str, default="./tmp")
     parser.add_argument('--data_json', type=str,
                         default='./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_1.json')
+    parser.add_argument('--keypoint_dir', type=str,
+                        default='./horse_kp_20240710')
     args = parser.parse_args()
     tmp_dir = args.tmp_dir
     data_json = args.data_json
+    keypoint_dir = args.keypoint_dir
     args = yaml.load(open(args.config), Loader=yaml.FullLoader)
     args = argparse.Namespace(**args)
-    main(args, tmp_dir, data_json)
+    main(args, tmp_dir, data_json, keypoint_dir)
