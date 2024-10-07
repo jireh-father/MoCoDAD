@@ -56,6 +56,7 @@ else:
                                      use_random_frame_range=args.use_random_frame_range,
                                      skip_not_continuous_sample=args.skip_not_continuous_sample,
                                      sort_max_frames=args.sort_max_frames)
+
 kp_path = os.path.join(tmp_dir, str(uuid.uuid4()) + '.csv')
 
 try:
@@ -117,5 +118,5 @@ try:
 
 except Exception as e:
     traceback.print_exc()
-finally:
-    os.remove(kp_path)
+# finally:
+    # os.remove(kp_path)
