@@ -42,6 +42,8 @@ def main(args, tmp_dir, data_json):
     else:
         x_axis_keys, y_axis_keys = make_horse_dataset.get_axis_keys(args.camera_direction, args.target_keypoint_name)
 
+    num_samples = 0
+    num_true = 0
     for sample_idx, sample in enumerate(dataset):
         # print(f"processing {sample_idx}th sample")
         label = sample['lameness']
@@ -103,9 +105,14 @@ def main(args, tmp_dir, data_json):
                 loss = np.mean(unpacked_result[0], axis=0)
                 if args.pred_threshold <= loss:
                     print("positive sample")
+                    pred = True
                 else:
                     print("negative sample")
+                    pred = False
                 print("loss", loss)
+                if pred == label:
+                    num_true += 1
+                num_samples += 1
 
                 prediction = unpacked_result[1]
                 pred_window = prediction.shape[2]
@@ -122,6 +129,9 @@ def main(args, tmp_dir, data_json):
             finally:
                 os.remove(kp_path)
 
+    print(f"accuracy: {num_true / num_samples}")
+    print("num_samples", num_samples)
+    print("num_true", num_true)
 
 if __name__ == '__main__':
     # Parse command line arguments and load config file
