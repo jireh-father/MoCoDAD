@@ -299,6 +299,7 @@ class MoCoDAD(pl.LightningModule):
             batch_idx (int): index of the batch
         """
         # print('test step batch: ', batch[0].shape)
+        print("do test step")
         output = self.forward(batch)
         # print("test step output shape: ", output.shape)
         self._test_output_list.append(output)
