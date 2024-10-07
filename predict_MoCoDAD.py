@@ -41,6 +41,15 @@ out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_pre
 print("out length", len(out[0]))
 for i in range(len(out[0])):
     print(f"{i}th out shape", out[0][i].shape)
+# when return is pose
+# out length 5
+# 0th out shape torch.Size([360, 2, 1, 8])
+# 1th out shape torch.Size([360, 2, 4, 8])
+# 2th out shape torch.Size([360])
+# 3th out shape torch.Size([360, 4])
+# 4th out shape torch.Size([360, 4]
+
+# when return is pose and loss
 # # 1th out shape torch.Size([360, 2, 1, 8])
 # # 2th out shape torch.Size([360, 2, 4, 8])
 # # 3th out shape torch.Size([360])

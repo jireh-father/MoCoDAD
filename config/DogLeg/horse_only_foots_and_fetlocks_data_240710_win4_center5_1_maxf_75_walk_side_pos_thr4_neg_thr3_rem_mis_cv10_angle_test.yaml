@@ -52,7 +52,7 @@ rec_weight: 0.01 # weight of the reconstruction loss
 
 ### Inference's configuration
 n_generated_samples: 5 # number of samples to generate
-model_return_value: 'pose' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
+model_return_value: 'all' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
                            # if 'poses', the model will return the generated poses; 
                            # if 'all', the model will return both the loss and the generated poses
 aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected; 
