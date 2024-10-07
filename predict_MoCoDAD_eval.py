@@ -55,25 +55,7 @@ def main(args, tmp_dir, data_json):
             continue
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
-            csv_path = path_and_dir["keypoint_full_path"]
-
-            if args.use_old_keypoint:
-                csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
-                csv_files = glob.glob(os.path.join(args.keypoint_dir, csv_path))
-                if len(csv_files) == 0:
-                    print("no csv file", csv_path)
-                    continue
-                if len(csv_files) > 1:
-                    print("multiple csv files", csv_files)
-                    sys.exit(1)
-
-                csv_file = csv_files[0]
-
-            else:
-                csv_file = os.path.join(args.keypoint_dir, path_and_dir["keypoint_full_path"])
-
-            if args.kp_file_name:
-                csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
+            csv_file = os.path.join(args.keypoint_dir, path_and_dir["keypoint_full_path"])
 
             if args.use_angle:
                 df = make_horse_angle_dataset.read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets,
