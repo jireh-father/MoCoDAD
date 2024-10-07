@@ -293,6 +293,7 @@ class PoseDatasetRobust(PoseDataset):
         segs_data_np = np.transpose(segs_data_np, (0, 3, 1, 2)).astype(np.float32)
 
         print("segs_data_np.shape 2: ", segs_data_np.shape)
+        #segs_data_np.shape 2:  (72, 3, 4, 8)
         if ret_keys:
             return segs_data_np, segs_meta, person_keys, segs_ids
         else:
