@@ -54,7 +54,7 @@ def data_of_combined_model(**args):
         out_normalisation_strategy = args.get('normalization_strategy', 'robust')
 
     trajectories = load_trajectories(trajectories_path, debug=debug, split=split)
-    print('\nLoaded %d trajectories.' % len(trajectories))
+    # print('\nLoaded %d trajectories.' % len(trajectories))
     # trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,
 #                                              frames=trajectory_frames,
 #                                              coordinates=trajectory_coordinates)
@@ -114,12 +114,11 @@ def data_of_combined_model(**args):
                                                       coordinate_system='bounding_box_centre', invert=False)
         # print("changed local_trajectories:", local_trajectories)
 
-    print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')
+    # print('\nChanged local trajectories\'s coordinate system to bounding_box_centre.')
     
     X_local, y_local, X_local_meta, y_local_meta = aggregate_rnn_autoencoder_data(local_trajectories, input_length=input_length, 
                                                                                   input_gap=seg_stride, pred_length=pred_length,
                                                                                   return_ids=True)
-    print("X_local shape:", X_local.shape)
     # if X_local_meta:
     #     print("X_local_meta shape:", X_local_meta.shape)
     # if y_local_meta:
@@ -140,7 +139,7 @@ def data_of_combined_model(**args):
         if y_local is not None:
             y_local, _ = scale_trajectories(y_local, scaler=local_scaler, strategy=local_normalisation_strategy)
         
-        print('\nNormalised local trajectories using the %s normalisation strategy.' % local_normalisation_strategy)
+        # print('\nNormalised local trajectories using the %s normalisation strategy.' % local_normalisation_strategy)
 
     # (Optional) Reconstruct the original data
     if reconstruct_original_data:
@@ -174,7 +173,6 @@ def data_of_combined_model(**args):
             y_out, _ = scale_trajectories(y_out, scaler=out_scaler, strategy=out_normalisation_strategy)
             
         print('\nNormalised target trajectories using the %s normalisation strategy.' % out_normalisation_strategy)
-    print("X_local shape:", X_local.shape)
     #X_local shape: (72, 4, 16)
             
     if pred_length > 0:

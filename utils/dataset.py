@@ -268,7 +268,6 @@ class PoseDatasetRobust(PoseDataset):
             X_local = X_local.reshape((*X_local.shape[:2], dataset_args['custom_num_joints'], 2))
         else:
             X_local = X_local.reshape((*X_local.shape[:2], 17, 2))
-        print("X_local.shape: ", X_local.shape)
         if not self.include_global:
               
             segs_data_np = np.empty(shape=(*X_local.shape[:-1], 3))
@@ -281,8 +280,7 @@ class PoseDatasetRobust(PoseDataset):
             segs_data_np[..., 2:6] = X_global
             segs_data_np[..., 6] = 1.0
 
-        print("segs_data_np.shape 1 : ", segs_data_np.shape)
-    
+
         if self.kp18_format and segs_data_np.shape[-2] == 17:
             segs_data_np = keypoints17_to_coco18(segs_data_np)
         
@@ -292,7 +290,6 @@ class PoseDatasetRobust(PoseDataset):
 
         segs_data_np = np.transpose(segs_data_np, (0, 3, 1, 2)).astype(np.float32)
 
-        print("segs_data_np.shape 2: ", segs_data_np.shape)
         #segs_data_np.shape 2:  (72, 3, 4, 8)
         if ret_keys:
             return segs_data_np, segs_meta, person_keys, segs_ids

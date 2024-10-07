@@ -51,7 +51,6 @@ def main(args, tmp_dir, data_json, keypoint_dir):
         is_val = 'isVal' in sample and sample['isVal']
 
         if not is_val:
-            print("skip positive train sample")
             continue
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
@@ -101,7 +100,6 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 gt_data = unpacked_result[2][:, :, -pred_window:, :]
                 diff = np.abs(prediction - gt_data)
                 diff = np.mean(diff, axis=(0, 1, 2))
-                print(time.time() - start)
                 print("max diff index", diff.argmax(), np.max(diff))
                 print("min diff index", diff.argmin(), np.min(diff))
                 print("exec time", time.time() - start)
