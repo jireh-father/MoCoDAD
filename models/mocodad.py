@@ -161,7 +161,7 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             List[torch.Tensor]: [predicted poses and the loss, tensor_data, transformation_idx, metadata, actual_frames]
         """
-
+        print("do forward")
         # Unpack data: tensor_data is the input data, meta_out is a list of metadata
         tensor_data, meta_out = self._unpack_data(input_data)
         B = tensor_data.shape[0]
