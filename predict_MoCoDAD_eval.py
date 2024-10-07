@@ -44,6 +44,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
 
     num_samples = 0
     num_true = 0
+    losses = []
     for sample_idx, sample in enumerate(dataset):
         # print(f"processing {sample_idx}th sample")
         label = sample['lameness']
@@ -84,6 +85,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 unpacked_result = processing_data(out)
 
                 loss = np.mean(unpacked_result[0], axis=0)
+                losses.append(loss)
                 if args.pred_threshold <= loss:
                     print("positive sample")
                     pred = True
@@ -112,6 +114,14 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     print(f"accuracy: {num_true / num_samples}")
     print("num_samples", num_samples)
     print("num_true", num_true)
+
+    # print stat losses
+    losses = np.array(losses)
+    print("mean loss", np.mean(losses))
+    print("std loss", np.std(losses))
+    print("max loss", np.max(losses))
+    print("min loss", np.min(losses))
+
 
 if __name__ == '__main__':
     # Parse command line arguments and load config file
