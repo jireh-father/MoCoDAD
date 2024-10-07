@@ -355,7 +355,7 @@ def get_dataset_and_loader(args, split='train', validation=False):
     return dataset, loader, val_dataset, val_loader
 
 
-def get_test_dataset_and_loader(args):
+def get_test_dataset_and_loader(args, kp_path):
     if args.num_transform > 0:
         trans_list = ae_trans_list[:args.num_transform]
     else:
@@ -385,7 +385,7 @@ def get_test_dataset_and_loader(args):
     dataset_args['seg_stride'] = 1  # No strides for test set
     if args.normalization_strategy == 'robust':
         dataset = PoseDatasetRobust(
-            path_to_data=args.test_path,
+            path_to_data=kp_path,
             # exp_dir=args.ckpt_dir,
             include_global=(args.num_coords == 6), split='test', **dataset_args
         )

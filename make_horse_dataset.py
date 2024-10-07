@@ -119,22 +119,111 @@ TARGET_KP_COL_DICT = {
 }
 
 
+def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side', use_score_col=False,
+             frame_stride=None, num_div=None, num_thr_div=0.1, max_frames=None, sort_max_frames=False, reset_index=False,
+             skip_not_continuous_sample=False, use_random_frame_range=False):
+    try:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
+    except:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+
+    if len(df) < window_length:
+        return False
+
+    if direction == 'side':
+        cols = KEYPOINT_COLS
+        if use_score_col:
+            cols = KEYPOINT_COLS_WITH_SCORE
+    elif direction == 'front':
+        cols = FRONT_KP_COLS
+    elif direction == 'back':
+        cols = BACK_KP_COLS
+    else:
+        raise Exception("invalid direction", direction)
+
+    if len(df.columns) != len(cols):
+        raise Exception("invalid df keys", df.columns, csv_file)
+    df.columns = cols
+
+    df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
+    if df.index.max() - df.index.min() + 1 != len(df):
+        if skip_not_continuous_sample:
+            print("skip. index is not continuous", csv_file)
+            return False
+
+        # print(df)
+        # print("index is not continuous a", csv_file)
+        # sys.exit()
+    if len(df) < window_length:
+        return False
+
+    # reset index
+    if reset_index:
+        df.reset_index(drop=True, inplace=True)
+    df['index_col'] = df.index + 1
+
+    df = df[['index_col'] + x_axis_keys + y_axis_keys]
+
+    if frame_stride and frame_stride > 1:
+        # remove rows by frame_stride
+        df = df[df['index_col'] % frame_stride == 0]
+
+    if num_div:
+        if use_random_frame_range and max_frames:
+            if len(df) > max_frames:
+                start_idx = np.random.randint(0, len(df) - max_frames)
+                df = df.iloc[start_idx:start_idx + max_frames]
+        else:
+            min_x = df[x_axis_keys].min().min()
+            max_x = df[x_axis_keys].max().max()
+            width = max_x - min_x
+            div_width = width / num_div
+            thr_width = div_width * num_thr_div
+            left_thr = min_x + thr_width
+            right_thr = max_x - thr_width
+
+            # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
+            df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
+            # indexes = [i for i in range(sdf.index.min(), sdf.index.max() + 1) if i in df.index.values]
+            # print(df.index.values)
+            # print(indexes)
+            # df = df.loc[indexes]
+            # if df.index.max() - df.index.min() + 1 != len(df):
+            #     print("index is not continuous", csv_file)
+            #     sys.exit()
+
+            if max_frames and len(df) > max_frames:
+                center_x = (min_x + max_x) / 2
+                # remain max_frames rows that frames closest to center_x by first key in x_axis_keys.
+                df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:max_frames]]
+                if sort_max_frames:
+                    # sort by index_col
+                    df.sort_values(by='index_col', inplace=True)
+
+    else:
+        if max_frames and len(df) > max_frames:
+            df = df.iloc[:max_frames]
+
+    return df
+
+
+def get_axis_keys(direction, target_keypoint_name):
+    use_keys = TARGET_KP_COL_DICT[
+        target_keypoint_name if direction == 'side' else f"{direction}_{target_keypoint_name}"]
+    y_axis_keys = [f"{k}_y" for k in use_keys]
+    x_axis_keys = [f"{k}_x" for k in use_keys]
+    return x_axis_keys, y_axis_keys
+
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
-    use_keys = TARGET_KP_COL_DICT[
-        args.target_keypoint_name if args.direction == 'side' else f"{args.direction}_{args.target_keypoint_name}"]
-    # score_keys = [f"{k}_score" for k in use_keys]
-    y_axis_keys = [f"{k}_y" for k in use_keys]
-    x_axis_keys = [f"{k}_x" for k in use_keys]
+
+    x_axis_keys, y_axis_keys = get_axis_keys(args.direction, args.target_keypoint_name)
     keypoint_root = args.keypoint_dir
 
     moco_fname_to_csv_fname_dict = {}
 
     label_key = "lameness"
-    center_frames = []
-    num_drop = 0
-    num_drop_lameness = 0
     for sample_idx, sample in enumerate(labels):
         # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
@@ -186,105 +275,9 @@ def main(args):
 
             if args.kp_file_name:
                 csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
-
-            try:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
-            except:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
-
-            if len(df) < args.window_length:
-                continue
-
-            len_df = len(df)
-
-            if args.direction == 'side':
-                cols = KEYPOINT_COLS
-                if args.use_score_col:
-                    cols = KEYPOINT_COLS_WITH_SCORE
-            elif args.direction == 'front':
-                cols = FRONT_KP_COLS
-            elif args.direction == 'back':
-                cols = BACK_KP_COLS
-            else:
-                raise Exception("invalid direction", args.direction)
-
-            if len(df.columns) != len(cols):
-                raise Exception("invalid df keys", df.columns, csv_file)
-            df.columns = cols
-
-            # if args.keypoint_threshold and args.keypoint_threshold > 0:
-            #     # drop rows by self.keypoint_threshold and score_keys
-            #     for k in score_keys:
-            #         df = df[df[k] > args.keypoint_threshold]
-
-            # drop na rows even if one of the keypoints is na
-            # if df.index.max() - df.index.min() + 1 != len(df):
-            #     print("index is not continuous b", csv_file)
-            #     sys.exit()
-            # print show na rows
-            # print(df[df.isna().any(axis=1)])
-            df = df.dropna(subset=x_axis_keys + y_axis_keys, how='any')
-            if df.index.max() - df.index.min() + 1 != len(df):
-                num_drop += 1
-                if label:
-                    num_drop_lameness += 1
-                if args.skip_not_continuous_sample:
-                    print("skip. index is not continuous", csv_file)
-                    continue
-
-                # print(df)
-                # print("index is not continuous a", csv_file)
-                # sys.exit()
-            if len(df) < args.window_length:
-                continue
-
-            # reset index
-            if args.reset_index:
-                df.reset_index(drop=True, inplace=True)
-            df['index_col'] = df.index + 1
-
-            df = df[['index_col'] + x_axis_keys + y_axis_keys]
-
-            if args.frame_stride and args.frame_stride > 1:
-                # remove rows by frame_stride
-                df = df[df['index_col'] % args.frame_stride == 0]
-
-            if args.num_div:
-                if args.use_random_frame_range and args.max_frames:
-                    if len(df) > args.max_frames:
-                        start_idx = np.random.randint(0, len(df) - args.max_frames)
-                        df = df.iloc[start_idx:start_idx + args.max_frames]
-                else:
-                    min_x = df[x_axis_keys].min().min()
-                    max_x = df[x_axis_keys].max().max()
-                    width = max_x - min_x
-                    div_width = width / args.num_div
-                    thr_width = div_width * args.num_thr_div
-                    left_thr = min_x + thr_width
-                    right_thr = max_x - thr_width
-
-                    # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                    df = df[(df[x_axis_keys] > left_thr).all(axis=1) & (df[x_axis_keys] < right_thr).all(axis=1)]
-                    # indexes = [i for i in range(sdf.index.min(), sdf.index.max() + 1) if i in df.index.values]
-                    # print(df.index.values)
-                    # print(indexes)
-                    # df = df.loc[indexes]
-                    # if df.index.max() - df.index.min() + 1 != len(df):
-                    #     print("index is not continuous", csv_file)
-                    #     sys.exit()
-
-                    if args.max_frames and len(df) > args.max_frames:
-                        center_x = (min_x + max_x) / 2
-                        # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
-                        df = df.iloc[(df[x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        if args.sort_max_frames:
-                            # sort by index_col
-                            df.sort_values(by='index_col', inplace=True)
-
-                    center_frames.append(len(df))
-            else:
-                if args.max_frames and len(df) > args.max_frames:
-                    df = df.iloc[:args.max_frames]
+            df = read_csv(csv_file, x_axis_keys, y_axis_keys, args.window_length, args.direction, args.use_score_col,
+                          args.frame_stride, args.num_div, args.num_thr_div, args.max_frames, args.sort_max_frames,
+                          args.reset_index, args.skip_not_continuous_sample, args.use_random_frame_range)
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
@@ -330,12 +323,7 @@ def main(args):
     if moco_fname_to_csv_fname_dict:
         with open(os.path.join(args.output_dir, "moco_fname_to_csv_fname_dict.json"), "w") as f:
             json.dump(moco_fname_to_csv_fname_dict, f, ensure_ascii=False, indent=4)
-    if center_frames:
-        print("avg center frames", sum(center_frames) / len(center_frames))
-        print("min center frames", min(center_frames))
     print("done")
-    print("num_drop", num_drop)
-    print("num_drop_lameness", num_drop_lameness)
 
 
 if __name__ == '__main__':

@@ -252,10 +252,131 @@ def angle_between_points(row, first_key, second_key, third_key):
     return rad_to_deg(angle_rad)
 
 
-def main(args):
-    # index번호는 1부터
-    labels = json.load(open(args.label_file, encoding="utf-8"))
-    target_skeleton_key_sets = TARGET_KP_COL_DICT[args.target_keypoint_name]
+def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, window_length, direction, num_div=None,
+             num_thr_div=0.1, frame_stride=None, max_frames=None, use_random_frame_range=False,
+             reset_index=False, skip_not_continuous_sample=False, use_score_col=False, sort_max_frames=False):
+    try:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
+    except:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+    # print(df.index.values)
+
+    if len(df) < window_length:
+        return False
+
+    len_df = len(df)
+
+    if direction == 'side':
+        cols = KEYPOINT_COLS
+        if use_score_col:
+            cols = KEYPOINT_COLS_WITH_SCORE
+    elif direction == 'front':
+        cols = FRONT_KP_COLS
+    elif direction == 'back':
+        cols = BACK_KP_COLS
+    else:
+        raise Exception("invalid direction", direction)
+
+    if len(df.columns) != len(cols):
+        raise Exception("invalid df keys", df.columns, csv_file)
+    df.columns = cols
+
+    df = df.dropna(subset=all_keys, how='any')
+    # print(df.index.values)
+    if df.index.max() - df.index.min() + 1 != len(df):
+        if skip_not_continuous_sample:
+            print("skip. index is not continuous", csv_file)
+            return False
+    if len(df) < window_length:
+        return False
+
+    # reset index
+    if reset_index:
+        df.reset_index(drop=True, inplace=True)
+
+    df['index_col'] = df.index + 1
+
+    df = df[['index_col'] + all_keys]
+
+    if frame_stride and frame_stride > 1:
+        df = df[df['index_col'] % frame_stride == 0]
+
+    if num_div:
+        if use_random_frame_range and max_frames:
+            if len(df) > max_frames:
+                start_idx = np.random.randint(0, len(df) - max_frames)
+                df = df.iloc[start_idx:start_idx + max_frames]
+                # print("random frame range", len(df))
+                # print(df.index)
+        else:
+            min_x = df[all_x_axis_keys].min().min()
+            max_x = df[all_x_axis_keys].max().max()
+            width = max_x - min_x
+            div_width = width / num_div
+            thr_width = div_width * num_thr_div
+            left_thr = min_x + thr_width
+            right_thr = max_x - thr_width
+
+            # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
+            df = df[
+                (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
+            # print("num_div", len(df))
+            # print(df.index)
+
+            if max_frames and len(df) > max_frames:
+                center_x = (min_x + max_x) / 2
+                # find index of frame closest to center_x
+                # closest_idx = (df[all_x_axis_keys[0]] - center_x).abs().idxmin()
+                # print("closest_idx", closest_idx)
+                # print(center_x)
+                # remain max_frames rows that frames closest to center_x by first key in x_axis_keys.
+                df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:max_frames]]
+                # print("max_frames", len(df))
+                # print(df.index)
+                if sort_max_frames:
+                    # sort by index_col
+                    df.sort_values(by='index_col', inplace=True)
+
+    else:
+        if max_frames and len(df) > max_frames:
+            df = df.iloc[:max_frames]
+
+    # 좌표를 연결된 3개의 관절들의 사이 각도로 변환
+    for key_set in target_skeleton_key_sets:
+        for start_idx in range(len(key_set) - 2):
+            first_key = key_set[start_idx]
+            second_key = key_set[start_idx + 1]
+            third_key = key_set[start_idx + 2]
+            df[f"{first_key}_{second_key}_{third_key}_angle"] = df.apply(angle_between_points, axis=1,
+                                                                         first_key=first_key,
+                                                                         second_key=second_key,
+                                                                         third_key=third_key)
+
+            first_key = key_set[start_idx + 2]
+            second_key = key_set[start_idx]
+            third_key = key_set[start_idx + 1]
+            df[f"{first_key}_{second_key}_{third_key}_angle_2"] = df.apply(angle_between_points, axis=1,
+                                                                           first_key=first_key,
+                                                                           second_key=second_key,
+                                                                           third_key=third_key)
+
+    # drop df cols of all_keys
+    df = df.drop(columns=all_keys)
+    # print("drop")
+    # print(df.index)
+
+    # 각도 컬럼에 180초과 값이 있는지 확인
+    for col in df.columns:
+        if "angle" in col:
+            if (df[col] > 180).any():
+                print(f"angle over 180 in {col}")
+                return False
+
+    return df
+
+
+def get_key_data(target_keypoint_name):
+    target_skeleton_key_sets = TARGET_KP_COL_DICT[target_keypoint_name]
     y_axs_key_sets = []
     x_axs_key_sets = []
     all_key_sets = set()
@@ -269,11 +390,17 @@ def main(args):
         all_x_axis_keys.extend(x_axs_key_sets[-1])
         all_y_axis_keys.extend(y_axs_key_sets[-1])
     all_keys = list(all_key_sets)
+    return all_keys, all_x_axis_keys, target_skeleton_key_sets
+
+
+def main(args):
+    # index번호는 1부터
+    labels = json.load(open(args.label_file, encoding="utf-8"))
+    all_keys, all_x_axis_keys, target_skeleton_key_sets = get_key_data(args.target_keypoint_name)
 
     moco_fname_to_csv_fname_dict = {}
 
     label_key = "lameness"
-    center_frames = []
     for sample_idx, sample in enumerate(labels):
         # print(f"processing {sample_idx}th sample")
         label = sample[label_key]
@@ -307,7 +434,6 @@ def main(args):
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_path = path_and_dir["keypoint_full_path"]
-            direction = path_and_dir["direction"]
 
             if args.use_old_keypoint:
                 csv_path = csv_path.replace("/auto/", "/").replace("LABEL_DATA_FINAL", "LABEL_DATA2/*")
@@ -327,98 +453,10 @@ def main(args):
             if args.kp_file_name:
                 csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
 
-            try:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
-            except:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
-            # print(df.index.values)
-
-            if len(df) < args.window_length:
-                continue
-
-            len_df = len(df)
-
-            if args.direction == 'side':
-                cols = KEYPOINT_COLS
-                if args.use_score_col:
-                    cols = KEYPOINT_COLS_WITH_SCORE
-            elif args.direction == 'front':
-                cols = FRONT_KP_COLS
-            elif args.direction == 'back':
-                cols = BACK_KP_COLS
-            else:
-                raise Exception("invalid direction", args.direction)
-
-            if len(df.columns) != len(cols):
-                raise Exception("invalid df keys", df.columns, csv_file)
-            df.columns = cols
-
-            df = df.dropna(subset=all_keys, how='any')
-            # print(df.index.values)
-            if df.index.max() - df.index.min() + 1 != len(df):
-                if args.skip_not_continuous_sample:
-                    print("skip. index is not continuous", csv_file)
-                    continue
-            if len(df) < args.window_length:
-                continue
-
-            # reset index
-            if args.reset_index:
-                df.reset_index(drop=True, inplace=True)
-
-            # if args.flip_rtol_to_ltor:
-            #     if direction == "RtoL":
-            #         for key in all_x_axis_keys:
-            #             df[key] = -df[key]
-
-            df['index_col'] = df.index + 1
-            # print(df.index.values)
-
-            df = df[['index_col'] + all_keys]
-
-            if args.frame_stride and args.frame_stride > 1:
-                # remove rows by frame_stride
-                df = df[df['index_col'] % args.frame_stride == 0]
-                # print("frame_stride", len(df))
-                # print(df.index)
-
-            if args.num_div:
-                if args.use_random_frame_range and args.max_frames:
-                    if len(df) > args.max_frames:
-                        start_idx = np.random.randint(0, len(df) - args.max_frames)
-                        df = df.iloc[start_idx:start_idx + args.max_frames]
-                        # print("random frame range", len(df))
-                        # print(df.index)
-                else:
-                    min_x = df[all_x_axis_keys].min().min()
-                    max_x = df[all_x_axis_keys].max().max()
-                    width = max_x - min_x
-                    div_width = width / args.num_div
-                    thr_width = div_width * args.num_thr_div
-                    left_thr = min_x + thr_width
-                    right_thr = max_x - thr_width
-
-                    # if any keypoint is out of the left_thr or right_thr, remove the sample(row)
-                    df = df[
-                        (df[all_x_axis_keys] > left_thr).all(axis=1) & (df[all_x_axis_keys] < right_thr).all(axis=1)]
-                    # print("num_div", len(df))
-                    # print(df.index)
-
-                    if args.max_frames and len(df) > args.max_frames:
-                        center_x = (min_x + max_x) / 2
-                        # find index of frame closest to center_x
-                        closest_idx = (df[all_x_axis_keys[0]] - center_x).abs().idxmin()
-                        # print("closest_idx", closest_idx)
-                        # print(center_x)
-                        # remain args.max_frames rows that frames closest to center_x by first key in x_axis_keys.
-                        df = df.iloc[(df[all_x_axis_keys[0]] - center_x).abs().argsort()[:args.max_frames]]
-                        # print("max_frames", len(df))
-                        # print(df.index)
-
-                    center_frames.append(len(df))
-            else:
-                if args.max_frames and len(df) > args.max_frames:
-                    df = df.iloc[:args.max_frames]
+            df = read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, args.window_length,
+                          args.direction, args.num_div, args.num_thr_div, args.frame_stride, args.max_frames,
+                          args.use_random_frame_range, args.reset_index, args.skip_not_continuous_sample,
+                          args.use_score_col, args.sort_max_frames)
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
@@ -426,54 +464,6 @@ def main(args):
                                                  "00001.csv")
             # print(kp_sample_output_path)
             os.makedirs(os.path.dirname(kp_sample_output_path), exist_ok=True)
-
-            # 좌표를 연결된 3개의 관절들의 사이 각도로 변환
-            for key_set in target_skeleton_key_sets:
-                for start_idx in range(len(key_set) - 2):
-                    first_key = key_set[start_idx]
-                    second_key = key_set[start_idx + 1]
-                    third_key = key_set[start_idx + 2]
-                    df[f"{first_key}_{second_key}_{third_key}_angle"] = df.apply(angle_between_points, axis=1,
-                                                                                 first_key=first_key,
-                                                                                 second_key=second_key,
-                                                                                 third_key=third_key)
-
-
-                    # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
-                    #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
-                    #     df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
-                    # angle = np.degrees(angle)
-                    # # 각도가 음수인 경우 360도를 더해줌
-                    # # angle[angle < 0] += 360
-                    # df[f"{first_key}_{second_key}_{third_key}_angle"] = angle
-
-                    first_key = key_set[start_idx + 2]
-                    second_key = key_set[start_idx]
-                    third_key = key_set[start_idx + 1]
-                    df[f"{first_key}_{second_key}_{third_key}_angle_2"] = df.apply(angle_between_points, axis=1,
-                                                                                   first_key=first_key,
-                                                                                   second_key=second_key,
-                                                                                   third_key=third_key)
-
-                    # angle = np.arctan2(df[f"{third_key}_y"] - df[f"{second_key}_y"],
-                    #                    df[f"{third_key}_x"] - df[f"{second_key}_x"]) - np.arctan2(
-                    #     df[f"{first_key}_y"] - df[f"{second_key}_y"], df[f"{first_key}_x"] - df[f"{second_key}_x"])
-                    # angle = np.degrees(angle)
-                    # # 각도가 음수인 경우 360도를 더해줌
-                    # # angle[angle < 0] += 360
-                    # df[f"{first_key}_{second_key}_{third_key}_angle_2"] = angle
-
-            # drop df cols of all_keys
-            df = df.drop(columns=all_keys)
-            # print("drop")
-            # print(df.index)
-
-            # 각도 컬럼에 180초과 값이 있는지 확인
-            for col in df.columns:
-                if "angle" in col:
-                    if (df[col] > 180).any():
-                        print(f"angle over 180 in {col}")
-                        sys.exit()
 
             # save df to csv without header'
             df.to_csv(kp_sample_output_path, index=False, header=False)
@@ -512,9 +502,6 @@ def main(args):
     if moco_fname_to_csv_fname_dict:
         with open(os.path.join(args.output_dir, "moco_fname_to_csv_fname_dict.json"), "w") as f:
             json.dump(moco_fname_to_csv_fname_dict, f, ensure_ascii=False, indent=4)
-    if center_frames:
-        print("avg center frames", sum(center_frames) / len(center_frames))
-        print("min center frames", min(center_frames))
     print("done")
 
 
@@ -560,6 +547,7 @@ if __name__ == '__main__':
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
+    parser.add_argument('--sort_max_frames', action='store_true', default=False)
     # parser.add_argument('--flip_rtol_to_ltor', action='store_true', default=False)
 
     main(parser.parse_args())

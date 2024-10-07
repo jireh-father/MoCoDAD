@@ -92,6 +92,38 @@ TARGET_KP_COL_DICT = {
 }
 
 
+def read_keypoint_csv(csv_file, window_length, reset_index, x_axis_keys, y_axis_keys, keypoint_threshold, score_keys):
+    try:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
+    except:
+        df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+
+    if len(df) < window_length:
+        return False
+
+    len_df = len(df)
+
+    if len(df.columns) != len(KEYPOINT_COLS):
+        raise Exception("invalid df keys", df.columns, csv_file)
+    df.columns = KEYPOINT_COLS
+
+    if keypoint_threshold and keypoint_threshold > 0:
+        # drop rows by self.keypoint_threshold and score_keys
+        for k in score_keys:
+            df = df[df[k] > keypoint_threshold]
+
+    if len(df) < window_length:
+        return False
+
+    # reset index
+    if reset_index:
+        df.reset_index(drop=True, inplace=True)
+    df['index_col'] = df.index + 1
+
+    df = df[['index_col'] + x_axis_keys + y_axis_keys]
+    return df
+
+
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
@@ -137,36 +169,10 @@ def main(args):
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_path = path_and_dir["keypoint_full_path"]
-            csv_file = os.path.join(keypoint_root, path_and_dir["keypoint_full_path"])
 
-            try:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
-            except:
-                df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
+            df = read_keypoint_csv(os.path.join(keypoint_root, path_and_dir["keypoint_full_path"]), args.window_length,
+                                   args.reset_index, x_axis_keys, y_axis_keys, args.keypoint_threshold, score_keys)
 
-            if len(df) < args.window_length:
-                continue
-
-            len_df = len(df)
-
-            if len(df.columns) != len(KEYPOINT_COLS):
-                raise Exception("invalid df keys", df.columns, csv_file)
-            df.columns = KEYPOINT_COLS
-
-            if args.keypoint_threshold and args.keypoint_threshold > 0:
-                # drop rows by self.keypoint_threshold and score_keys
-                for k in score_keys:
-                    df = df[df[k] > args.keypoint_threshold]
-
-            if len(df) < args.window_length:
-                continue
-
-            # reset index
-            if args.reset_index:
-                df.reset_index(drop=True, inplace=True)
-            df['index_col'] = df.index + 1
-
-            df = df[['index_col'] + x_axis_keys + y_axis_keys]
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:03d}"
             kp_sample_output_path = os.path.join(kp_output_dir, f"{kp_sample_prefix}{sample_idx_str}-0{csv_idx + 101}",
