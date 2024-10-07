@@ -56,7 +56,7 @@ else:
                                      use_random_frame_range=args.use_random_frame_range,
                                      skip_not_continuous_sample=args.skip_not_continuous_sample,
                                      sort_max_frames=args.sort_max_frames)
-kp_path = os.path.join(args.tmp_dir, str(uuid.uuid4()) + '.csv')
+kp_path = os.path.join(tmp_dir, str(uuid.uuid4()) + '.csv')
 
 try:
     df.to_csv(kp_path, index=False, header=False)
