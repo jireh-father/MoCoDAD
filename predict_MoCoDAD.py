@@ -47,10 +47,12 @@ out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_pre
 # # 4th out shape torch.Size([360, 4])
 # # 5th out shape torch.Size([360, 4])
 # 360 = 72frames * 5(num transform)
+# [frames & transforms, keypoint axis, window, num of keypoint]
 
 unpacked_result = processing_data(out)
 print("unpacked_result length", len(unpacked_result))
 prediction = unpacked_result[0]
+print("prediction shape", prediction.shape)
 pred_window = prediction.shape[2]
 gt_data = unpacked_result[1][:, :, -pred_window:, :]
 print(prediction.shape)
