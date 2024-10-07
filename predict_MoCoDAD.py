@@ -95,7 +95,7 @@ try:
     unpacked_result = processing_data(out)
 
     loss = np.mean(unpacked_result[0], axis=0)
-    if args.pred_threshold >= loss:
+    if args.pred_threshold <= loss:
         print("positive sample")
     else:
         print("negative sample")
