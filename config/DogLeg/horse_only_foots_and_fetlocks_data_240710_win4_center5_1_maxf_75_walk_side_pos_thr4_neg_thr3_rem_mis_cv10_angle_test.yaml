@@ -99,7 +99,7 @@ use_original_anomaly_score: true
 use_angle: true
 use_angle_norm: false
 camera_direction: side
-target_keypoint_name: baseline
+target_keypoint_name: only_foots_and_fetlocks
 max_frames: 75
 num_div: 5
 num_thr_div: 1
