@@ -21,6 +21,7 @@ parser = argparse.ArgumentParser(description='MoCoDAD')
 parser.add_argument('-c', '--config', type=str, required=True)
 parser.add_argument('--tmp_dir', type=str, default="./tmp")
 args = parser.parse_args()
+tmp_dir = args.tmp_dir
 args = yaml.load(open(args.config), Loader=yaml.FullLoader)
 args = argparse.Namespace(**args)
 
@@ -30,7 +31,7 @@ torch.cuda.manual_seed_all(args.seed)
 random.seed(args.seed)
 np.random.seed(args.seed)
 
-os.makedirs(args.tmp_dir, exist_ok=True)
+os.makedirs(tmp_dir, exist_ok=True)
 # Initialize the model
 model = MoCoDAD(args)
 
