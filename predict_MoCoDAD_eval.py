@@ -88,6 +88,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
 
             try:
                 df.to_csv(kp_path, index=False, header=False)
+                print(df.index_col)
                 dataset, loader = get_test_dataset_and_loader(args, kp_path)
 
                 start = time.time()
