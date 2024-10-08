@@ -54,7 +54,7 @@ def main(args, tmp_dir):
     if args.use_angle:
         all_keys, all_x_axis_keys, target_skeleton_key_sets = make_horse_angle_dataset.get_key_data(
             args.target_keypoint_name)
-        df = make_horse_angle_dataset.read_csv(args.test_path, all_keys, all_x_axis_keys, target_skeleton_key_sets,
+        df, len_df = make_horse_angle_dataset.read_csv(args.test_path, all_keys, all_x_axis_keys, target_skeleton_key_sets,
                                                window_length=args.seg_len, direction=args.camera_direction,
                                                max_frames=args.max_frames,
                                                num_div=args.num_div,
@@ -93,7 +93,7 @@ def main(args, tmp_dir):
             loss = filter_vectors_by_cond([loss], cond_transform)
 
 
-            loss_matrix = compute_var_matrix(loss, out[0][5], len(loss))
+            loss_matrix = compute_var_matrix(loss, out[0][5], len_df)
             # loss_matrix = [num_windows, num_frames]
             print("loss_matrix", loss_matrix.shape)
             print(loss_matrix)
