@@ -137,23 +137,22 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 print(out)
                 print("len out", len(out))
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
-                unpacked_result = processing_data(out)
 
-                loss = unpacked_result[0]
+                loss = out[0]
 
-                loss_matrix = compute_var_matrix(loss, out[0][5], len_df)
+                loss_matrix = compute_var_matrix(loss, out[5], len_df)
                 # loss_matrix = [num_windows, num_frames]
                 print("loss_matrix", loss_matrix.shape)
                 print(loss_matrix)
                 total_mean_loss = np.mean(np.nanmax(loss_matrix, axis=0))
 
-                trans = out[0][3]
+                trans = out[3]
                 trans_losses = []
                 for transformation in range(args.num_transform):
                     cond_transform = (trans == transformation)
                     trans_loss, = filter_vectors_by_cond([loss], cond_transform)
 
-                    loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
+                    loss_matrix = compute_var_matrix(trans_loss, out[5], len_df)
                     # loss_matrix = [num_windows, num_frames]
                     print("loss_matrix", loss_matrix.shape)
                     print(loss_matrix)
@@ -180,9 +179,9 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                     num_true += 1
                 num_samples += 1
 
-                prediction = unpacked_result[1]
+                prediction = out[1]
                 pred_window = prediction.shape[2]
-                gt_data = unpacked_result[2][:, :, -pred_window:, :]
+                gt_data = out[2][:, :, -pred_window:, :]
                 diff = np.abs(prediction - gt_data)
                 diff = np.mean(diff, axis=(0, 1, 2))
                 print("max diff index", diff.argmax(), np.max(diff))
