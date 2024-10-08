@@ -134,9 +134,9 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                         batch = [b.to('cuda') for b in batch]
                         out = model.forward(batch)
                         break
+                print(out)
+                print("len out", len(out))
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
-
-
                 unpacked_result = processing_data(out)
 
                 loss = unpacked_result[0]
