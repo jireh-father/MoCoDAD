@@ -16,6 +16,15 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
+def filter_vectors_by_cond(vecs, cond):
+    return [filter_by_cond(vec, cond) for vec in vecs]
+
+
+def filter_by_cond(vec, cond):
+    return vec[cond]
+
+
+
 def compute_var_matrix(pos, frames_pos, n_frames):
     pose = np.zeros(shape=(pos.shape[0], n_frames))
 
@@ -77,16 +86,25 @@ def main(args, tmp_dir):
         print("len unpacked_result", len(unpacked_result))
 
         loss = unpacked_result[0]
+        trans = out[0][3]
+        losses = []
+        for transformation in range(args.num_transform):
+            cond_transform = (trans == transformation)
+            loss = filter_vectors_by_cond([loss], cond_transform)
 
 
-        loss_matrix = compute_var_matrix(loss, out[0][5], len(loss))
-        # loss_matrix = [num_windows, num_frames]
-        print("loss_matrix", loss_matrix.shape)
-        print(loss_matrix)
-        loss = np.nanmax(loss_matrix, axis=0)
+            loss_matrix = compute_var_matrix(loss, out[0][5], len(loss))
+            # loss_matrix = [num_windows, num_frames]
+            print("loss_matrix", loss_matrix.shape)
+            print(loss_matrix)
+            loss = np.nanmax(loss_matrix, axis=0)
+            losses.append(loss)
 
-        loss = np.mean(loss)
-        print(loss)
+        losses = np.stack(losses, axis=0)
+        losses = np.mean(losses, axis=0)
+        print("losses shape", losses.shape)
+        # loss = np.mean(loss)
+        # print(loss)
 
         # loss = np.mean(loss, axis=0)
         if args.pred_threshold <= loss:
