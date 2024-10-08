@@ -45,6 +45,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     num_samples = 0
     num_true = 0
     losses = []
+    pos_losses = []
+    neg_losses = []
     for sample_idx, sample in enumerate(dataset):
         # print(f"processing {sample_idx}th sample")
         label = sample['lameness']
@@ -85,6 +87,10 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 unpacked_result = processing_data(out)
 
                 loss = np.mean(unpacked_result[0], axis=0)
+                if label:
+                    pos_losses.append(loss)
+                else:
+                    neg_losses.append(loss)
                 losses.append(loss)
                 if args.pred_threshold <= loss:
                     print("positive sample")
@@ -121,6 +127,18 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     print("std loss", np.std(losses))
     print("max loss", np.max(losses))
     print("min loss", np.min(losses))
+
+    pos_losses = np.array(pos_losses)
+    print("mean pos loss", np.mean(pos_losses))
+    print("std pos loss", np.std(pos_losses))
+    print("max pos loss", np.max(pos_losses))
+    print("min pos loss", np.min(pos_losses))
+
+    neg_losses = np.array(neg_losses)
+    print("mean neg loss", np.mean(neg_losses))
+    print("std neg loss", np.std(neg_losses))
+    print("max neg loss", np.max(neg_losses))
+    print("min neg loss", np.min(neg_losses))
 
 
 if __name__ == '__main__':
