@@ -518,12 +518,17 @@ class MoCoDAD(pl.LightningModule):
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip],
                                                                     cond_fig)
                     print("out_fig", out_fig.shape)
-                    # out_fig = [frames]
+                    # out_fig = [num_windows]
                     print("frames_fig", frames_fig.shape)
                     print("n_frames", n_frames)
+                    # out_fig (72,)
+                    # frames_fig (72, 4)
+                    # n_frames 345
+                    # loss_matrix (72, 345)
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
-                    # loss_matrix = [frames,
+                    # loss_matrix = [num_windows, num_frames]
                     print("loss_matrix", loss_matrix.shape)
+                    print(loss_matrix)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
 
                     if self.anomaly_score_pad_size != -1:
