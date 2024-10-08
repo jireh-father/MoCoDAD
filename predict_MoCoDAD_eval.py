@@ -18,15 +18,15 @@ import make_horse_angle_dataset
 
 
 def processing_data(data_array):
-    output = data_array[0].cpu().numpy()
-    tensor_data = data_array[1].cpu().numpy()
-    transformation_idx = data_array[2].cpu().numpy()
-    metadata = data_array[3].cpu().numpy()
-    actual_frames = data_array[4].cpu().numpy()
-    last_frame = data_array[5].cpu().numpy()
+    loss = data_array[0].cpu().numpy()
+    pred = data_array[1].cpu().numpy()
+    input = data_array[2].cpu().numpy()
+    transform_idx = data_array[3].cpu().numpy()
+    metadata = data_array[4].cpu().numpy()
+    actual_frames = data_array[5].cpu().numpy()
 
 
-    return output, tensor_data, transformation_idx, metadata, actual_frames, last_frame
+    return loss, pred, input, transform_idx, metadata, actual_frames
 
 def filter_vectors_by_cond(vecs, cond):
     return [filter_by_cond(vec, cond) for vec in vecs]
@@ -55,13 +55,14 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     os.makedirs(tmp_dir, exist_ok=True)
     # Initialize the model
     model = MoCoDAD(args)
+    model.load_from_checkpoint(args.load_ckpt)
     model.eval()
     model.to('cuda')
     # Initialize trainer and test
     # trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
     #                      max_epochs=1, logger=False)
 
-    ckpt_path = args.load_ckpt
+    # ckpt_path = args.load_ckpt
     dataset = json.load(open(data_json, encoding="utf-8"))
 
     if args.use_angle:
@@ -120,15 +121,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 # print("len out", len(out))
                 out = processing_data(out)
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
-
+                #loss, pred, input, transform_idx, metadata, actual_frames
                 loss = out[0]
-
-                loss_matrix = compute_var_matrix(loss, out[5], len_df)
-                # loss_matrix = [num_windows, num_frames]
-                print("loss_matrix", loss_matrix.shape)
-                print(loss_matrix)
-                total_mean_loss = np.mean(np.nanmax(loss_matrix, axis=0))
-
                 trans = out[3]
                 trans_losses = []
                 for transformation in range(args.num_transform):
