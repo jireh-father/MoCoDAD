@@ -45,11 +45,12 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     os.makedirs(tmp_dir, exist_ok=True)
     # Initialize the model
     model = MoCoDAD(args)
+    model.eval()
+    model.to('cuda')
     # Initialize trainer and test
-    trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
-                         max_epochs=1, logger=False)
+    # trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
+    #                      max_epochs=1, logger=False)
 
-    print('Loading data and creating loaders.....')
     ckpt_path = args.load_ckpt
     dataset = json.load(open(data_json, encoding="utf-8"))
 
@@ -101,7 +102,12 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 dataset, loader = get_test_dataset_and_loader(args, kp_path)
 
                 start = time.time()
-                out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
+                for batch in loader:
+                    batch = batch.to('cuda')
+                    out = model(batch)
+                    break
+                # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
+
 
                 unpacked_result = processing_data(out)
 
