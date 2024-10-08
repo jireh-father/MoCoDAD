@@ -86,12 +86,18 @@ def main(args, tmp_dir):
         print("len unpacked_result", len(unpacked_result))
 
         loss = unpacked_result[0]
+
+        loss_matrix = compute_var_matrix(loss, out[0][5], len_df)
+        # loss_matrix = [num_windows, num_frames]
+        print("loss_matrix", loss_matrix.shape)
+        print(loss_matrix)
+        total_mean_loss = np.mean(np.nanmax(loss_matrix, axis=0))
+
         trans = out[0][3]
         losses = []
         for transformation in range(args.num_transform):
             cond_transform = (trans == transformation)
             trans_loss, = filter_vectors_by_cond([loss], cond_transform)
-
 
             loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
             # loss_matrix = [num_windows, num_frames]
@@ -102,6 +108,7 @@ def main(args, tmp_dir):
         losses = np.stack(losses, axis=0)
         losses = np.mean(losses, axis=0)
         print("losses shape", losses.shape)
+        loss = np.mean(losses)
         # loss = np.mean(loss)
         # print(loss)
 
@@ -110,7 +117,7 @@ def main(args, tmp_dir):
             print("positive sample")
         else:
             print("negative sample")
-        print("loss", loss)
+        print("loss", loss, total_mean_loss)
 
         prediction = unpacked_result[1]
         pred_window = prediction.shape[2]
