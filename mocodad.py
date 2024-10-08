@@ -67,16 +67,17 @@ class Mocodad:
         self.model = model
 
         if args.use_angle:
-            all_keys, all_x_axis_keys, target_skeleton_key_sets = make_horse_angle_dataset.get_key_data(
+            all_keys, all_x_axis_keys, target_skeleton_key_sets, keypoint_names = make_horse_angle_dataset.get_key_data(
                 args.target_keypoint_name)
             self.all_keys = all_keys
             self.all_x_axis_keys = all_x_axis_keys
             self.target_skeleton_key_sets = target_skeleton_key_sets
         else:
-            x_axis_keys, y_axis_keys = make_horse_dataset.get_axis_keys(args.camera_direction,
+            x_axis_keys, y_axis_keys, keypoint_names = make_horse_dataset.get_axis_keys(args.camera_direction,
                                                                         args.target_keypoint_name)
             self.x_axis_keys = x_axis_keys
             self.y_axis_keys = y_axis_keys
+        self.keypoint_names = keypoint_names
 
     def inference(self, keypoint_csv_path):
         if self.args.use_angle:
@@ -104,7 +105,6 @@ class Mocodad:
             df.to_csv(kp_path, index=False, header=False)
             dataset, loader = get_test_dataset_and_loader(self.args, kp_path)
 
-            start = time.time()
             for batch in loader:
                 with torch.no_grad():
                     batch = [b.to('cuda') for b in batch]
@@ -136,15 +136,12 @@ class Mocodad:
                 gt_data = out[2][:, :, -pred_window:, :]
                 diff = np.abs(prediction - gt_data)
                 diff = np.mean(diff, axis=(0, 1, 2))
-                print("diff len", len(diff))
-                print(time.time() - start)
-                print("max diff index", diff.argmax(), np.max(diff))
-                print("min diff index", diff.argmin(), np.min(diff))
+                position = self.keypoint_names[diff.argmax()]
             else:
                 result = False
+                position = None
 
-            print("exec time", time.time() - start)
-            return result, diff.argmax()
+            return result, position
         except Exception as e:
             traceback.print_exc()
             raise e

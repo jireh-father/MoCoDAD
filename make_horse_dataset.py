@@ -215,7 +215,7 @@ def get_axis_keys(direction, target_keypoint_name):
         target_keypoint_name if direction == 'side' else f"{direction}_{target_keypoint_name}"]
     y_axis_keys = [f"{k}_y" for k in use_keys]
     x_axis_keys = [f"{k}_x" for k in use_keys]
-    return x_axis_keys, y_axis_keys
+    return x_axis_keys, y_axis_keys, use_keys
 
 
 def main(args):

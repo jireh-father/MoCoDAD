@@ -62,7 +62,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     dataset = json.load(open(data_json, encoding="utf-8"))
 
     if args.use_angle:
-        all_keys, all_x_axis_keys, target_skeleton_key_sets = make_horse_angle_dataset.get_key_data(
+        all_keys, all_x_axis_keys, target_skeleton_key_sets, keypoint_names = make_horse_angle_dataset.get_key_data(
             args.target_keypoint_name)
     else:
         x_axis_keys, y_axis_keys = make_horse_dataset.get_axis_keys(args.camera_direction, args.target_keypoint_name)

@@ -1,4 +1,5 @@
 import argparse
+import copy
 import glob
 import os
 import json
@@ -383,7 +384,10 @@ def get_key_data(target_keypoint_name):
     all_key_sets = set()
     all_x_axis_keys = []
     all_y_axis_keys = []
+    keypoint_names = []
     for key_set in target_skeleton_key_sets:
+        tmp_key_set = copy.deepcopy(key_set)
+        keypoint_names += tmp_key_set[1:-1]
         y_axs_key_sets.append([f"{k}_y" for k in key_set])
         x_axs_key_sets.append([f"{k}_x" for k in key_set])
         all_key_sets.update(y_axs_key_sets[-1])
@@ -391,13 +395,13 @@ def get_key_data(target_keypoint_name):
         all_x_axis_keys.extend(x_axs_key_sets[-1])
         all_y_axis_keys.extend(y_axs_key_sets[-1])
     all_keys = list(all_key_sets)
-    return all_keys, all_x_axis_keys, target_skeleton_key_sets
+    return all_keys, all_x_axis_keys, target_skeleton_key_sets, keypoint_names
 
 
 def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
-    all_keys, all_x_axis_keys, target_skeleton_key_sets = get_key_data(args.target_keypoint_name)
+    all_keys, all_x_axis_keys, target_skeleton_key_sets, keypoint_names = get_key_data(args.target_keypoint_name)
 
     moco_fname_to_csv_fname_dict = {}
 
