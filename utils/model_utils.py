@@ -116,7 +116,6 @@ def processing_data(data):
     frames = []
     for data_array in data:
         output = data_array[0]
-        print("output type", type(output))
         tensor_data = data_array[1]
         transformation_idx = data_array[2]
         metadata = data_array[3]

@@ -11,11 +11,38 @@ import pytorch_lightning as pl
 import yaml
 from models.mocodad import MoCoDAD
 from utils.dataset import get_test_dataset_and_loader
-from utils.model_utils import processing_data
 import random
 import numpy as np
 import make_horse_dataset
 import make_horse_angle_dataset
+
+
+def processing_data(data):
+    out = []
+    gt_data = []
+    trans = []
+    meta = []
+    frames = []
+    for data_array in data:
+        output = data_array[0]
+        tensor_data = data_array[1]
+        transformation_idx = data_array[2]
+        metadata = data_array[3]
+        actual_frames = data_array[4]
+
+        out.append(output.cpu())
+        gt_data.append(tensor_data.cpu())
+        trans.append(transformation_idx.cpu())
+        meta.append(metadata.cpu())
+        frames.append(actual_frames.cpu())
+
+    out = np.concatenate(out, axis=0)
+    gt_data = np.concatenate(gt_data, axis=0)
+    trans = np.concatenate(trans, axis=0)
+    meta = np.concatenate(meta, axis=0)
+    frames = np.concatenate(frames, axis=0)
+
+    return out, gt_data, trans, meta, frames
 
 
 def filter_vectors_by_cond(vecs, cond):
