@@ -129,13 +129,10 @@ def main(args, tmp_dir, data_json, keypoint_dir):
 
                     loss_matrix = compute_var_matrix(trans_loss, out[5], len_df)
                     # loss_matrix = [num_windows, num_frames]
-                    print("loss_matrix", loss_matrix.shape)
-                    print(loss_matrix)
                     trans_losses.append(np.nanmax(loss_matrix, axis=0))
 
                 trans_losses = np.stack(trans_losses, axis=0)
                 trans_losses = np.mean(trans_losses, axis=0)
-                print("losses shape", trans_losses.shape)
                 loss = np.mean(trans_losses)
 
                 if label:
@@ -144,10 +141,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                     neg_losses.append(loss)
                 losses.append(loss)
                 if args.pred_threshold <= loss:
-                    print("positive sample")
                     pred = True
                 else:
-                    print("negative sample")
                     pred = False
                 print("loss", loss)
                 if pred == label:
