@@ -144,7 +144,7 @@ class Mocodad:
                 result = False
 
             print("exec time", time.time() - start)
-            return result
+            return result, diff.argmax()
         except Exception as e:
             traceback.print_exc()
         finally:
