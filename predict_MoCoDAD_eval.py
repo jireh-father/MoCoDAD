@@ -23,8 +23,10 @@ def processing_data(data_array):
     transformation_idx = data_array[2].cpu().numpy()
     metadata = data_array[3].cpu().numpy()
     actual_frames = data_array[4].cpu().numpy()
+    last_frame = data_array[5].cpu().numpy()
 
-    return output, tensor_data, transformation_idx, metadata, actual_frames
+
+    return output, tensor_data, transformation_idx, metadata, actual_frames, last_frame
 
 def filter_vectors_by_cond(vecs, cond):
     return [filter_by_cond(vec, cond) for vec in vecs]
@@ -115,7 +117,6 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                         batch = [b.to('cuda') for b in batch]
                         out = model.forward(batch)
                         break
-                print(out)
                 # print("len out", len(out))
                 out = processing_data(out)
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
