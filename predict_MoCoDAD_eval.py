@@ -123,12 +123,13 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                     # loss_matrix = [num_windows, num_frames]
                     print("loss_matrix", loss_matrix.shape)
                     print(loss_matrix)
-                    trans_losses.append(np.nanmax(loss_matrix, axis=0))
-
-                trans_losses = np.stack(trans_losses, axis=0)
-                trans_losses = np.mean(trans_losses, axis=0)
-                print("losses shape", trans_losses.shape)
-                loss = np.mean(trans_losses)
+                    clip_loss = np.mean(np.mean(np.stack([np.nanmax(loss_matrix, axis=0)], axis=0), axis=0))
+                    trans_losses.append(clip_loss)
+                loss = np.mean(np.stack(trans_losses,axis=0), axis=0)
+                # trans_losses = np.stack(trans_losses, axis=0)
+                # trans_losses = np.mean(trans_losses, axis=0)
+                print("loss shape", loss.shape)
+                # loss = np.mean(trans_losses)
 
                 if label:
                     pos_losses.append(loss)
