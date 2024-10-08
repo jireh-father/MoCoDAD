@@ -222,7 +222,7 @@ def main(args):
     # index번호는 1부터
     labels = json.load(open(args.label_file, encoding="utf-8"))
 
-    x_axis_keys, y_axis_keys = get_axis_keys(args.direction, args.target_keypoint_name)
+    x_axis_keys, y_axis_keys, keypoint_names = get_axis_keys(args.direction, args.target_keypoint_name)
     keypoint_root = args.keypoint_dir
 
     moco_fname_to_csv_fname_dict = {}

@@ -65,7 +65,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
         all_keys, all_x_axis_keys, target_skeleton_key_sets, keypoint_names = make_horse_angle_dataset.get_key_data(
             args.target_keypoint_name)
     else:
-        x_axis_keys, y_axis_keys = make_horse_dataset.get_axis_keys(args.camera_direction, args.target_keypoint_name)
+        x_axis_keys, y_axis_keys, keypoint_names = make_horse_dataset.get_axis_keys(args.camera_direction, args.target_keypoint_name)
 
     num_samples = 0
     num_true = 0
