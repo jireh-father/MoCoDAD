@@ -63,7 +63,15 @@ def main(args, tmp_dir):
 
         unpacked_result = processing_data(out)
 
-        loss = np.mean(unpacked_result[0], axis=0)
+        loss = unpacked_result[0]
+
+        loss_matrix = compute_var_matrix(loss, frames_fig, n_frames)
+        # loss_matrix = [num_windows, num_frames]
+        print("loss_matrix", loss_matrix.shape)
+        print(loss_matrix)
+        fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
+
+        loss = np.mean(loss, axis=0)
         if args.pred_threshold <= loss:
             print("positive sample")
         else:

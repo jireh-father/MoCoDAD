@@ -264,7 +264,6 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
     if len(df) < window_length:
         return False
 
-    len_df = len(df)
 
     if direction == 'side':
         cols = KEYPOINT_COLS
@@ -475,21 +474,19 @@ def main(args):
                 os.makedirs(os.path.dirname(test_kp_sample_output_path), exist_ok=True)
                 df.to_csv(test_kp_sample_output_path, index=False, header=False)
 
-            if args.reset_index:
-                len_df = len(df)
 
             if is_val:
                 label_output_path = os.path.join(label_output_dir,
                                                  f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                 os.makedirs(os.path.dirname(label_output_path), exist_ok=True)
-                if label:
-                    # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
-                    label_np = np.ones(len_df, dtype=np.int8)
-                    # set last 5 elements to 0
-                    label_np[-5:] = 0
-                else:
-                    # label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
-                    label_np = np.zeros(len_df, dtype=np.int8)
+                # if label:
+                #     # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
+                #     label_np = np.ones(len(df), dtype=np.int8)
+                #     # set last 5 elements to 0
+                #     label_np[-5:] = 0
+                # else:
+                # label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
+                label_np = np.zeros(len(df), dtype=np.int8)
                 np.save(label_output_path, label_np)
                 if args.save_test:
                     test_label_output_path = os.path.join(test_output_dir,
