@@ -102,10 +102,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 print("loss_matrix", loss_matrix.shape)
                 print(loss_matrix)
                 loss = np.nanmax(loss_matrix, axis=0)
-                print(loss)
 
                 loss = np.mean(loss)
-                print(loss)
 
                 if label:
                     pos_losses.append(loss)
