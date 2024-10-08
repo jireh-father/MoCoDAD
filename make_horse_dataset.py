@@ -207,7 +207,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         if max_frames and len(df) > max_frames:
             df = df.iloc[:max_frames]
 
-    return df, len(df)
+    return df, len_df#len(df)
 
 
 def get_axis_keys(direction, target_keypoint_name):
