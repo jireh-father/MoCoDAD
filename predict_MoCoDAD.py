@@ -79,7 +79,7 @@ def main(args, tmp_dir):
         loss = unpacked_result[0]
 
 
-        loss_matrix = compute_var_matrix(loss, unpacked_result[5], len(loss))
+        loss_matrix = compute_var_matrix(loss, out[0][5], len(loss))
         # loss_matrix = [num_windows, num_frames]
         print("loss_matrix", loss_matrix.shape)
         print(loss_matrix)
