@@ -487,9 +487,9 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt_each_clip = []
             model_scores_each_clip = []
             model_scores_orig_each_clip = []
-            print("trans", trans, transformation)
+            # print("trans", trans, transformation)
+            # 현재 transformation에 해당되는 index만 추출하기 위한 index 배열
             cond_transform = (trans == transformation)
-
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond(
                 [out, gt_data, meta, frames], cond_transform)
 
@@ -497,10 +497,11 @@ class MoCoDAD(pl.LightningModule):
                 # iterating over each clip C with transformation T
 
                 scene_idx, clip_idx = scene_clips[idx]
-                is_pos = scene_idx < 1000
+                is_pos = scene_idx < 10000
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
                 n_frames = gt.shape[0]
-
+                
+                # 동영상 클립 하나만 가져오도록 index 세팅
                 cond_scene_clip = (meta_transform[:, 0] == scene_idx) & (meta_transform[:, 1] == clip_idx)
                 out_scene_clip, gt_scene_clip, meta_scene_clip, frames_scene_clip = filter_vectors_by_cond(
                     [out_transform, gt_data_transform,
@@ -509,7 +510,7 @@ class MoCoDAD(pl.LightningModule):
                 # person ids
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
                 error_per_person = []
-
+                print("figs_ids", figs_ids)
                 for fig in figs_ids:
                     # iterating over each actor A in each clip C with transformation T
 
