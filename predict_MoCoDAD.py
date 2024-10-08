@@ -16,6 +16,15 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
+def compute_var_matrix(pos, frames_pos, n_frames):
+    pose = np.zeros(shape=(pos.shape[0], n_frames))
+
+    for n in range(pose.shape[0]):
+        pose[n, frames_pos[n] - 1] = pos[n]
+
+    return pose
+
+
 def main(args, tmp_dir):
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
@@ -65,13 +74,15 @@ def main(args, tmp_dir):
 
         loss = unpacked_result[0]
 
-        # loss_matrix = compute_var_matrix(loss, frames_fig, len(loss))
-        # loss_matrix = [num_windows, num_frames]
-        # print("loss_matrix", loss_matrix.shape)
-        # print(loss_matrix)
-        # fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
 
-        loss = np.mean(loss, axis=0)
+        loss_matrix = compute_var_matrix(loss, unpacked_result[5], len(loss))
+        # loss_matrix = [num_windows, num_frames]
+        print("loss_matrix", loss_matrix.shape)
+        print(loss_matrix)
+        loss = np.nanmax(loss_matrix, axis=0)
+        print(loss)
+
+        # loss = np.mean(loss, axis=0)
         if args.pred_threshold <= loss:
             print("positive sample")
         else:
