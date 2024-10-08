@@ -847,7 +847,8 @@ class MoCoDAD(pl.LightningModule):
             selected_x = torch.stack(generated_xs).permute(*dims_idxs)
             loss_of_selected_x = torch.stack(losses).permute(1, 0)
         elif aggr_strategy == 'mean':
-            selected_x = None
+            # selected_x = None
+            selected_x = torch.zeros((B, *repr_shape)).to(self.device)
             loss_of_selected_x = torch.mean(torch.stack(losses), dim=0)
         elif aggr_strategy == 'mean_pose':
             selected_x = torch.mean(torch.stack(generated_xs), dim=0)
