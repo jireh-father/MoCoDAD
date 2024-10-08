@@ -69,6 +69,9 @@ def main(args, tmp_dir):
 
         start = time.time()
         out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
+        print("out length", len(out[0]))
+        for i in range(len(out[0])):
+            print(f"{i}th out shape", out[0][i].shape)
 
         unpacked_result = processing_data(out)
         print("len unpacked_result", len(unpacked_result))
