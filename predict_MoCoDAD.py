@@ -86,6 +86,9 @@ def main(args, tmp_dir):
         loss = np.nanmax(loss_matrix, axis=0)
         print(loss)
 
+        loss = np.stack(loss, axis=0)
+        print(loss)
+
         # loss = np.mean(loss, axis=0)
         if args.pred_threshold <= loss:
             print("positive sample")
