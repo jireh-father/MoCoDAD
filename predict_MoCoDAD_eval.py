@@ -130,9 +130,10 @@ def main(args, tmp_dir, data_json, keypoint_dir):
 
                 start = time.time()
                 for batch in loader:
-                    batch = [b.to('cuda') for b in batch]
-                    out = model.forward(batch)
-                    break
+                    with torch.no_grad():
+                        batch = [b.to('cuda') for b in batch]
+                        out = model.forward(batch)
+                        break
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 
 
