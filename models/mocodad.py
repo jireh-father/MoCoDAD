@@ -680,9 +680,9 @@ class MoCoDAD(pl.LightningModule):
         print(f'AUC: {auc:.4f}')
 
         if self.use_original_anomaly_score:
-            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_orig_each_clip)
+            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_orig_each_clip, pos_label=1)
         else:
-            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_each_clip)
+            fpr, tpr, thresholds = roc_curve(gt_each_clip, pds_each_clip, pos_label=1)
         J = tpr - fpr
         ix = np.argmax(J)
         best_thr = thresholds[ix]
