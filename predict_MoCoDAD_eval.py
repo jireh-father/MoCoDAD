@@ -18,6 +18,14 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
+def filter_vectors_by_cond(vecs, cond):
+    return [filter_by_cond(vec, cond) for vec in vecs]
+
+
+def filter_by_cond(vec, cond):
+    return vec[cond]
+
+
 def compute_var_matrix(pos, frames_pos, n_frames):
     pose = np.zeros(shape=(pos.shape[0], n_frames))
 
@@ -69,13 +77,15 @@ def main(args, tmp_dir, data_json, keypoint_dir):
             csv_file = os.path.join(keypoint_dir, path_and_dir["keypoint_full_path"])
 
             if args.use_angle:
-                df, len_df = make_horse_angle_dataset.read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets,
-                                                       window_length=args.seg_len, direction=args.camera_direction,
-                                                       max_frames=args.max_frames,
-                                                       num_div=args.num_div,
-                                                       use_random_frame_range=args.use_random_frame_range,
-                                                       skip_not_continuous_sample=args.skip_not_continuous_sample,
-                                                       sort_max_frames=args.sort_max_frames)
+                df, len_df = make_horse_angle_dataset.read_csv(csv_file, all_keys, all_x_axis_keys,
+                                                               target_skeleton_key_sets,
+                                                               window_length=args.seg_len,
+                                                               direction=args.camera_direction,
+                                                               max_frames=args.max_frames,
+                                                               num_div=args.num_div,
+                                                               use_random_frame_range=args.use_random_frame_range,
+                                                               skip_not_continuous_sample=args.skip_not_continuous_sample,
+                                                               sort_max_frames=args.sort_max_frames)
             else:
                 df = make_horse_dataset.read_csv(csv_file, x_axis_keys, y_axis_keys, window_length=args.seg_len,
                                                  direction='side',
@@ -101,9 +111,24 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                 # loss_matrix = [num_windows, num_frames]
                 print("loss_matrix", loss_matrix.shape)
                 print(loss_matrix)
-                loss = np.nanmax(loss_matrix, axis=0)
+                total_mean_loss = np.mean(np.nanmax(loss_matrix, axis=0))
 
-                loss = np.mean(loss)
+                trans = out[0][3]
+                losses = []
+                for transformation in range(args.num_transform):
+                    cond_transform = (trans == transformation)
+                    trans_loss, = filter_vectors_by_cond([loss], cond_transform)
+
+                    loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
+                    # loss_matrix = [num_windows, num_frames]
+                    print("loss_matrix", loss_matrix.shape)
+                    print(loss_matrix)
+                    losses.append(np.nanmax(loss_matrix, axis=0))
+
+                losses = np.stack(losses, axis=0)
+                losses = np.mean(losses, axis=0)
+                print("losses shape", losses.shape)
+                loss = np.mean(losses)
 
                 if label:
                     pos_losses.append(loss)
