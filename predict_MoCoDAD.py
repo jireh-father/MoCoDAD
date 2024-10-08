@@ -90,10 +90,10 @@ def main(args, tmp_dir):
         losses = []
         for transformation in range(args.num_transform):
             cond_transform = (trans == transformation)
-            loss = filter_vectors_by_cond([loss], cond_transform)
+            trans_loss = filter_vectors_by_cond([loss], cond_transform)
 
 
-            loss_matrix = compute_var_matrix(loss, out[0][5], len_df)
+            loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
             # loss_matrix = [num_windows, num_frames]
             print("loss_matrix", loss_matrix.shape)
             print(loss_matrix)
