@@ -18,6 +18,15 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
+def compute_var_matrix(pos, frames_pos, n_frames):
+    pose = np.zeros(shape=(pos.shape[0], n_frames))
+
+    for n in range(pose.shape[0]):
+        pose[n, frames_pos[n] - 1] = pos[n]
+
+    return pose
+
+
 def main(args, tmp_dir, data_json, keypoint_dir):
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
@@ -86,7 +95,18 @@ def main(args, tmp_dir, data_json, keypoint_dir):
 
                 unpacked_result = processing_data(out)
 
-                loss = np.mean(unpacked_result[0], axis=0)
+                loss = unpacked_result[0]
+
+                loss_matrix = compute_var_matrix(loss, out[0][5], len(loss))
+                # loss_matrix = [num_windows, num_frames]
+                print("loss_matrix", loss_matrix.shape)
+                print(loss_matrix)
+                loss = np.nanmax(loss_matrix, axis=0)
+                print(loss)
+
+                loss = np.mean(loss)
+                print(loss)
+
                 if label:
                     pos_losses.append(loss)
                 else:
