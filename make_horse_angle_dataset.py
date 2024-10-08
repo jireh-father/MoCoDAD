@@ -263,7 +263,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
     # print(df.index.values)
 
     if len(df) < window_length:
-        return False
+        return False, False
 
     len_df = len(df)
 
@@ -288,9 +288,9 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
     if df.index.max() - df.index.min() + 1 != len(df):
         if skip_not_continuous_sample:
             print("skip. index is not continuous", csv_file)
-            return False
+            return False, False
     if len(df) < window_length:
-        return False
+        return False, False
 
     # reset index
     if reset_index:
@@ -372,7 +372,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
         if "angle" in col:
             if (df[col] > 180).any():
                 print(f"angle over 180 in {col}")
-                return False
+                return False, False
 
     return df, len_df#len(df)
 

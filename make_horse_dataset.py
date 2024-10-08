@@ -129,7 +129,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='utf-8')
 
     if len(df) < window_length:
-        return False
+        return False, False
 
     len_df = len(df)
 
@@ -152,13 +152,13 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
     if df.index.max() - df.index.min() + 1 != len(df):
         if skip_not_continuous_sample:
             print("skip. index is not continuous", csv_file)
-            return False
+            return False, False
 
         # print(df)
         # print("index is not continuous a", csv_file)
         # sys.exit()
     if len(df) < window_length:
-        return False
+        return False, False
 
     # reset index
     if reset_index:
@@ -284,6 +284,8 @@ def main(args):
                                   args.frame_stride, args.num_div, args.num_thr_div, args.max_frames,
                                   args.sort_max_frames,
                                   args.reset_index, args.skip_not_continuous_sample, args.use_random_frame_range)
+            if df is False:
+                continue
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
