@@ -17,33 +17,14 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
-def processing_data(data):
-    out = []
-    gt_data = []
-    trans = []
-    meta = []
-    frames = []
-    for data_array in data:
-        output = data_array[0]
-        tensor_data = data_array[1]
-        transformation_idx = data_array[2]
-        metadata = data_array[3]
-        actual_frames = data_array[4]
+def processing_data(data_array):
+    output = data_array[0].cpu().numpy()
+    tensor_data = data_array[1].cpu().numpy()
+    transformation_idx = data_array[2].cpu().numpy()
+    metadata = data_array[3].cpu().numpy()
+    actual_frames = data_array[4].cpu().numpy()
 
-        out.append(output.cpu())
-        gt_data.append(tensor_data.cpu())
-        trans.append(transformation_idx.cpu())
-        meta.append(metadata.cpu())
-        frames.append(actual_frames.cpu())
-
-    out = np.concatenate(out, axis=0)
-    gt_data = np.concatenate(gt_data, axis=0)
-    trans = np.concatenate(trans, axis=0)
-    meta = np.concatenate(meta, axis=0)
-    frames = np.concatenate(frames, axis=0)
-
-    return out, gt_data, trans, meta, frames
-
+    return output, tensor_data, transformation_idx, metadata, actual_frames
 
 def filter_vectors_by_cond(vecs, cond):
     return [filter_by_cond(vec, cond) for vec in vecs]
@@ -135,7 +116,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
                         out = model.forward(batch)
                         break
                 print(out)
-                print("len out", len(out))
+                # print("len out", len(out))
+                out = processing_data(out)
                 # out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 
                 loss = out[0]
