@@ -1,5 +1,4 @@
 import argparse
-import glob
 import json
 import os
 import time
@@ -7,7 +6,6 @@ import traceback
 import uuid
 
 import torch
-import pytorch_lightning as pl
 import yaml
 from models.mocodad import MoCoDAD
 from utils.dataset import get_test_dataset_and_loader

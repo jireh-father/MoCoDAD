@@ -120,7 +120,8 @@ TARGET_KP_COL_DICT = {
 
 
 def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side', use_score_col=False,
-             frame_stride=None, num_div=None, num_thr_div=0.1, max_frames=None, sort_max_frames=False, reset_index=False,
+             frame_stride=None, num_div=None, num_thr_div=0.1, max_frames=None, sort_max_frames=False,
+             reset_index=False,
              skip_not_continuous_sample=False, use_random_frame_range=False):
     try:
         df = pd.read_csv(csv_file, skiprows=lambda x: x in [2], header=1, encoding='CP949')
@@ -129,6 +130,8 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
 
     if len(df) < window_length:
         return False
+
+    len_df = len(df)
 
     if direction == 'side':
         cols = KEYPOINT_COLS
@@ -204,7 +207,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         if max_frames and len(df) > max_frames:
             df = df.iloc[:max_frames]
 
-    return df
+    return df, len(df)
 
 
 def get_axis_keys(direction, target_keypoint_name):
@@ -213,6 +216,7 @@ def get_axis_keys(direction, target_keypoint_name):
     y_axis_keys = [f"{k}_y" for k in use_keys]
     x_axis_keys = [f"{k}_x" for k in use_keys]
     return x_axis_keys, y_axis_keys
+
 
 def main(args):
     # index번호는 1부터
@@ -275,9 +279,11 @@ def main(args):
 
             if args.kp_file_name:
                 csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
-            df = read_csv(csv_file, x_axis_keys, y_axis_keys, args.window_length, args.direction, args.use_score_col,
-                          args.frame_stride, args.num_div, args.num_thr_div, args.max_frames, args.sort_max_frames,
-                          args.reset_index, args.skip_not_continuous_sample, args.use_random_frame_range)
+            df, len_df = read_csv(csv_file, x_axis_keys, y_axis_keys, args.window_length, args.direction,
+                                  args.use_score_col,
+                                  args.frame_stride, args.num_div, args.num_thr_div, args.max_frames,
+                                  args.sort_max_frames,
+                                  args.reset_index, args.skip_not_continuous_sample, args.use_random_frame_range)
 
             # three digit number using sample index
             sample_idx_str = f"{sample_idx:04d}"
@@ -295,7 +301,6 @@ def main(args):
                                                           "00001.csv")
                 os.makedirs(os.path.dirname(test_kp_sample_output_path), exist_ok=True)
                 df.to_csv(test_kp_sample_output_path, index=False, header=False)
-
 
             if is_val:
                 label_output_path = os.path.join(label_output_dir,

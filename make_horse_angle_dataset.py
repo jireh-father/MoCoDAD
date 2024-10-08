@@ -373,7 +373,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
                 print(f"angle over 180 in {col}")
                 return False
 
-    return df, len_df
+    return df, len(df)
 
 
 def get_key_data(target_keypoint_name):
@@ -454,7 +454,7 @@ def main(args):
             if args.kp_file_name:
                 csv_file = os.path.join(os.path.dirname(csv_file), args.kp_file_name)
 
-            df = read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, args.window_length,
+            df, len_df = read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, args.window_length,
                           args.direction, args.num_div, args.num_thr_div, args.frame_stride, args.max_frames,
                           args.use_random_frame_range, args.reset_index, args.skip_not_continuous_sample,
                           args.use_score_col, args.sort_max_frames)
