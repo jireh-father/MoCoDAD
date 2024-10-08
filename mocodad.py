@@ -47,7 +47,8 @@ def compute_var_matrix(pos, frames_pos, n_frames):
 class Mocodad:
     def __init__(self, config_path, tmp_dir):
         args = yaml.load(open(config_path), Loader=yaml.FullLoader)
-        self.args = argparse.Namespace(**args)
+        args = argparse.Namespace(**args)
+        self.args = args
 
         torch.manual_seed(args.seed)
         torch.cuda.manual_seed(args.seed)
@@ -56,6 +57,7 @@ class Mocodad:
         np.random.seed(args.seed)
 
         os.makedirs(tmp_dir, exist_ok=True)
+        self.tmp_dir = tmp_dir
 
         model = MoCoDAD(args)
         checkpoint = torch.load(args.load_ckpt, weights_only=True)
@@ -96,7 +98,7 @@ class Mocodad:
                                                      skip_not_continuous_sample=self.args.skip_not_continuous_sample,
                                                      sort_max_frames=self.args.sort_max_frames)
 
-        kp_path = os.path.join(tmp_dir, str(uuid.uuid4()) + '.csv')
+        kp_path = os.path.join(self.tmp_dir, str(uuid.uuid4()) + '.csv')
 
         try:
             df.to_csv(kp_path, index=False, header=False)
