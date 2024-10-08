@@ -518,7 +518,11 @@ class MoCoDAD(pl.LightningModule):
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip],
                                                                     cond_fig)
                     print("out_fig", out_fig.shape)
+                    # out_fig = [frames]
+                    print("frames_fig", frames_fig.shape)
+                    print("n_frames", n_frames)
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
+                    # loss_matrix = [frames,
                     print("loss_matrix", loss_matrix.shape)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
 
