@@ -36,7 +36,7 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 # first maxf75
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/  > log_tr_baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10 &
 
-# walk, first maxf75, skip hole 2024-10-08
+# [2024-10-08] walk, first maxf75, skip hole
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole/  > log_tr_baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole &
 
 # first maxf75, skip hole, trot
