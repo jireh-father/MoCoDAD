@@ -56,7 +56,7 @@ n_generated_samples: 5 # number of samples to generate
 model_return_value: 'all' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
                            # if 'poses', the model will return the generated poses; 
                            # if 'all', the model will return both the loss and the generated poses
-aggregation_strategy: 'mean_pose' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected;
+aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected;
                              # if 'mean', the mean of loss of the samples will be selected; 
                              # if 'median', the median of the loss of the samples will be selected; 
                              # if 'random', a random sample will be selected;
