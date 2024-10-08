@@ -227,8 +227,8 @@ def load_trajectories(trajectories_path, debug, split='train'):
         trajectory_id = "00001-0101_00001"
         trajectory = np.loadtxt(trajectories_path, dtype=np.float32, delimiter=',', ndmin=2)
         trajectory_frames, trajectory_coordinates = trajectory[:, 0].astype(np.int32), trajectory[:, 1:]
-        print("trajectory_frames shape: ", trajectory_frames.shape)
-        print("trajectory_coordinates shape: ", trajectory_coordinates.shape)
+        # print("trajectory_frames shape: ", trajectory_frames.shape)
+        # print("trajectory_coordinates shape: ", trajectory_coordinates.shape)
         #trajectory_frames shape:  (75,)
         #trajectory_coordinates shape:  (75, 16)
         trajectories[trajectory_id] = Trajectory(trajectory_id=trajectory_id,

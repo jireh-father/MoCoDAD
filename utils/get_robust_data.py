@@ -61,7 +61,7 @@ def data_of_combined_model(**args):
     if not use_angle:
         trajectories = remove_short_trajectories(trajectories, input_length=input_length,
                                                  input_gap=seg_stride, pred_length=pred_length)
-        print('\nRemoved short trajectories. Number of trajectories left: %d.' % len(trajectories))
+        # print('\nRemoved short trajectories. Number of trajectories left: %d.' % len(trajectories))
 
     # trajectories, trajectories_val = split_into_train_and_test(trajectories, train_ratio=0.8, seed=42)
 
