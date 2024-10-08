@@ -59,9 +59,6 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     model.load_state_dict(checkpoint['state_dict'])
     model.eval()
     model.to('cuda')
-    # Initialize trainer and test
-    # trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
-    #                      max_epochs=1, logger=False)
 
     # ckpt_path = args.load_ckpt
     dataset = json.load(open(data_json, encoding="utf-8"))

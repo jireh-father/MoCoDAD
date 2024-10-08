@@ -16,6 +16,17 @@ import make_horse_dataset
 import make_horse_angle_dataset
 
 
+def processing_data(data_array):
+    loss = data_array[0].cpu().numpy()
+    pred = data_array[1].cpu().numpy()
+    input = data_array[2].cpu().numpy()
+    transform_idx = data_array[3].cpu().numpy()
+    metadata = data_array[4].cpu().numpy()
+    actual_frames = data_array[5].cpu().numpy()
+
+
+    return loss, pred, input, transform_idx, metadata, actual_frames
+
 def filter_vectors_by_cond(vecs, cond):
     return [filter_by_cond(vec, cond) for vec in vecs]
 
@@ -44,9 +55,10 @@ def main(args, tmp_dir):
     os.makedirs(tmp_dir, exist_ok=True)
     # Initialize the model
     model = MoCoDAD(args)
-    # Initialize trainer and test
-    trainer = pl.Trainer(accelerator=args.accelerator, devices=args.devices,
-                         max_epochs=1, logger=False)
+    checkpoint = torch.load(args.load_ckpt, weights_only=True)
+    model.load_state_dict(checkpoint['state_dict'])
+    model.eval()
+    model.to('cuda')
 
     print('Loading data and creating loaders.....')
     ckpt_path = args.load_ckpt
@@ -77,51 +89,43 @@ def main(args, tmp_dir):
         dataset, loader = get_test_dataset_and_loader(args, kp_path)
 
         start = time.time()
-        out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
-        print("out length", len(out[0]))
-        for i in range(len(out[0])):
-            print(f"{i}th out shape", out[0][i].shape)
+        for batch in loader:
+            with torch.no_grad():
+                batch = [b.to('cuda') for b in batch]
+                out = model.forward(batch)
+                break
 
-        unpacked_result = processing_data(out)
-        print("len unpacked_result", len(unpacked_result))
+        out = processing_data(out)
 
-        loss = unpacked_result[0]
+        loss = out[0]
 
-        loss_matrix = compute_var_matrix(loss, out[0][5], len_df)
-        # loss_matrix = [num_windows, num_frames]
-        print("loss_matrix", loss_matrix.shape)
-        print(loss_matrix)
-        total_mean_loss = np.mean(np.nanmax(loss_matrix, axis=0))
-
-        trans = out[0][3]
-        losses = []
+        trans = out[3]
+        trans_losses = []
         for transformation in range(args.num_transform):
             cond_transform = (trans == transformation)
             trans_loss, = filter_vectors_by_cond([loss], cond_transform)
 
-            loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
+            loss_matrix = compute_var_matrix(trans_loss, out[5], len_df)
             # loss_matrix = [num_windows, num_frames]
             print("loss_matrix", loss_matrix.shape)
             print(loss_matrix)
-            losses.append(np.nanmax(loss_matrix, axis=0))
+            trans_losses.append(np.nanmax(loss_matrix, axis=0))
 
-        losses = np.stack(losses, axis=0)
-        losses = np.mean(losses, axis=0)
-        print("losses shape", losses.shape)
-        loss = np.mean(losses)
-        # loss = np.mean(loss)
-        # print(loss)
+        trans_losses = np.stack(trans_losses, axis=0)
+        trans_losses = np.mean(trans_losses, axis=0)
+        print("losses shape", trans_losses.shape)
+        loss = np.mean(trans_losses)
 
         # loss = np.mean(loss, axis=0)
         if args.pred_threshold <= loss:
             print("positive sample")
         else:
             print("negative sample")
-        print("loss", loss, total_mean_loss)
+        print("loss", loss)
 
-        prediction = unpacked_result[1]
+        prediction = out[1]
         pred_window = prediction.shape[2]
-        gt_data = unpacked_result[2][:, :, -pred_window:, :]
+        gt_data = out[2][:, :, -pred_window:, :]
         diff = np.abs(prediction - gt_data)
         diff = np.mean(diff, axis=(0, 1, 2))
         print(time.time() - start)
