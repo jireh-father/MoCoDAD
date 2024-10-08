@@ -74,7 +74,7 @@ class Mocodad:
             self.target_skeleton_key_sets = target_skeleton_key_sets
         else:
             x_axis_keys, y_axis_keys, keypoint_names = make_horse_dataset.get_axis_keys(args.camera_direction,
-                                                                        args.target_keypoint_name)
+                                                                                        args.target_keypoint_name)
             self.x_axis_keys = x_axis_keys
             self.y_axis_keys = y_axis_keys
         self.keypoint_names = keypoint_names
@@ -120,7 +120,7 @@ class Mocodad:
             for transformation in range(self.args.num_transform):
                 cond_transform = (trans == transformation)
                 trans_loss, = filter_vectors_by_cond([loss], cond_transform)
-                print(len(trans_loss), out[5].shape, len(trans_loss))
+                print(len(trans_loss), out[5].shape, len_df)
                 loss_matrix = compute_var_matrix(trans_loss, out[5], len_df)
                 # loss_matrix = [num_windows, num_frames]
                 trans_losses.append(np.nanmax(loss_matrix, axis=0))
@@ -159,9 +159,9 @@ def main(config, tmp_dir, keypoint_csv_path):
 if __name__ == '__main__':
     # Parse command line arguments and load config file
     parser = argparse.ArgumentParser(description='MoCoDAD')
-    parser.add_argument('-c', '--config', type=str, required=True)
+    parser.add_argument('-c', '--config', type=str, default='deploy/20241020/inference_config.yaml')
     parser.add_argument('--tmp_dir', type=str, default="./tmp")
     parser.add_argument('--keypoint_csv_path', type=str,
-                        default="./horse_kp_20240710/2000343/trot/left/2000343_part3_2_c_20230915_104056_Left_001/CollectedData_teamDLC.csv")
+                        default="deploy/20241020/test_keypoint.csv")
     global_args = parser.parse_args()
     main(global_args.config, global_args.tmp_dir, global_args.keypoint_csv_path)
