@@ -71,6 +71,7 @@ def main(args, tmp_dir):
         out = trainer.predict(model, dataloaders=loader, ckpt_path=ckpt_path, return_predictions=True)
 
         unpacked_result = processing_data(out)
+        print("len unpacked_result", len(unpacked_result))
 
         loss = unpacked_result[0]
 
