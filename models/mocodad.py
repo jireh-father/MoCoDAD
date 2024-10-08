@@ -215,7 +215,6 @@ class MoCoDAD(pl.LightningModule):
         Returns:
             torch.float32: loss of the model
         """
-        print("do training step")
         # Unpack data: tensor_data is the input data, meta_out is a list of metadata
         tensor_data, _ = self._unpack_data(batch)
         # print("tensor_data", tensor_data)
@@ -488,7 +487,7 @@ class MoCoDAD(pl.LightningModule):
             dataset_gt_each_clip = []
             model_scores_each_clip = []
             model_scores_orig_each_clip = []
-
+            print("trans", trans, transformation)
             cond_transform = (trans == transformation)
 
             out_transform, gt_data_transform, meta_transform, frames_transform = filter_vectors_by_cond(
