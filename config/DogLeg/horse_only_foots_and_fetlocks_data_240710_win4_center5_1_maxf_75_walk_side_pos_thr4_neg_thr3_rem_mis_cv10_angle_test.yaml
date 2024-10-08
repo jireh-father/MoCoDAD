@@ -106,4 +106,4 @@ num_thr_div: 1
 sort_max_frames: false
 skip_not_continuous_sample: false
 use_random_frame_range: false
-pred_threshold: 0.0855
+pred_threshold: 0.04
