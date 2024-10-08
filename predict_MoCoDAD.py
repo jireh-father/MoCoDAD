@@ -90,7 +90,7 @@ def main(args, tmp_dir):
         losses = []
         for transformation in range(args.num_transform):
             cond_transform = (trans == transformation)
-            trans_loss = filter_vectors_by_cond([loss], cond_transform)
+            trans_loss, = filter_vectors_by_cond([loss], cond_transform)
 
 
             loss_matrix = compute_var_matrix(trans_loss, out[0][5], len_df)
