@@ -510,14 +510,16 @@ class MoCoDAD(pl.LightningModule):
                 # person ids
                 figs_ids = sorted(list(set(meta_scene_clip[:, 2])))
                 error_per_person = []
-                print("figs_ids", figs_ids)
+                # figs_ids는 동영상에서 사람단위로 판단하는건데. 말의 경우 한마리밖에 없음.
                 for fig in figs_ids:
                     # iterating over each actor A in each clip C with transformation T
 
                     cond_fig = (meta_scene_clip[:, 2] == fig)
                     out_fig, _, frames_fig = filter_vectors_by_cond([out_scene_clip, gt_scene_clip, frames_scene_clip],
                                                                     cond_fig)
+                    print("out_fig", out_fig.shape)
                     loss_matrix = compute_var_matrix(out_fig, frames_fig, n_frames)
+                    print("loss_matrix", loss_matrix.shape)
                     fig_reconstruction_loss = np.nanmax(loss_matrix, axis=0)
 
                     if self.anomaly_score_pad_size != -1:
