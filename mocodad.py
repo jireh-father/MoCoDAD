@@ -120,7 +120,7 @@ class Mocodad:
             for transformation in range(self.args.num_transform):
                 cond_transform = (trans == transformation)
                 trans_loss, = filter_vectors_by_cond([loss], cond_transform)
-
+                print(len(len_df), len(trans_losses))
                 loss_matrix = compute_var_matrix(trans_loss, out[5], len_df)
                 # loss_matrix = [num_windows, num_frames]
                 trans_losses.append(np.nanmax(loss_matrix, axis=0))
@@ -147,6 +147,7 @@ class Mocodad:
             return result, diff.argmax()
         except Exception as e:
             traceback.print_exc()
+            raise e
         finally:
             os.remove(kp_path)
 
