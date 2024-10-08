@@ -57,6 +57,7 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     model = MoCoDAD(args)
     checkpoint = torch.load(args.load_ckpt, weights_only=True)
     print(checkpoint.keys())
+    sys.exit()
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     model.to('cuda')
