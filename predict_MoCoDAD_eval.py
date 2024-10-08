@@ -55,7 +55,8 @@ def main(args, tmp_dir, data_json, keypoint_dir):
     os.makedirs(tmp_dir, exist_ok=True)
     # Initialize the model
     model = MoCoDAD(args)
-    model.load_from_checkpoint(args.load_ckpt)
+    checkpoint = torch.load(args.load_ckpt, weights_only=True)
+    model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     model.to('cuda')
     # Initialize trainer and test
