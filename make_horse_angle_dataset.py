@@ -264,6 +264,8 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
     if len(df) < window_length:
         return False
 
+    len_df = len(df)
+
 
     if direction == 'side':
         cols = KEYPOINT_COLS
@@ -371,7 +373,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
                 print(f"angle over 180 in {col}")
                 return False
 
-    return df
+    return df, len_df
 
 
 def get_key_data(target_keypoint_name):
