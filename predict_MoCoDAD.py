@@ -97,8 +97,7 @@ def main(args, tmp_dir):
             # loss_matrix = [num_windows, num_frames]
             print("loss_matrix", loss_matrix.shape)
             print(loss_matrix)
-            loss = np.nanmax(loss_matrix, axis=0)
-            losses.append(loss)
+            losses.append(np.nanmax(loss_matrix, axis=0))
 
         losses = np.stack(losses, axis=0)
         losses = np.mean(losses, axis=0)
