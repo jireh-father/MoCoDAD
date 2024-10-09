@@ -293,8 +293,6 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
         return False, False
 
     # reset index
-
-
     df['index_col'] = df.index + 1
 
     df = df[['index_col'] + all_keys]
@@ -375,6 +373,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
 
     if reset_index:
         df.reset_index(drop=True, inplace=True)
+        df['index_col'] = df.index + 1
 
     return df, len(df)
 

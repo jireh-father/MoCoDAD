@@ -208,6 +208,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
 
     if reset_index:
         df.reset_index(drop=True, inplace=True)
+        df['index_col'] = df.index + 1
 
     return df, len(df)
 
