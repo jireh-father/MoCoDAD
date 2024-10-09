@@ -2,16 +2,11 @@
 # best hp v1: kp score 0.55, window 4, paws
 ## General settings
 split: 'test' # data split; choices ['train', 'test']
-debug: false # if true, load only a few data samples
 seed: 999
 
-## Computational resources
-accelerator: 'gpu'
-devices: [0] # indices of cuda devices to use
-
 ## Paths
-scaler_path: './deploy/20241020/local_robust.pickle' # path to the fitted scaler
-load_ckpt: 'deploy/20241020/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: true
 
 ### Model's configuration

@@ -102,7 +102,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--config', type=str, required=True)
     parser.add_argument('--tmp_dir', type=str, default="./tmp")
     parser.add_argument('--data_json', type=str,
-                        default='./deploy/20241020/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json')
+                        default='./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json')
     parser.add_argument('--keypoint_dir', type=str,
                         default='./horse_kp_20240710')
     global_args = parser.parse_args()

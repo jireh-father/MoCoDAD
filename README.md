@@ -1,3 +1,157 @@
+# MoCoDAD for Animals
+## Setup
+### Environment
+```sh
+conda env create -f environment.yaml
+conda activate mocodad
+```
+
+## Inference
+### [20241010] model files
+- model ckpt
+  - deploy/20241010/epoch=8-step=792.ckpt
+- config file
+  - deploy/20241010/inference_config.yaml
+- scaler file
+  - deploy/20241010/local_robust.pkl
+
+### Inference in python code
+```python
+import mocodad
+config = "./deploy/20241010/inference_config.yaml"
+tmp_dir = "./tmp"
+keypoint_csv_path = "./deploy/20241010/test_keypoint.csv"
+mocodad = mocodad.Mocodad(config, tmp_dir)
+
+result, position = mocodad.inference(keypoint_csv_path)
+```
+
+### Inference in command line
+```sh
+python mocodad.py --config ./deploy/20241010/inference_config.yaml --keypoint_csv_path ./deploy/20241010/test_keypoint.csv
+````
+
+### Evaluation in command line
+```sh
+# you need to prepare the keypoint directory and data json file
+# request the keypoint directory to the owner
+# the sample data json file is in ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json 
+python predict_MoCoDAD_eval.py --config ./deploy/20241010/inference_config.yaml --keypoint_dir ./horse_kp_20240710 --data_json ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json
+```
+
+### Inference config file
+```yaml
+split: 'test' # do not change
+debug: false # do not change
+seed: 999 # same seed used for training
+
+## Computational resources
+accelerator: 'gpu'
+devices: [0] # indices of cuda devices to use
+
+## Paths
+scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+create_experiment_dir: true
+
+### Model's configuration
+
+## U-Net's configuration
+embedding_dim: 16 # dimension of the embedding of the UNet
+dropout: 0. # probability of dropout
+conditioning_strategy: 'inject' # choices ['inject' (add2layers), 'concat' (cat), 'inbetween_imp' (interleave), 'random_imp' (random_indices), 'no_condition' (none)]
+
+## Conditioning network's configuration
+conditioning_architecture: 'AE' # choices ['AE', 'E', 'E_unet']
+conditioning_indices: [0,1,2] # If conditioning_strategy=random_imp, it must be int and it is used as the number of random indices that will be selected
+                              # If an int is given and conditioning_strategy=[inject|concat], n_frames//conditioning_indices will be used as the number of conditioning indices
+                              # If an int is given and conditioning_strategy=inbetween_imp, it will be used as the step of the conditioning indices, starting from 0
+                              # If a list is given, it will be used as the conditioning indices 
+h_dim: 32 # dimension of the bottleneck at the end of the encoder of the conditioning network
+latent_dim: 16 # dimension of the latent space of the conditioning encoder
+channels: [32,16,32] # channels for the encoder (ignored if conditioning_architecture=E_unet)
+
+##############################
+
+
+### Training's configuration
+
+## Diffusion's configuration
+noise_steps: 10 # how many diffusion steps to perform
+
+### Optimizer and scheduler's configuration
+opt_lr: 0.001
+
+## Losses' configuration
+loss_fn: 'smooth_l1' # loss function; choices ['mse', 'l1', 'smooth_l1']
+rec_weight: 0.01 # weight of the reconstruction loss
+
+##############################
+
+
+### Inference's configuration
+n_generated_samples: 5 # number of samples to generate
+model_return_value: 'all' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
+                           # if 'poses', the model will return the generated poses; 
+                           # if 'all', the model will return both the loss and the generated poses
+aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected;
+                             # if 'mean', the mean of loss of the samples will be selected; 
+                             # if 'median', the median of the loss of the samples will be selected; 
+                             # if 'random', a random sample will be selected;
+                             # if 'mean_poses', the mean of the generated poses will be selected;
+                             # if 'median_poses', the median of the generated poses will be selected;
+                             # if 'all', all the generated poses will be selected
+filter_kernel_size: 30 # size of the kernel to use for smoothing the anomaly score of each clip
+frames_shift: 6 # it compensates the shift of the anomaly score due to the sliding window;
+                 # in conjuction with pad_size and filter_kernel_size, it strongly depends on the dataset
+save_tensors: true # if true, save the generated tensors for faster inference
+load_tensors: false # if true, load the generated tensors for faster inference
+
+##############################
+
+
+### Dataset's configuration
+
+## Important parameters
+seg_len: 4 # length of the window (cond+noised)
+vid_res: [10800,7200]
+batch_size: 1024
+pad_size: -1 # size of the padding 
+
+## Other parameters
+headless: false # remove the keypoints of the head
+hip_center: false # center the keypoints on the hip
+kp18_format: false # use the 18 keypoints format
+normalization_strategy: 'robust' # use 'none' to avoid normalization, 'robust' otherwise
+num_coords: 2 # number of coordinates to use
+num_transform: 5 # number of transformations to apply
+num_workers: 2
+seg_stride: 1
+custom_num_joints: 8
+seg_th: 0
+start_offset: 0
+symm_range: true
+use_fitted_scaler: false
+remove_last_remain_frame: false
+use_original_anomaly_score: true
+use_angle: true
+use_angle_norm: false
+camera_direction: side
+target_keypoint_name: only_foots_and_fetlocks
+max_frames: 75
+num_div: 5
+num_thr_div: 1
+sort_max_frames: false
+skip_not_continuous_sample: false
+use_random_frame_range: false
+pred_threshold: 0.0386
+```
+
+## Training
+
+--- 
+# VVV Original MOCODAD README.md
+
 # Multimodal Motion Conditioned Diffusion Model for Skeleton-based Video Anomaly Detection
 _Alessandro Flaborea*, Luca Collorone*, Guido D'Amely*, Stefano D'Arrigo*, Bardh Prenkaj, Fabio Galasso_
 

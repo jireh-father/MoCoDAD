@@ -161,9 +161,9 @@ def main(config, tmp_dir, keypoint_csv_path):
 if __name__ == '__main__':
     # Parse command line arguments and load config file
     parser = argparse.ArgumentParser(description='MoCoDAD')
-    parser.add_argument('-c', '--config', type=str, default='deploy/20241020/inference_config.yaml')
+    parser.add_argument('-c', '--config', type=str, default='deploy/20241010/inference_config.yaml')
     parser.add_argument('--tmp_dir', type=str, default="./tmp")
     parser.add_argument('--keypoint_csv_path', type=str,
-                        default="deploy/20241020/test_keypoint.csv")
+                        default="deploy/20241010/test_keypoint.csv")
     global_args = parser.parse_args()
     main(global_args.config, global_args.tmp_dir, global_args.keypoint_csv_path)
