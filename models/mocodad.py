@@ -496,6 +496,7 @@ class MoCoDAD(pl.LightningModule):
 
                 scene_idx, clip_idx = scene_clips[idx]
                 is_pos = scene_idx < 1000
+                print(os.path.join(self.gt_path, all_gts[idx]))
                 gt = np.load(os.path.join(self.gt_path, all_gts[idx]))
                 n_frames = gt.shape[0]
                 
