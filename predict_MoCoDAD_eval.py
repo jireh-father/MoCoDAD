@@ -76,24 +76,24 @@ def main(config, tmp_dir, data_json, keypoint_dir):
     print("num_samples", num_samples)
     print("num_true", num_true)
 
-    # print stat losses
-    losses = np.array(losses)
-    print("mean loss", np.mean(losses))
-    print("std loss", np.std(losses))
-    print("max loss", np.max(losses))
-    print("min loss", np.min(losses))
-
-    pos_losses = np.array(pos_losses)
-    print("mean pos loss", np.mean(pos_losses))
-    print("std pos loss", np.std(pos_losses))
-    print("max pos loss", np.max(pos_losses))
-    print("min pos loss", np.min(pos_losses))
-
-    neg_losses = np.array(neg_losses)
-    print("mean neg loss", np.mean(neg_losses))
-    print("std neg loss", np.std(neg_losses))
-    print("max neg loss", np.max(neg_losses))
-    print("min neg loss", np.min(neg_losses))
+    # # print stat losses
+    # losses = np.array(losses)
+    # print("mean loss", np.mean(losses))
+    # print("std loss", np.std(losses))
+    # print("max loss", np.max(losses))
+    # print("min loss", np.min(losses))
+    #
+    # pos_losses = np.array(pos_losses)
+    # print("mean pos loss", np.mean(pos_losses))
+    # print("std pos loss", np.std(pos_losses))
+    # print("max pos loss", np.max(pos_losses))
+    # print("min pos loss", np.min(pos_losses))
+    #
+    # neg_losses = np.array(neg_losses)
+    # print("mean neg loss", np.mean(neg_losses))
+    # print("std neg loss", np.std(neg_losses))
+    # print("max neg loss", np.max(neg_losses))
+    # print("min neg loss", np.min(neg_losses))
 
 
 if __name__ == '__main__':
