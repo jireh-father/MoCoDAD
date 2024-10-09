@@ -210,7 +210,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         df.reset_index(drop=True, inplace=True)
         df['index_col'] = df.index + 1
 
-    return df, len(df)
+    return df, len_df
 
 
 def get_axis_keys(direction, target_keypoint_name):
@@ -311,14 +311,16 @@ def main(args):
                 label_output_path = os.path.join(label_output_dir,
                                                  f"{kp_sample_prefix}{sample_idx_str}_0{csv_idx + 101}.npy")
                 os.makedirs(os.path.dirname(label_output_path), exist_ok=True)
+                if args.use_num_last_frames:
+                    len_df = len(df)
                 if label:
                     # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
-                    label_np = np.ones(len(df), dtype=np.int8)
+                    label_np = np.ones(len_df, dtype=np.int8)
                     # set last 5 elements to 0
                     start_idx = args.window_length - 1
                     label_np[-start_idx:] = 0
                 else:
-                    label_np = np.zeros(len(df), dtype=np.int8)
+                    label_np = np.zeros(len_df, dtype=np.int8)
                 # label_np = np.zeros(len(df), dtype=np.int8)
                 np.save(label_output_path, label_np)
                 if args.save_test:
@@ -380,5 +382,8 @@ if __name__ == '__main__':
 
     # use_random_frame_range
     parser.add_argument('--use_random_frame_range', action='store_true', default=False)
+
+    # use_num_last_frames
+    parser.add_argument('--use_num_last_frames', action='store_true', default=False)
 
     main(parser.parse_args())

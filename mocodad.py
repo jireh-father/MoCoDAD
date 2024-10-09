@@ -100,7 +100,8 @@ class Mocodad:
                                                      skip_not_continuous_sample=self.args.skip_not_continuous_sample,
                                                      sort_max_frames=self.args.sort_max_frames,
                                                      reset_index=self.args.reset_index)
-
+        if self.args.use_num_last_frames:
+            len_df = len(df)
         kp_path = os.path.join(self.tmp_dir, str(uuid.uuid4()) + '.csv')
 
         try:
