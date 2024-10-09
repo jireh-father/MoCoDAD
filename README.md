@@ -39,20 +39,121 @@ python mocodad.py --config ./deploy/20241010/inference_config.yaml --keypoint_cs
 python predict_MoCoDAD_eval.py --config ./deploy/20241010/inference_config.yaml --keypoint_dir ./horse_kp_20240710 --data_json ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json
 ```
 
-### Inference config file
+### Added parameters in the config file for inference
+- 학습용 설정 파일을 그대로 복사한 후 아래 내용만 상황에 맞게 변경하면 됨.
 ```yaml
 split: 'test' # do not change
-debug: false # do not change
 seed: 999 # same seed used for training
+
+## Paths
+scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+pred_threshold: 0.0386 # threshold for the anomaly score
+
+# dataset parameters
+# 학습 데이터셋 생성했던 파라미터와 동일하게 세팅해야 함.
+camera_direction: side # side, front, back
+target_keypoint_name: only_foots_and_fetlocks # make_horse_dataset.py 혹은 make_horse_angle_dataset.py의 TARGET_KP_COL_DICT 딕셔너리의 키값 사용
+max_frames: 75
+num_div: 5 # x좌표 기준 가운데 프레임만 사용할 경우, 값이 5일 경우 5등분에서 양쪽 2개 제외 가운데 3개 범위에 해당되는 프레임만 사용 
+num_thr_div: 1 # 고정
+sort_max_frames: false # 실험중
+skip_not_continuous_sample: false # 실험중
+use_random_frame_range: false # 실험중
+reset_index: false # 실험중
+use_num_last_frames: false # 실험중
+```
+
+## Training
+
+### Dataset
+#### Make Common Dataset Format
+- 라벨링 완료된 csv 파일 기반으로 Common Dataset json파일 생성
+  - 샘플 라벨링 파일: ./merged_with_score_with_missing_frames_20240710.csv
+```sh
+# 10 fold cross validation
+# 모든 파라미터는 파일 내부에 설명있음
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_1.json --seed 1 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_2.json --seed 2 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_3.json --seed 3 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_4.json --seed 4 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_5.json --seed 5 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_6.json --seed 6 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_7.json --seed 7 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_8.json --seed 8 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json --seed 9 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+python convert_expert_label_excel_to_json_v5_horse.py --output_path ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_10.json --seed 10 --pos_num_labels_threshold 4 --neg_num_labels_threshold 3 --gait_types walk --directions LtoR,RtoL --remove_missing_frame_samples --remove_multi_video_samples --copy_keypoint_from_server --change_kp_path
+```
+
+#### Make MoCoDAD Dataset Format
+- 바로 위 Common Dataset를 사용해서 MoCoDAD Dataset을 생성
+
+##### 1. 좌표 사용
+```sh
+# 10 fold cross validation
+# horse_kp_20240710 데이터는 요청해주세요.
+# 모든 파라미터는 파일 내부에 설명있음
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv1 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_1.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv2 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_2.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv3 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_3.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv4 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_4.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv5 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_5.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv6 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_6.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv7 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_7.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv8 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_8.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv9 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maaxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10/cv10 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_10.json --num_div 5 --num_thr_div 1 --max_frames 75
+
+````
+##### 2. 각도 사용
+```sh
+# 10 fold cross validation
+# horse_kp_20240710 데이터는 요청해주세요.
+# 모든 파라미터는 파일 내부에 설명있음
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv1 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_1.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv2 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_2.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv3 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_3.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv4 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_4.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv5 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_5.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv6 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_6.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv7 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_7.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv8 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_8.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv9 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json --num_div 5 --num_thr_div 1 --max_frames 75
+python make_horse_angle_dataset.py --keypoint_dir ./horse_kp_20240710/ --target_keypoint_name baseline --window_length 4 --save_test --output_dir ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_angle/cv10 --label_file ./horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_10.json --num_div 5 --num_thr_div 1 --max_frames 75
+````
+
+### Create Training Config File
+- 예제 파일: ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10.yaml
+- 예제 설정 파일을 복사하여 파라미터 변경후 사용
+```yaml
+## General settings
+split: 'train' # data split; choices ['train', 'test']
+debug: false # if true, load only a few data samples
+seed: 999
+validation: true # use validation; only for UBnormal
+use_hr: false # for validation and test on UBnormal
 
 ## Computational resources
 accelerator: 'gpu'
 devices: [0] # indices of cuda devices to use
 
 ## Paths
-scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler
-load_ckpt: 'deploy/20241010/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+dir_name: 'train_experiment' # name of the directory of the current experiment
+data_dir: './data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10/' # path to the data
+exp_dir: './baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10' # path to the directory that will contain the current experiment directory
+test_path: './data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10/validating/test_frame_mask' # path to the test data
+load_ckpt: '' # name of the checkpoint to load at inference time
 create_experiment_dir: true
+
+## WANDB configuration
+use_wandb: false
+project_name: "project_name"
+wandb_entity: "entity_name"
+group_name: "group_name"
+use_ema: false
+
+##############################
+
 
 ### Model's configuration
 
@@ -63,10 +164,7 @@ conditioning_strategy: 'inject' # choices ['inject' (add2layers), 'concat' (cat)
 
 ## Conditioning network's configuration
 conditioning_architecture: 'AE' # choices ['AE', 'E', 'E_unet']
-conditioning_indices: [0,1,2] # If conditioning_strategy=random_imp, it must be int and it is used as the number of random indices that will be selected
-                              # If an int is given and conditioning_strategy=[inject|concat], n_frames//conditioning_indices will be used as the number of conditioning indices
-                              # If an int is given and conditioning_strategy=inbetween_imp, it will be used as the step of the conditioning indices, starting from 0
-                              # If a list is given, it will be used as the conditioning indices 
+conditioning_indices: [0,1,2] # 윈도우안에서 컨디션 역할을 할 프레임의 인덱스 번호
 h_dim: 32 # dimension of the bottleneck at the end of the encoder of the conditioning network
 latent_dim: 16 # dimension of the latent space of the conditioning encoder
 channels: [32,16,32] # channels for the encoder (ignored if conditioning_architecture=E_unet)
@@ -80,6 +178,7 @@ channels: [32,16,32] # channels for the encoder (ignored if conditioning_archite
 noise_steps: 10 # how many diffusion steps to perform
 
 ### Optimizer and scheduler's configuration
+n_epochs: 100
 opt_lr: 0.001
 
 ## Losses' configuration
@@ -91,10 +190,10 @@ rec_weight: 0.01 # weight of the reconstruction loss
 
 ### Inference's configuration
 n_generated_samples: 5 # number of samples to generate
-model_return_value: 'all' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
+model_return_value: 'loss' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss; 
                            # if 'poses', the model will return the generated poses; 
                            # if 'all', the model will return both the loss and the generated poses
-aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected;
+aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected; 
                              # if 'mean', the mean of loss of the samples will be selected; 
                              # if 'median', the median of the loss of the samples will be selected; 
                              # if 'random', a random sample will be selected;
@@ -113,8 +212,9 @@ load_tensors: false # if true, load the generated tensors for faster inference
 ### Dataset's configuration
 
 ## Important parameters
+dataset_choice: 'UBnormal'
 seg_len: 4 # length of the window (cond+noised)
-vid_res: [10800,7200]
+vid_res: [10800,7200] # 그대로 사용하면 됨
 batch_size: 1024
 pad_size: -1 # size of the padding 
 
@@ -126,30 +226,25 @@ normalization_strategy: 'robust' # use 'none' to avoid normalization, 'robust' o
 num_coords: 2 # number of coordinates to use
 num_transform: 5 # number of transformations to apply
 num_workers: 2
-seg_stride: 1
-custom_num_joints: 8
-seg_th: 0
-start_offset: 0
-symm_range: true
-use_fitted_scaler: false
-remove_last_remain_frame: false
-use_original_anomaly_score: true
-use_angle: true
-use_angle_norm: false
-camera_direction: side
-target_keypoint_name: only_foots_and_fetlocks
-max_frames: 75
-num_div: 5
-num_thr_div: 1
-sort_max_frames: false
-skip_not_continuous_sample: false
-use_random_frame_range: false
-pred_threshold: 0.0386
-reset_index: false
-use_num_last_frames: true
+seg_stride: 1 # stride of the window
+custom_num_joints: 34 # number of joints to use
+seg_th: 0 # 무시
+start_offset: 0 # 사용할 프레임의 시작 위치
+symm_range: true # 무시
+use_fitted_scaler: false # 무시
+remove_last_remain_frame: false # 테스트용
+use_original_anomaly_score: true # 테스트용
+use_angle: false # 각도 사용여부
+use_angle_norm: false # 테스트용
 ```
 
-## Training
+### Train MoCoDAD
+```sh
+# --data_root: mocodad용 데이터셋의 루트 경로 지정
+python -u train_MoCoDAD_cross_validation.py \
+--config ./config/DogLeg/horse_baseline_win4_center5_1_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10.yaml \
+--data_root ./data/horse/baseline_data_240710_win4_center5_1_maxf_75_walk_side_pos_thr4_neg_thr3_rem_old_mis_cv10
+```
 
 --- 
 # VVV Original MOCODAD README.md
