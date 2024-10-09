@@ -374,7 +374,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
                 print(f"angle over 180 in {col}")
                 return False, False
 
-    return df, len_df#len(df)
+    return df, len(df)
 
 
 def get_key_data(target_keypoint_name):
@@ -492,7 +492,7 @@ def main(args):
                     start_idx = args.window_length - 1
                     label_np[-start_idx:] = 0
                 else:
-                    label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
+                    label_np = np.zeros(len(df) - args.window_length + 1, dtype=np.int8)
                 # label_np = np.zeros(len(df), dtype=np.int8)
                 np.save(label_output_path, label_np)
                 if args.save_test:

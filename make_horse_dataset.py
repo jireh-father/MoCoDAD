@@ -207,7 +207,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         if max_frames and len(df) > max_frames:
             df = df.iloc[:max_frames]
 
-    return df, len_df#len(df)
+    return df, len(df)
 
 
 def get_axis_keys(direction, target_keypoint_name):
@@ -315,7 +315,7 @@ def main(args):
                     start_idx = args.window_length - 1
                     label_np[-start_idx:] = 0
                 else:
-                    label_np = np.zeros(len_df - args.window_length + 1, dtype=np.int8)
+                    label_np = np.zeros(len(df) - args.window_length + 1, dtype=np.int8)
                 # label_np = np.zeros(len(df), dtype=np.int8)
                 np.save(label_output_path, label_np)
                 if args.save_test:
