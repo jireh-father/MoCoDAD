@@ -293,8 +293,7 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
         return False, False
 
     # reset index
-    if reset_index:
-        df.reset_index(drop=True, inplace=True)
+
 
     df['index_col'] = df.index + 1
 
@@ -373,6 +372,9 @@ def read_csv(csv_file, all_keys, all_x_axis_keys, target_skeleton_key_sets, wind
             if (df[col] > 180).any():
                 print(f"angle over 180 in {col}")
                 return False, False
+
+    if reset_index:
+        df.reset_index(drop=True, inplace=True)
 
     return df, len(df)
 

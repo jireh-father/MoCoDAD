@@ -89,7 +89,8 @@ class Mocodad:
                                                            num_div=self.args.num_div,
                                                            use_random_frame_range=self.args.use_random_frame_range,
                                                            skip_not_continuous_sample=self.args.skip_not_continuous_sample,
-                                                           sort_max_frames=self.args.sort_max_frames)
+                                                           sort_max_frames=self.args.sort_max_frames,
+                                                           reset_index=self.args.reset_index)
         else:
             df, len_df = make_horse_dataset.read_csv(keypoint_csv_path, self.x_axis_keys, self.y_axis_keys,
                                                      window_length=self.args.seg_len,
@@ -97,7 +98,8 @@ class Mocodad:
                                                      max_frames=self.args.max_frames, num_div=self.args.num_div,
                                                      use_random_frame_range=self.args.use_random_frame_range,
                                                      skip_not_continuous_sample=self.args.skip_not_continuous_sample,
-                                                     sort_max_frames=self.args.sort_max_frames)
+                                                     sort_max_frames=self.args.sort_max_frames,
+                                                     reset_index=self.args.reset_index)
 
         kp_path = os.path.join(self.tmp_dir, str(uuid.uuid4()) + '.csv')
 

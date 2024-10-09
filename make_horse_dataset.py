@@ -161,8 +161,7 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
         return False, False
 
     # reset index
-    if reset_index:
-        df.reset_index(drop=True, inplace=True)
+
     df['index_col'] = df.index + 1
 
     df = df[['index_col'] + x_axis_keys + y_axis_keys]
@@ -206,6 +205,9 @@ def read_csv(csv_file, x_axis_keys, y_axis_keys, window_length, direction='side'
     else:
         if max_frames and len(df) > max_frames:
             df = df.iloc[:max_frames]
+
+    if reset_index:
+        df.reset_index(drop=True, inplace=True)
 
     return df, len(df)
 
