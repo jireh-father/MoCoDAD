@@ -3,6 +3,7 @@
 ## General settings
 split: 'test' # data split; choices ['train', 'test']
 seed: 999
+debug: false
 
 ## Paths
 scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler

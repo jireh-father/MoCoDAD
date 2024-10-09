@@ -145,6 +145,8 @@ sort_max_frames: false
 skip_not_continuous_sample: false
 use_random_frame_range: false
 pred_threshold: 0.0386
+reset_index: false
+use_num_last_frames: true
 ```
 
 ## Training
