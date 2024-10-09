@@ -39,6 +39,9 @@ nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse
 # [2024-10-08] walk, first maxf75, skip hole
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole/  > log_tr_baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole &
 
+# [2024-10-08] walk, first maxf75, skip hole, --num_div 5 --num_thr_div 1, sort_max_frames
+nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_data_240710_win4_maxf_75_center_sorted_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole.yaml --data_root ./data/horse/baseline_data_240710_win4_maxf_75_center_sorted_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole/  > log_tr_baseline_data_240710_win4_maxf_75_center_sorted_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole &
+
 # [2024-10-08] walk, first maxf75, skip hole, use original frame length
 nohup python -u train_MoCoDAD_cross_validation.py --config ./config/DogLeg/horse_baseline_win4_first_maxf_75_data_240710_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole_use_orif.yaml --data_root ./data/horse/baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole_use_orif/  > log_tr_baseline_data_240710_win4_first_maxf_75_walk_side_pos_thr4_neg_thr3_rem_mis_cv10_skip_hole_use_orif &
 
