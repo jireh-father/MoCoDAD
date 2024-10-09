@@ -310,7 +310,7 @@ def main(args):
                 os.makedirs(os.path.dirname(label_output_path), exist_ok=True)
                 if label:
                     # label_np = np.ones(len_df - args.window_length + 1, dtype=np.int8)
-                    label_np = np.ones(len(df), dtype=np.int8)
+                    label_np = np.ones(len(df) - args.window_length + 1, dtype=np.int8)
                     # set last 5 elements to 0
                     start_idx = args.window_length - 1
                     label_np[-start_idx:] = 0
