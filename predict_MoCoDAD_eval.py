@@ -44,7 +44,7 @@ def compute_var_matrix(pos, frames_pos, n_frames):
     return pose
 
 
-def main(config, tmp_dir, data_json, keypoint_dir):
+def main(config, tmp_dir, data_json, keypoint_dir, eval_train_data):
     mocodad = Mocodad(config, tmp_dir)
     dataset = json.load(open(data_json, encoding="utf-8"))
 
@@ -57,10 +57,14 @@ def main(config, tmp_dir, data_json, keypoint_dir):
         # print(f"processing {sample_idx}th sample")
         label = sample['lameness']
 
-        is_val = 'isVal' in sample and sample['isVal']
+        if eval_train_data:
+            if 'isVal' in sample and sample['isVal']:
+                continue
+        else:
+            is_val = 'isVal' in sample and sample['isVal']
 
-        if not is_val:
-            continue
+            if not is_val:
+                continue
 
         for csv_idx, path_and_dir in enumerate(sample["keypoints"]["path_and_direction"]):
             csv_file = os.path.join(keypoint_dir, path_and_dir["keypoint_full_path"])
@@ -105,6 +109,8 @@ if __name__ == '__main__':
                         default='./deploy/20241010/walk_test_keypoint.csv')
     parser.add_argument('--keypoint_dir', type=str,
                         default='./horse_kp_20240710')
+    # eval train dataset
+    parser.add_argument('--eval_train_data', action='store_true', default=False)
     global_args = parser.parse_args()
 
-    main(global_args.config, global_args.tmp_dir, global_args.data_json, global_args.keypoint_dir)
+    main(global_args.config, global_args.tmp_dir, global_args.data_json, global_args.keypoint_dir, global_args.eval_train_data)
