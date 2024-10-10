@@ -60,6 +60,7 @@ class Mocodad:
         self.tmp_dir = tmp_dir
 
         model = MoCoDAD(args)
+        print("loading model", args.load_ckpt)
         checkpoint = torch.load(args.load_ckpt, weights_only=True)
         model.load_state_dict(checkpoint['state_dict'])
         model.eval()

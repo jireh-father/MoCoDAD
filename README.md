@@ -34,7 +34,11 @@ result, position = mocodad.inference(keypoint_csv_path)
 
 ### Inference in command line
 ```sh
+# walk
 python mocodad.py --config ./deploy/20241010/walk_inference_config.yaml --keypoint_csv_path ./deploy/20241010/walk_test_keypoint.csv
+
+# trot
+python mocodad.py --config ./deploy/20241010/trot_inference_config.yaml --keypoint_csv_path ./deploy/20241010/walk_test_keypoint.csv
 ````
 
 ### Evaluation in command line
