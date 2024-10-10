@@ -601,6 +601,7 @@ class MoCoDAD(pl.LightningModule):
                 else:
                     each_clip_score = clip_score
                 model_scores_each_clip.append(np.mean(each_clip_score))
+                print("mean gt", np.mean(gt))
                 dataset_gt_each_clip.append(np.mean(gt))
                 if transformation == 0:
                     clip_pred_frames.append((all_gts[idx].split(".")[0], len(clip_score)))
