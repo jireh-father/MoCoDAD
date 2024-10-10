@@ -6,8 +6,8 @@ seed: 999
 debug: false
 
 ## Paths
-scaler_path: './deploy/20241010/walk_local_robust.pickle' # path to the fitted scaler
-load_ckpt: 'deploy/20241010/walk_best_epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+scaler_path: './deploy/20241010/trot_local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/trot_best_epoch=13-step=518.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: true
 
 ### Model's configuration
