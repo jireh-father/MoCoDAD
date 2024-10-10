@@ -54,7 +54,7 @@ def main(config, tmp_dir, data_json, keypoint_dir, eval_train_data):
     pos_losses = []
     neg_losses = []
     for sample_idx, sample in enumerate(dataset):
-        # print(f"processing {sample_idx}th sample")
+        print(f"processing {sample_idx}th sample")
         label = sample['lameness']
 
         if eval_train_data:
