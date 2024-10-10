@@ -8,19 +8,25 @@ conda activate mocodad
 
 ## Inference
 ### [20241010] model files
-- model ckpt
-  - deploy/20241010/epoch=8-step=792.ckpt
-- config file
-  - deploy/20241010/inference_config.yaml
-- scaler file
-  - deploy/20241010/local_robust.pkl
+- walk model ckpt
+  - deploy/20241010/walk_best_epoch=8-step=792.ckpt
+- walk config file
+  - deploy/20241010/walk_inference_config.yaml
+- walk scaler file
+  - deploy/20241010/walk_local_robust.pkl
+- trot model ckpt
+  - deploy/20241010/trot_best_epoch=8-step=792.ckpt
+- trot config file
+  - deploy/20241010/trot_inference_config.yaml
+- trot scaler file
+  - deploy/20241010/trot_local_robust.pkl
 
 ### Inference in python code
 ```python
 import mocodad
-config = "./deploy/20241010/inference_config.yaml"
+config = "./deploy/20241010/walk_inference_config.yaml"
 tmp_dir = "./tmp"
-keypoint_csv_path = "./deploy/20241010/test_keypoint.csv"
+keypoint_csv_path = "./deploy/20241010/walk_test_keypoint.csv"
 mocodad = mocodad.Mocodad(config, tmp_dir)
 
 result, position = mocodad.inference(keypoint_csv_path)
@@ -28,7 +34,7 @@ result, position = mocodad.inference(keypoint_csv_path)
 
 ### Inference in command line
 ```sh
-python mocodad.py --config ./deploy/20241010/inference_config.yaml --keypoint_csv_path ./deploy/20241010/test_keypoint.csv
+python mocodad.py --config ./deploy/20241010/walk_inference_config.yaml --keypoint_csv_path ./deploy/20241010/walk_test_keypoint.csv
 ````
 
 ### Evaluation in command line
@@ -36,7 +42,7 @@ python mocodad.py --config ./deploy/20241010/inference_config.yaml --keypoint_cs
 # you need to prepare the keypoint directory and data json file
 # request the keypoint directory to the owner
 # the sample data json file is in ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json 
-python predict_MoCoDAD_eval.py --config ./deploy/20241010/inference_config.yaml --keypoint_dir ./horse_kp_20240710 --data_json ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json
+python predict_MoCoDAD_eval.py --config ./deploy/20241010/walk_inference_config.yaml --keypoint_dir ./horse_kp_20240710 --data_json ./deploy/20241010/horse_20240710_walk_side_pos_thr_4_neg_thr_3_rem_mis_seed_9.json
 ```
 
 ### Added parameters in the config file for inference
@@ -46,8 +52,8 @@ split: 'test' # do not change
 seed: 999 # same seed used for training
 
 ## Paths
-scaler_path: './deploy/20241010/local_robust.pickle' # path to the fitted scaler
-load_ckpt: 'deploy/20241010/epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
+scaler_path: './deploy/20241010/walk_local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/walk_best_epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
 pred_threshold: 0.0386 # threshold for the anomaly score
 
 # dataset parameters
