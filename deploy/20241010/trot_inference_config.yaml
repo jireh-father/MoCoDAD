@@ -1,33 +1,14 @@
 ### Experiment configuration
 # best hp v1: kp score 0.55, window 4, paws
 ## General settings
-split: 'train' # data split; choices ['train', 'test']
-debug: false # if true, load only a few data samples
+split: 'test' # data split; choices ['train', 'test']
 seed: 999
-validation: true # use validation; only for UBnormal
-use_hr: false # for validation and test on UBnormal
-
-## Computational resources
-accelerator: 'gpu'
-devices: [0] # indices of cuda devices to use
+debug: false
 
 ## Paths
-dir_name: 'train_experiment' # name of the directory of the current experiment
-data_dir: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_old_mis_cv10_angle/' # path to the data
-exp_dir: './checkpoints_horse_only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_old_mis_cv10_angle' # path to the directory that will contain the current experiment directory
-test_path: './data/horse/only_foots_and_fetlocks_data_240710_win4_center5_1_maxf_75_trot_side_pos_thr2_neg_thr2_rem_old_mis_cv10_angle/validating/test_frame_mask' # path to the test data
-load_ckpt: '' # name of the checkpoint to load at inference time
+scaler_path: './deploy/20241010/walk_local_robust.pickle' # path to the fitted scaler
+load_ckpt: 'deploy/20241010/walk_best_epoch=8-step=792.ckpt' # name of the checkpoint to load at inference time
 create_experiment_dir: true
-
-## WANDB configuration
-use_wandb: false
-project_name: "project_name"
-wandb_entity: "entity_name"
-group_name: "group_name"
-use_ema: false
-
-##############################
-
 
 ### Model's configuration
 
@@ -55,7 +36,6 @@ channels: [32,16,32] # channels for the encoder (ignored if conditioning_archite
 noise_steps: 10 # how many diffusion steps to perform
 
 ### Optimizer and scheduler's configuration
-n_epochs: 100
 opt_lr: 0.001
 
 ## Losses' configuration
@@ -67,7 +47,7 @@ rec_weight: 0.01 # weight of the reconstruction loss
 
 ### Inference's configuration
 n_generated_samples: 5 # number of samples to generate
-model_return_value: 'loss' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss; 
+model_return_value: 'all' # choices ['loss', 'poses', 'all']; if 'loss', the model will return the loss;
                            # if 'poses', the model will return the generated poses; 
                            # if 'all', the model will return both the loss and the generated poses
 aggregation_strategy: 'best' # choices ['best', 'mean', 'median', 'random']; if 'best', the best sample will be selected; 
@@ -89,7 +69,6 @@ load_tensors: false # if true, load the generated tensors for faster inference
 ### Dataset's configuration
 
 ## Important parameters
-dataset_choice: 'UBnormal'
 seg_len: 4 # length of the window (cond+noised)
 vid_res: [10800,7200]
 batch_size: 1024
@@ -113,3 +92,14 @@ remove_last_remain_frame: false
 use_original_anomaly_score: true
 use_angle: true
 use_angle_norm: false
+camera_direction: side
+target_keypoint_name: only_foots_and_fetlocks
+max_frames: 75
+num_div: 5
+num_thr_div: 1
+sort_max_frames: false
+skip_not_continuous_sample: false
+use_random_frame_range: false
+pred_threshold: 0.0386
+reset_index: false
+use_num_last_frames: false
