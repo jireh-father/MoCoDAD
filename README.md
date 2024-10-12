@@ -21,6 +21,7 @@ conda activate mocodad
 - trot scaler file
   - deploy/20241010/trot_local_robust.pkl
 
+
 ### Inference in python code
 ```python
 import mocodad
